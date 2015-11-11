@@ -12,7 +12,7 @@
 		E9205DBD1BD73F95005B990F /* GLMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9205DBC1BD73F95005B990F /* GLMesh.swift */; };
 		E9205DBF1BD740CE005B990F /* BoundingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9205DBE1BD740CE005B990F /* BoundingBox.swift */; };
 		E9205DC11BD744DD005B990F /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9205DC01BD744DD005B990F /* Material.swift */; };
-		E9205DC61BD777B7005B990F /* QuaternionIntrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = E9205DC51BD777B7005B990F /* QuaternionIntrinsics.c */; };
+		E9205DC61BD777B7005B990F /* CBridges.c in Sources */ = {isa = PBXBuildFile; fileRef = E9205DC51BD777B7005B990F /* CBridges.c */; };
 		E9205DC81BD77C97005B990F /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9205DC71BD77C97005B990F /* ModelIO.framework */; };
 		E93B4C0F1BED59A200792417 /* TextureUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B4C0E1BED59A200792417 /* TextureUnit.swift */; };
 		E93B4C111BED5D8B00792417 /* GLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B4C101BED5D8B00792417 /* GLExtensions.swift */; };
@@ -20,9 +20,11 @@
 		E93EED3F1BD30245005B6B05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E93EED3E1BD30245005B6B05 /* Assets.xcassets */; };
 		E93EED4A1BD30262005B6B05 /* SceneNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93EED491BD30262005B6B05 /* SceneNode.swift */; };
 		E93EED4C1BD3026C005B6B05 /* TransformNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93EED4B1BD3026C005B6B05 /* TransformNode.swift */; };
-		E944BD8B1BF0059900E61077 /* MDLVertexFormatExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944BD8A1BF0059900E61077 /* MDLVertexFormatExtensions.swift */; };
+		E944BD8B1BF0059900E61077 /* MDL+GLTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944BD8A1BF0059900E61077 /* MDL+GLTypes.swift */; };
 		E944BD8F1BF03BAB00E61077 /* GLForwardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944BD8E1BF03BAB00E61077 /* GLForwardRenderer.swift */; };
 		E944BD971BF0423500E61077 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E944BD961BF0423500E61077 /* libglfw3.a */; };
+		E9867C541BF19FFA008781B0 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9867C531BF19FFA008781B0 /* GLKit.framework */; };
+		E9867C561BF1A1B4008781B0 /* Plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = E9867C551BF1A1B4008781B0 /* Plane.obj */; };
 		E99FCEBD1BDA2A3500C778A5 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBC1BDA2A3500C778A5 /* Game.swift */; };
 		E99FCEBF1BDA2F4600C778A5 /* OriginalAdventure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */; };
 		E9A4D4B61BF077BD003FEACC /* MedievalModels in Resources */ = {isa = PBXBuildFile; fileRef = E9A4D4B51BF077BD003FEACC /* MedievalModels */; };
@@ -44,8 +46,8 @@
 		E9205DBC1BD73F95005B990F /* GLMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLMesh.swift; sourceTree = "<group>"; };
 		E9205DBE1BD740CE005B990F /* BoundingBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingBox.swift; sourceTree = "<group>"; };
 		E9205DC01BD744DD005B990F /* Material.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
-		E9205DC41BD77331005B990F /* QuaternionIntrinsics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuaternionIntrinsics.h; sourceTree = "<group>"; };
-		E9205DC51BD777B7005B990F /* QuaternionIntrinsics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = QuaternionIntrinsics.c; sourceTree = "<group>"; };
+		E9205DC41BD77331005B990F /* CBridges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CBridges.h; sourceTree = "<group>"; };
+		E9205DC51BD777B7005B990F /* CBridges.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CBridges.c; sourceTree = "<group>"; };
 		E9205DC71BD77C97005B990F /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
 		E9205DCA1BD79063005B990F /* BigTorch.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BigTorch.obj; sourceTree = "<group>"; };
 		E9205DCB1BD79063005B990F /* Carpet.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Carpet.obj; sourceTree = "<group>"; };
@@ -87,11 +89,13 @@
 		E93EED491BD30262005B6B05 /* SceneNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneNode.swift; sourceTree = "<group>"; };
 		E93EED4B1BD3026C005B6B05 /* TransformNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransformNode.swift; sourceTree = "<group>"; };
 		E93EED4D1BD313A3005B6B05 /* OriginalAdventure-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OriginalAdventure-Bridging-Header.h"; sourceTree = "<group>"; };
-		E944BD8A1BF0059900E61077 /* MDLVertexFormatExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MDLVertexFormatExtensions.swift; sourceTree = "<group>"; };
+		E944BD8A1BF0059900E61077 /* MDL+GLTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MDL+GLTypes.swift"; sourceTree = "<group>"; };
 		E944BD8E1BF03BAB00E61077 /* GLForwardRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLForwardRenderer.swift; sourceTree = "<group>"; };
 		E944BD921BF03F9800E61077 /* PickerShader.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PickerShader.frag; sourceTree = "<group>"; };
 		E944BD931BF03F9800E61077 /* PickerShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PickerShader.vert; sourceTree = "<group>"; };
 		E944BD961BF0423500E61077 /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libglfw3.a; sourceTree = "<group>"; };
+		E9867C531BF19FFA008781B0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		E9867C551BF1A1B4008781B0 /* Plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Plane.obj; sourceTree = "<group>"; };
 		E99FCEBC1BDA2A3500C778A5 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OriginalAdventure.swift; sourceTree = "<group>"; };
 		E9A4D4B31BF075F1003FEACC /* PassthroughShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PassthroughShader.vert; sourceTree = "<group>"; };
@@ -112,6 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9867C541BF19FFA008781B0 /* GLKit.framework in Frameworks */,
 				E9205DC81BD77C97005B990F /* ModelIO.framework in Frameworks */,
 				E944BD971BF0423500E61077 /* libglfw3.a in Frameworks */,
 				E9FBA62B1BD61D2C007052D4 /* Accelerate.framework in Frameworks */,
@@ -209,8 +214,8 @@
 			children = (
 				E9FBA6281BD61B8B007052D4 /* MathTypes.swift */,
 				E9205DBE1BD740CE005B990F /* BoundingBox.swift */,
-				E9205DC41BD77331005B990F /* QuaternionIntrinsics.h */,
-				E9205DC51BD777B7005B990F /* QuaternionIntrinsics.c */,
+				E9205DC41BD77331005B990F /* CBridges.h */,
+				E9205DC51BD777B7005B990F /* CBridges.c */,
 			);
 			name = Maths;
 			sourceTree = "<group>";
@@ -218,6 +223,7 @@
 		E944BD901BF03F7900E61077 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E9867C551BF1A1B4008781B0 /* Plane.obj */,
 				E9205DC91BD79063005B990F /* MedievalModels */,
 			);
 			name = Resources;
@@ -244,7 +250,7 @@
 				E91AA9961BEAFDB30026D9ED /* GBuffer.swift */,
 				E93B4C0E1BED59A200792417 /* TextureUnit.swift */,
 				E93B4C101BED5D8B00792417 /* GLExtensions.swift */,
-				E944BD8A1BF0059900E61077 /* MDLVertexFormatExtensions.swift */,
+				E944BD8A1BF0059900E61077 /* MDL+GLTypes.swift */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -266,6 +272,7 @@
 		E9FE256A1BD4D12900B0CFC0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E9867C531BF19FFA008781B0 /* GLKit.framework */,
 				E92549EC1BD8EB1400EA4D58 /* GLFW */,
 				E9205DC71BD77C97005B990F /* ModelIO.framework */,
 				E9FBA62A1BD61D2C007052D4 /* Accelerate.framework */,
@@ -332,6 +339,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9867C561BF1A1B4008781B0 /* Plane.obj in Resources */,
 				E9A4D4B71BF077CB003FEACC /* PassthroughShader.vert in Resources */,
 				E9A4D4B81BF077CB003FEACC /* PickerShader.frag in Resources */,
 				E9A4D4B91BF077CB003FEACC /* PickerShader.vert in Resources */,
@@ -357,12 +365,12 @@
 				E9205DBF1BD740CE005B990F /* BoundingBox.swift in Sources */,
 				E93B4C0F1BED59A200792417 /* TextureUnit.swift in Sources */,
 				E93EED4A1BD30262005B6B05 /* SceneNode.swift in Sources */,
-				E9205DC61BD777B7005B990F /* QuaternionIntrinsics.c in Sources */,
+				E9205DC61BD777B7005B990F /* CBridges.c in Sources */,
 				E91AA9971BEAFDB30026D9ED /* GBuffer.swift in Sources */,
 				E93EED3B1BD30245005B6B05 /* main.swift in Sources */,
 				E9205DC11BD744DD005B990F /* Material.swift in Sources */,
 				E944BD8F1BF03BAB00E61077 /* GLForwardRenderer.swift in Sources */,
-				E944BD8B1BF0059900E61077 /* MDLVertexFormatExtensions.swift in Sources */,
+				E944BD8B1BF0059900E61077 /* MDL+GLTypes.swift in Sources */,
 				E99FCEBD1BDA2A3500C778A5 /* Game.swift in Sources */,
 				E9FE25671BD4CAE200B0CFC0 /* Light.swift in Sources */,
 				E93B4C111BED5D8B00792417 /* GLExtensions.swift in Sources */,

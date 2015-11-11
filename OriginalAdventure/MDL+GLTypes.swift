@@ -8,7 +8,7 @@
 
 import Swift
 import ModelIO
-import OpenGL
+import OpenGL.GL3
 
 extension MDLVertexFormat {
     
@@ -72,5 +72,41 @@ extension MDLVertexFormat {
         }
         
         return GLenum(type)
+    }
+}
+
+extension MDLIndexBitDepth {
+    var glType : GLenum {
+        switch self {
+        case .UInt8:
+            return GLenum(GL_UNSIGNED_BYTE)
+        case .UInt16:
+            return GLenum(GL_UNSIGNED_SHORT)
+        case .UInt32:
+            return GLenum(GL_UNSIGNED_INT)
+        case .Invalid:
+            assertionFailure("The index type has not been initialised")
+            return 0
+        }
+    }
+}
+
+extension MDLGeometryType {
+    var glType : GLenum {
+        switch self {
+        case .TypeLines:
+            return GLenum(GL_LINES)
+        case .TypePoints:
+            return GLenum(GL_POINTS)
+        case .TypeQuads:
+            return GLenum(GL_QUADS)
+        case .TypeTriangles:
+            return GLenum(GL_TRIANGLES)
+        case .TypeTriangleStrips:
+            return GLenum(GL_TRIANGLE_STRIP)
+        case .TypeVariableTopology:
+            assertionFailure("Variable topologies are unsupported")
+            return 0
+        }
     }
 }

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OpenGL
+import OpenGL.GL3
 
 public func glGenTexture() -> GLuint {
     var value : GLuint = 0

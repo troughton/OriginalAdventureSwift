@@ -28,6 +28,7 @@ struct Shader {
     }
     
     func useProgram() {
+
         glUseProgram(_glProgramRef)
     }
     

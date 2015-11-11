@@ -6,7 +6,7 @@
 //  Copyright © 2015 Thomas Roughton. All rights reserved.
 //
 
-#import "QuaternionIntrinsics.h"
+#import "CBridges.h"
 
 vector_float4 QuaternionMultiply(vector_float4 quaternionLeft, vector_float4 quaternionRight) {
     const __m128 ql = _mm_load_ps(&quaternionLeft);
@@ -35,4 +35,8 @@ vector_float4 QuaternionMultiply(vector_float4 quaternionLeft, vector_float4 qua
     const __m128 r = _mm_hadd_ps(_mm_hadd_ps(aline, bline), _mm_hadd_ps(cline, dline));
     
     return *(vector_float4 *)&r;
+}
+
+void glDrawElementsSwift(GLenum mode, GLsizei count, GLenum type, int64_t indices) {
+    glDrawElements(mode, count, type, (void*)indices);
 }

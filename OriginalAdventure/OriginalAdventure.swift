@@ -27,9 +27,9 @@ class OriginalAdventure: Game {
         let cameraTransform = TransformNode(id: "cameraOffset", parent: self.sceneGraph, isDynamic: false, translation: [0, 0, -500], rotation: Quaternion.Identity, scale: Vector3.One)
         self.camera = CameraNode(id: "camera", parent: cameraTransform)
         
-        let mesh = MeshType.meshFromFile(withPath: "MedievalModels", fileName: "BigTorch.obj")
-        let gameObject = GameObject(id: "bigTorch", parent: sceneGraph)
-        gameObject.mesh = mesh
+        let meshes = MeshType.meshesFromFile(fileName: "Plane.obj")
+        let gameObject = GameObject(id: "plane", parent: sceneGraph)
+        gameObject.meshes = meshes
     }
     
     var size : WindowDimension! = nil {
@@ -45,6 +45,7 @@ class OriginalAdventure: Game {
     
     func update(delta delta: Double) {
         _renderer.render(sceneGraph.allNodesOfType(GameObject), lights: [], worldToCameraMatrix: self.camera.worldToNodeSpaceTransform, fieldOfView: self.camera.fieldOfView, hdrMaxIntensity: 1.0)
+
     }
     
 }

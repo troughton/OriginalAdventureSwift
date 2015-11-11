@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OpenGL
+import OpenGL.GL3
 
 /** A texture unit is one of the possible units that a texture and sampler can be bound to in an OpenGL context.
 * This enum makes things a little nicer than passing integer constants around.

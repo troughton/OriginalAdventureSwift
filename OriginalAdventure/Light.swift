@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import OpenGL.GL3
 import simd
 
 struct LightFalloff {

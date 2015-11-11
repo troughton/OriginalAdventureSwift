@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import OpenGL
 
 /**
  * Created by Thomas Roughton, Student ID 300313924, on 11/10/15.

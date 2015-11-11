@@ -40,6 +40,7 @@ func main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 0);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
     
@@ -61,13 +62,17 @@ func main() {
     
     while (glfwWindowShouldClose(window) == 0) {
         
+        var error = glGetError()
+        if error != 0 {
+            assertionFailure("OpenGL error \(error)")
+        }
         let currentTime = glfwGetTime()
         
         game.update(delta: currentTime - timeLastUpdate)
         
         timeLastUpdate = glfwGetTime()
-        
         glfwSwapBuffers(window);
+        
         glfwPollEvents();
     }
     

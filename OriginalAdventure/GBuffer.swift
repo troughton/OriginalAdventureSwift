@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OpenGL
+import OpenGL.GL3
 
 final class GBuffer {
     

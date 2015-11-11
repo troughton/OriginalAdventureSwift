@@ -28,44 +28,34 @@ enum VertexArrays {
 
 protocol Mesh : Enableable {
     func renderWithShader(shader: Shader, hdrMaxIntensity: Float)
-    func renderWithVertexArrays(vertexArrays : VertexArrays)
     func render()
     
-    var boundingBox : BoundingBox? { get }
+    var boundingBox : BoundingBox { get }
     
 }
 
-var _loadedMeshes = [String : Mesh]()
+var _loadedMeshes = [String : [Mesh]]()
 
-let _bufferAllocator = GLKMeshBufferAllocator()
 extension Mesh {
-    static func meshFromFile(withPath path : String? = nil, fileName: String) -> Mesh {
-        var mesh = _loadedMeshes[fileName];
+    static func meshesFromFile(withPath path : String? = nil, fileName: String) -> [Mesh] {
+        var meshes = _loadedMeshes[fileName];
         
-        if (mesh == nil) {
+            if (meshes == nil) {
+                    meshes = [Mesh]()
+                        let asset = MDLAsset(URL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(fileName, ofType: nil, inDirectory: path)!))
             
-            do {
-                let asset = MDLAsset(URL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(fileName, ofType: nil, inDirectory: path)!),
-                    vertexDescriptor: nil, bufferAllocator: _bufferAllocator)
-            
-                var mdlMeshes : NSArray? = nil
-            
-                let glkMeshes = try GLKMesh.newMeshesFromAsset(asset, sourceMeshes: &mdlMeshes)
-            
-                mesh = MeshType(mesh: glkMeshes[0], asset: mdlMeshes![0] as! MDLMesh)
-            
-            } catch let error {
-                assertionFailure("Could not load mesh file in directory \(path) named \(fileName): \(error)");
-            }
-            
-            _loadedMeshes[fileName] = mesh;
+                for mesh in (0..<asset.count).map({asset.objectAtIndex($0)}) {
+                    meshes!.append(MeshType(mdlMesh: mesh as! MDLMesh))
+                }
+        
+                _loadedMeshes[fileName] = meshes;
         }
         
-        return mesh!;
+        return meshes!;
     }
 }
 
-typealias MeshType = GLMesh<Float, Int>
+typealias MeshType = GLMesh
 
 struct CollisionNode : Enableable {
     var isEnabled : Bool
@@ -78,7 +68,7 @@ class GameObject: SceneNode {
             light?.parent = self
         }
     }
-    var mesh : Mesh?
+    var meshes = [Mesh]()
     
     override var isEnabled : Bool {
         get {
@@ -87,9 +77,11 @@ class GameObject: SceneNode {
         set(enabled) {
             super.isEnabled = enabled
             
-            mesh?.isEnabled = enabled
+            for var mesh in meshes {
+                mesh.isEnabled = enabled
+            }
             light?.isEnabled = enabled
-            mesh?.isEnabled = enabled
+            collisionNode?.isEnabled = enabled
         }
     }
 }

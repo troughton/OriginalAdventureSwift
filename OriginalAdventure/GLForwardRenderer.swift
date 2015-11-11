@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OpenGL
+import OpenGL.GL3
 
 class GLForwardRenderer : Renderer {
     
@@ -38,6 +38,9 @@ class GLForwardRenderer : Renderer {
     
     private var _projectionMatrix : Matrix4! = nil;
     
+    init() {
+    }
+    
     /**
     * Setup GL state for rendering.
     */
@@ -54,7 +57,7 @@ class GLForwardRenderer : Renderer {
         glDepthRange(0.0, 1.0);
         glEnable(GLenum(GL_DEPTH_CLAMP));
     
-        glClear(GLenum(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        glClear(GLenum(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
     }
     
     /**
@@ -76,25 +79,30 @@ class GLForwardRenderer : Renderer {
     }
     
     func render(nodes: [GameObject], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
-        var error = GLenum(0)
+        var error = glGetError()
+        if error != 0 {
+            assertionFailure("OpenGL error \(error)")
+        }
         
         self.preRender();
         
         _shader.useProgram();
         
-        _shader.setMatrix(projectionMatrix, forProperty: .Matrix4CameraToClip)
+        _shader.setMatrix(Matrix4.Identity /*projectionMatrix*/, forProperty: .Matrix4CameraToClip)
         
   //      _shader.setLightData(Light.toLightBlock(lights.stream().filter(Light::isOn).collect(Collectors.toList()), worldToCameraMatrix, hdrMaxIntensity));
         
         for node in nodes {
-            guard let mesh = node.mesh else { continue }
+            guard !node.meshes.isEmpty else { continue }
             let nodeToCameraSpaceTransform = worldToCameraMatrix * node.nodeToWorldSpaceTransform
             let normalModelToCameraSpaceTransform = nodeToCameraSpaceTransform.matrix3.inverse.transpose;
             
-            _shader.setMatrix(nodeToCameraSpaceTransform, forProperty: .Matrix4ModelToCamera);
+            _shader.setMatrix(Matrix4.Identity/*nodeToCameraSpaceTransform*/, forProperty: .Matrix4ModelToCamera);
         //    _shader.setMatrix(normalModelToCameraSpaceTransform, forProperty: .Matrix4NormalModelToCamera)
             
-            mesh.renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)
+            for mesh in node.meshes {
+                mesh.renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)
+            }
             
         }
     
