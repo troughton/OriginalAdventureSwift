@@ -41,14 +41,23 @@ extension Mesh {
         var meshes = _loadedMeshes[fileName];
         
             if (meshes == nil) {
+                autoreleasepool {
+                do {
                     meshes = [Mesh]()
-                        let asset = MDLAsset(URL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(fileName, ofType: nil, inDirectory: path)!))
-            
-                for mesh in (0..<asset.count).map({asset.objectAtIndex($0)}) {
-                    meshes!.append(MeshType(mdlMesh: mesh as! MDLMesh))
+                    let asset = MDLAsset(URL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(fileName, ofType: nil, inDirectory: path)!), vertexDescriptor: nil, bufferAllocator: GLKMeshBufferAllocator())
+                
+                    var mdlMeshes : NSArray? = nil
+                    let glkMeshes = try GLKMesh.newMeshesFromAsset(asset, sourceMeshes: &mdlMeshes)
+                    
+                for (glkMesh, mdlMesh) in zip(glkMeshes, mdlMeshes!) {
+                    meshes!.append(MeshType(glkMesh: glkMesh, mdlMesh: mdlMesh as! MDLMesh))
                 }
         
                 _loadedMeshes[fileName] = meshes;
+                } catch let error {
+                    assertionFailure("Error loading mesh with name \(fileName): \(error)")
+                }
+                }
         }
         
         return meshes!;

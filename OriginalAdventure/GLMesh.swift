@@ -58,27 +58,6 @@ struct RenderCommand {
         defer {
             glBindVertexArray(0)
         }
-        
-        var vertexBufferRef : GLint = 0
-        glGetVertexAttribiv(0, GLenum(GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING), &vertexBufferRef)
-        
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), GLuint(vertexBufferRef))
-        
-        let vertexBufferBaseAddress = malloc(192)
-        glGetBufferSubData(GLenum(GL_ARRAY_BUFFER), 0, 192, vertexBufferBaseAddress)
-        let vertexBuffer = UnsafeBufferPointer<Float>(start: UnsafePointer<Float>(vertexBufferBaseAddress), count: 192/4)
-        var vertexBufferArray = [Float]()
-        vertexBufferArray.appendContentsOf(vertexBuffer)
-        print(vertexBufferArray)
-        
-        
-        let indexBufferBaseAddress = malloc(4 * Int(elementCount))
-        glGetBufferSubData(GLenum(GL_ELEMENT_ARRAY_BUFFER), 0, 4 * Int(elementCount), indexBufferBaseAddress)
-        let indexBuffer = UnsafeBufferPointer<UInt32>(start: UnsafePointer<UInt32>(indexBufferBaseAddress), count: Int(self.elementCount))
-        var indexBufferArray = [UInt32]()
-        indexBufferArray.appendContentsOf(indexBuffer)
-        print(indexBufferArray)
-        
         glDrawElements(primitiveType, elementCount, indexDataType, UnsafePointer<Void>().advancedBy(self.startIndex))
     }
 }
@@ -90,6 +69,7 @@ class GLMesh: Mesh {
     private let primitives : [RenderCommand]; //The primitives that make up self mesh.
     
     let boundingBox : BoundingBox
+    let glkMesh : GLKMesh
 
     static func enableAttribute(attribute: MDLVertexAttribute, atIndex index: GLuint, withStride stride: Int) {
         glEnableVertexAttribArray(index)
@@ -105,19 +85,17 @@ class GLMesh: Mesh {
 
     }
     
-    init(mdlMesh: MDLMesh) {
+    init(glkMesh: GLKMesh, mdlMesh: MDLMesh) {
         
         self.boundingBox = BoundingBox(minPoint: mdlMesh.boundingBox.minBounds, maxPoint: mdlMesh.boundingBox.maxBounds)
         
-        let mdlVertexBuffer = mdlMesh.vertexBuffers[0] as! MDLMeshBufferData
+        let vertexBuffer = glkMesh.vertexBuffers[0]
         let stride = mdlMesh.vertexDescriptor.layouts[0].stride
         
-        var vertexBufferRef : GLuint = 0;
-        glGenBuffers(1, &vertexBufferRef)
-        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferRef)
-        glBufferData(GLenum(GL_ARRAY_BUFFER), mdlVertexBuffer.length, mdlVertexBuffer.data.bytes, GLenum(GL_STATIC_DRAW))
+        glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBuffer.glBufferName)
         
-        self.primitives = mdlMesh.submeshes.flatMap({ (mdlSubmesh) -> RenderCommand? in
+        self.glkMesh = glkMesh
+        self.primitives = zip(glkMesh.submeshes, mdlMesh.submeshes).flatMap({ (glkSubmesh, mdlSubmesh) -> RenderCommand? in
             guard let mdlSubmesh = mdlSubmesh as? MDLSubmesh else { return nil }
             let material = (mdlSubmesh.material != nil) ? Material(fromModelIO: mdlSubmesh.material!) : Material.defaultMaterial
 
@@ -125,15 +103,9 @@ class GLMesh: Mesh {
             glGenVertexArrays(1, &vao)
             glBindVertexArray(vao)
             
-            glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferRef)
-            
-            let indexBufferData = (mdlSubmesh.indexBuffer as! MDLMeshBufferData).data
-            
-            var indexBufferRef : GLuint = 0
-            glGenBuffers(1, &indexBufferRef)
+            //glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferRef)
         
-            glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), indexBufferRef)
-            glBufferData(GLenum(GL_ELEMENT_ARRAY_BUFFER), indexBufferData.length, indexBufferData.bytes, GLenum(GL_STATIC_DRAW))
+            glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), glkSubmesh.elementBuffer.glBufferName)
          
             var attributeIndex : GLuint = 0;
             for attribute in mdlMesh.vertexDescriptor.attributes {
@@ -145,7 +117,7 @@ class GLMesh: Mesh {
                 attributeIndex++;
             }
             
-            let primitive = RenderCommand(vertexArrayObject: vao, primitiveType: mdlSubmesh.geometryType.glType, startIndex: 0, elementCount: GLsizei(mdlSubmesh.indexCount), indexDataType: mdlSubmesh.indexType.glType, material: material)
+            let primitive = RenderCommand(vertexArrayObject: vao, primitiveType: glkSubmesh.mode, startIndex: glkSubmesh.elementBuffer.offset, elementCount: glkSubmesh.elementCount, indexDataType: glkSubmesh.type, material: material)
            
             glBindVertexArray(0)
             return primitive
