@@ -54,20 +54,23 @@ newmtl wallSG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
+Ks 0.1 0.1 0.1
 Tf 1.00 1.00 1.00
 map_Kd -o 0 -1 stone-tile-1.png
 map_normal stone-tile-1_NRM.png
-Ns 2.0
+Ns 1.1
 Ni 1.00
 
 newmtl wallSG1
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
+Ks 0.1 0.1 0.1
 Tf 1.00 1.00 1.00
 map_Kd -o 0 -1 stone-tile-2.png
 map_normal stone-tile-2_NRM.png
 Ni 1.00
+Ns 1.10
 newmtl woodSG
 illum 4
 Kd 0.00 0.00 0.00

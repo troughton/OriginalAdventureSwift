@@ -7,22 +7,34 @@
 //
 
 import Cocoa
+import OpenGL.GL3
+
+var game : Game = OriginalAdventure()
+var windowSize = WindowDimension.defaultDimension
+
 
 func errorCallback(error : Int32, description : UnsafePointer<Int8>) {
     fputs(description, stderr);
 }
 
-func keyCallback(window: COpaquePointer, key: Int32, scancode: Int32, action: Int32, mods: Int32)
-{
+func keyCallback(window: COpaquePointer, key: Int32, scancode: Int32, action: Int32, mods: Int32) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
 }
 
+func windowSizeCallback(window: COpaquePointer, width: Int32, height: Int32) -> Void {
+    windowSize = WindowDimension(width: width, height: height)
+    game.size = windowSize
+}
+
+func framebufferSizeCallback(window: COpaquePointer, width: Int32, height: Int32) -> Void {
+    glViewport(0, 0, width, height);
+    game.sizeInPixels = WindowDimension(width: width, height: height);
+}
+
 func main() {
-    var game : Game = OriginalAdventure()
     let window : COpaquePointer;
-    
     var timeLastUpdate = 0.0;
     
     glfwSetErrorCallback(errorCallback)
@@ -44,16 +56,19 @@ func main() {
     glfwWindowHint(GLFW_SAMPLES, 0);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
     
-    window = glfwCreateWindow(WindowDimension.defaultDimension.width, WindowDimension.defaultDimension.height, game.title, nil, nil);
+    window = glfwCreateWindow(windowSize.width, windowSize.height, game.title, nil, nil);
     if (window == nil) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+    
 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     
     glfwSetKeyCallback(window, keyCallback);
+    glfwSetWindowSizeCallback(window, windowSizeCallback)
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback)
     
     glfwShowWindow(window);
     
@@ -62,10 +77,6 @@ func main() {
     
     while (glfwWindowShouldClose(window) == 0) {
         
-        var error = glGetError()
-        if error != 0 {
-            assertionFailure("OpenGL error \(error)")
-        }
         let currentTime = glfwGetTime()
         
         game.update(delta: currentTime - timeLastUpdate)

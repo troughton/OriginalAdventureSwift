@@ -10,81 +10,101 @@ import Cocoa
 import simd
 
 struct LightFalloff {
+    
+    static let AttenuationFactor : Float = 0.00002
+    
     let constant : Float
     let linear : Float
     let quadratic : Float
     
     static let None = LightFalloff(constant: 1, linear: 0, quadratic: 0)
-    static let Quadratic = LightFalloff(constant: 1, linear: 0, quadratic: 1)
+    static let Linear = LightFalloff(constant: 1, linear: AttenuationFactor, quadratic: 0)
+    static let Quadratic = LightFalloff(constant: 1, linear: 0, quadratic: AttenuationFactor)
 }
 
 typealias Colour = Vector3
-typealias Intensity = Float
 
-enum Light : Enableable {
-    case Ambient(Bool, Colour, Intensity)
-    case Directional(Bool, Colour, Intensity, Vector3)
-    case Point(GameObject, Bool, Colour, Intensity, LightFalloff)
+enum LightType {
+    case Ambient
+    case Directional(Vector3)
+    case Point(LightFalloff)
+}
+
+class Light : SceneNode {
+    let type : LightType
+    
+    var colour : Colour
+    var intensity : Float
+    
+    init(id: String, parent: SceneNode, isDynamic: Bool = false, type: LightType, colour: Colour, intensity: Float) {
+        self.type = type
+        self.colour = colour
+        self.intensity = intensity
+        
+        super.init(id: id, parent: parent, isDynamic: isDynamic)
+    }
     
     var colourVector : Colour {
-        switch self {
-        case let .Ambient(_, colour, intensity):
-            return colour * intensity
-        case let .Directional(_, colour, intensity, _):
-            return colour * intensity
-        case let .Point(_, _, colour, intensity, _):
-            return colour * intensity
-        }
+        return colour * intensity
     }
     
     var falloff : LightFalloff {
-        switch self {
-        case let .Point(_, _, _, _, falloff):
+        switch self.type {
+        case let .Point(falloff):
             return falloff
         default:
             return LightFalloff.None
         }
     }
     
-    var parent : GameObject? {
-        get {
-            switch self {
-                case let .Point(parent, _, _, _, _):
-                    return parent
+    func perLightData(worldToCameraMatrix : Matrix4, hdrMaxIntensity: Float) -> PerLightData? {
+     
+        let localSpacePosition : Vector4
+        switch self.type {
+        case .Ambient: return nil
+        case .Point(_):
+            localSpacePosition = Vector4.ZeroPosition
+        case let .Directional(fromDirection):
+            localSpacePosition = Vector4(fromDirection, 0)
+        }
+        
+        //The position vector will have a 0 w component if it's directional.
+        let positionInCameraSpace = worldToCameraMatrix * (self.parent!.nodeToWorldSpaceTransform * localSpacePosition);
+        let intensity = self.isEnabled ? self.colourVector / hdrMaxIntensity : Vector3.Zero;
+
+        var perLightData = PerLightData()
+        perLightData.positionInCameraSpace = (positionInCameraSpace.x, positionInCameraSpace.y, positionInCameraSpace.z, positionInCameraSpace.w)
+        perLightData.intensity = (intensity.x, intensity.y, intensity.z, 0)
+        perLightData.falloff = (self.falloff.constant, self.falloff.linear, self.falloff.quadratic, 0)
+        
+        return perLightData
+    }
+    
+    static func toLightBlock(lights : [Light], worldToCameraMatrix : Matrix4, hdrMaxIntensity: Float) -> LightBlock {
+        let ambientIntensity = (lights.flatMap({ (light) -> Colour? in
+            switch light.type {
+            case .Ambient:
+                return light.colourVector
             default:
                 return nil
             }
-        }
-        set(parent) {
-            switch self {
-            case let .Point(_, enabled, colour, intensity, falloff):
-                self = .Point(parent!, enabled, colour, intensity, falloff)
-            default:
-                break
+        })
+            .reduce(Colour.Zero) { $0 + $1 }) / hdrMaxIntensity
+        
+        let lightData = lights.flatMap { $0.perLightData(worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity) }
+        
+        assert(lightData.count <= Int(MaxLights), "There are too many lights in the scene.")
+        
+        var lightBlock = LightBlock();
+        lightBlock.ambientIntensity = (ambientIntensity.x, ambientIntensity.y, ambientIntensity.z, 0)
+        withUnsafeMutablePointer(&lightBlock.lights.0) { (lightBlockPointer) -> Void in
+            let perLightBuffer = UnsafeMutableBufferPointer<PerLightData>(start: lightBlockPointer, count: Int(MaxLights))
+            for i in 0..<min(lightData.count, Int(MaxLights)) {
+                perLightBuffer[i] = lightData[i]
             }
         }
+        
+        return lightBlock;
     }
-    
-    var isEnabled : Bool {
-        get {
-            switch self {
-            case let .Ambient(enabled, _, _):
-                return enabled
-            case let .Directional(enabled, _, _, _):
-                return enabled
-            case let .Point(_, enabled, _, _, _):
-                return enabled
-            }
-        }
-        set(enabled) {
-            switch self {
-            case let .Ambient(_, colour, intensity):
-                self = .Ambient(enabled, colour, intensity)
-            case let .Directional(_, colour, intensity, fromDirection):
-                self = .Directional(enabled, colour, intensity, fromDirection)
-            case let .Point(parent, _, colour, intensity, falloff):
-                self = .Point(parent, enabled, colour, intensity, falloff)
-            }
-        }
-    }
+
 }

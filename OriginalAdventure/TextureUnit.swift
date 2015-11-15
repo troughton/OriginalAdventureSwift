@@ -25,4 +25,8 @@ enum TextureUnit : GLuint {
     case FinalUnit
     
     static let deferredShadingUnits : [TextureUnit] = [.VertexNormalUnit, .DiffuseColourUnit, .SpecularColourUnit]
+    
+    func makeActive() {
+        glActiveTexture(GLenum(GL_TEXTURE0) + self.rawValue)
+    }
 }

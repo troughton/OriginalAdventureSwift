@@ -36,7 +36,3 @@ vector_float4 QuaternionMultiply(vector_float4 quaternionLeft, vector_float4 qua
     
     return *(vector_float4 *)&r;
 }
-
-void glDrawElementsSwift(GLenum mode, GLsizei count, GLenum type, int64_t indices) {
-    glDrawElements(mode, count, type, (void*)indices);
-}

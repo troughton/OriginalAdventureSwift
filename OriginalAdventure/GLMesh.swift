@@ -37,16 +37,22 @@ struct RenderCommand {
     * @param shader The MaterialShader to set the material on.
     * @param hdrMaxIntensity The maximum light intensity in the scene, beyond which values will be clipped.
     */
-    func renderWithShader(shader : Shader, hdrMaxIntensity : Float) {
-        let material = self.material
-        shader.applyMaterial(material);
-        material.bindTextures();
+    func renderWithShader(shader : Shader, materialOverride: Material?, hdrMaxIntensity : Float) {
+        var error = glGetError()
+        if error != 0 {
+            assertionFailure("OpenGL error \(error)")
+        }
+        
+        let material = materialOverride ?? self.material
+        shader.setBuffer(material.toStruct(hdrMaxIntensity: hdrMaxIntensity), forProperty: .Material);
+        
         material.bindSamplers();
         
         self.render();
         
+        
         material.unbindSamplers();
-        material.unbindTextures();
+        
     }
     
     /**
@@ -63,8 +69,10 @@ struct RenderCommand {
 }
 
 
-class GLMesh: Mesh {
+struct GLMesh: Mesh {
     var isEnabled = true
+    var materialOverride : Material? = nil
+    var textureRepeat = Vector3.One
     
     private let primitives : [RenderCommand]; //The primitives that make up self mesh.
     
@@ -85,7 +93,7 @@ class GLMesh: Mesh {
 
     }
     
-    init(glkMesh: GLKMesh, mdlMesh: MDLMesh) {
+    init(glkMesh: GLKMesh, mdlMesh: MDLMesh, materialLibraries: [MaterialLibrary]) {
         
         self.boundingBox = BoundingBox(minPoint: mdlMesh.boundingBox.minBounds, maxPoint: mdlMesh.boundingBox.maxBounds)
         
@@ -97,13 +105,19 @@ class GLMesh: Mesh {
         self.glkMesh = glkMesh
         self.primitives = zip(glkMesh.submeshes, mdlMesh.submeshes).flatMap({ (glkSubmesh, mdlSubmesh) -> RenderCommand? in
             guard let mdlSubmesh = mdlSubmesh as? MDLSubmesh else { return nil }
-            let material = (mdlSubmesh.material != nil) ? Material(fromModelIO: mdlSubmesh.material!) : Material.defaultMaterial
+            
+            let material = (mdlSubmesh.material?.name).flatMap({ (materialName) -> Material? in
+                for materialLibrary in materialLibraries {
+                    if let material = materialLibrary.materials[materialName] {
+                        return material
+                    }
+                }
+                return nil
+            }) ?? Material.defaultMaterial
 
             var vao : GLuint = 0
             glGenVertexArrays(1, &vao)
             glBindVertexArray(vao)
-            
-            //glBindBuffer(GLenum(GL_ARRAY_BUFFER), vertexBufferRef)
         
             glBindBuffer(GLenum(GL_ELEMENT_ARRAY_BUFFER), glkSubmesh.elementBuffer.glBufferName)
          
@@ -141,9 +155,10 @@ class GLMesh: Mesh {
     * @param hdrMaxIntensity The maximum light intensity in the scene, beyond which values will be clipped.
     */
     func renderWithShader(shader: Shader, hdrMaxIntensity: Float) {
-    
+        shader.setUniform(self.textureRepeat.x, self.textureRepeat.y, forProperty: .TextureRepeat)
+        
         for primitive in self.primitives {
-            primitive.renderWithShader(shader, hdrMaxIntensity: hdrMaxIntensity)
+            primitive.renderWithShader(shader, materialOverride: self.materialOverride, hdrMaxIntensity: hdrMaxIntensity)
         }
     }
 }

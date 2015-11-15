@@ -9,11 +9,11 @@
 import Foundation
 
 class OriginalAdventure: Game {
- 
+    
     var title = "Original Adventure"
     lazy var _renderer : Renderer = GLForwardRenderer()
-    var sceneGraph = TransformNode(rootNodeWithId: "root")
-    var camera : CameraNode! = nil
+    var sceneGraph : SceneNode! = nil
+    var camera : Camera! = nil
     
     init() {
         
@@ -24,12 +24,11 @@ class OriginalAdventure: Game {
     }
     
     func setupRendering() {
-        let cameraTransform = TransformNode(id: "cameraOffset", parent: self.sceneGraph, isDynamic: false, translation: [0, 0, -500], rotation: Quaternion.Identity, scale: Vector3.One)
-        self.camera = CameraNode(id: "camera", parent: cameraTransform)
+        self.sceneGraph = try! SceneGraphParser.parseFileAtURL(NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("SceneGraph", ofType: "xml")!))
+        let spawnPoint = self.sceneGraph.nodeWithID(SpawnPointBehaviour.SpawnPointID).flatMap { $0 as? GameObject }
+        let player = spawnPoint?.behaviourOfType(SpawnPointBehaviour)?.spawnPlayerWithId("player")
+        self.camera = player?.camera
         
-        let meshes = MeshType.meshesFromFile(fileName: "Plane.obj")
-        let gameObject = GameObject(id: "plane", parent: sceneGraph)
-        gameObject.meshes = meshes
     }
     
     var size : WindowDimension! = nil {
@@ -44,8 +43,12 @@ class OriginalAdventure: Game {
     }
     
     func update(delta delta: Double) {
-        _renderer.render(sceneGraph.allNodesOfType(GameObject), lights: [], worldToCameraMatrix: self.camera.worldToNodeSpaceTransform, fieldOfView: self.camera.fieldOfView, hdrMaxIntensity: 1.0)
-
+        _renderer.render(sceneGraph.allNodesOfType(GameObject),
+            lights: sceneGraph.allNodesOfType(Light),
+            worldToCameraMatrix: self.camera.worldToNodeSpaceTransform,
+            fieldOfView: self.camera.fieldOfView,
+            hdrMaxIntensity: 1.0)
+        
     }
     
 }

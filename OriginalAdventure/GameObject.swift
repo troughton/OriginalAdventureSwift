@@ -8,7 +8,6 @@
 
 import Cocoa
 import ModelIO
-import GLKit
 
 protocol Enableable {
     var isEnabled : Bool { get set }
@@ -26,51 +25,11 @@ enum VertexArrays {
     case PositionsNormalsTextureCoordinatesAndTangents
 }
 
-protocol Mesh : Enableable {
-    func renderWithShader(shader: Shader, hdrMaxIntensity: Float)
-    func render()
-    
-    var boundingBox : BoundingBox { get }
-    
-}
-
-var _loadedMeshes = [String : [Mesh]]()
-
-extension Mesh {
-    static func meshesFromFile(withPath path : String? = nil, fileName: String) -> [Mesh] {
-        var meshes = _loadedMeshes[fileName];
-        
-            if (meshes == nil) {
-                autoreleasepool {
-                do {
-                    meshes = [Mesh]()
-                    let asset = MDLAsset(URL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource(fileName, ofType: nil, inDirectory: path)!), vertexDescriptor: nil, bufferAllocator: GLKMeshBufferAllocator())
-                
-                    var mdlMeshes : NSArray? = nil
-                    let glkMeshes = try GLKMesh.newMeshesFromAsset(asset, sourceMeshes: &mdlMeshes)
-                    
-                for (glkMesh, mdlMesh) in zip(glkMeshes, mdlMeshes!) {
-                    meshes!.append(MeshType(glkMesh: glkMesh, mdlMesh: mdlMesh as! MDLMesh))
-                }
-        
-                _loadedMeshes[fileName] = meshes;
-                } catch let error {
-                    assertionFailure("Error loading mesh with name \(fileName): \(error)")
-                }
-                }
-        }
-        
-        return meshes!;
-    }
-}
-
-typealias MeshType = GLMesh
-
 struct CollisionNode : Enableable {
     var isEnabled : Bool
 }
 
-class GameObject: SceneNode {
+class GameObject: TransformNode {
     var collisionNode : CollisionNode?
     var light : Light? {
         didSet {
@@ -78,6 +37,8 @@ class GameObject: SceneNode {
         }
     }
     var meshes = [Mesh]()
+    var behaviours = [Behaviour]()
+    var camera : Camera?
     
     override var isEnabled : Bool {
         get {
@@ -92,5 +53,9 @@ class GameObject: SceneNode {
             light?.isEnabled = enabled
             collisionNode?.isEnabled = enabled
         }
+    }
+    
+    func behaviourOfType<B : Behaviour>(type : B.Type) -> B? {
+        return self.behaviours.flatMap { $0 as? B }.first
     }
 }

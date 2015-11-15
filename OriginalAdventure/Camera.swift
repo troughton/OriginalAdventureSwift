@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class CameraNode: SceneNode {
-    var fieldOfView = Float(M_PI/3)
-    var hdrMaxIntensity = 16
+class Camera : TransformNode {
+    var fieldOfView : Float = Float(M_PI/3)
+    var hdrMaxIntensity : Float = 1
 }

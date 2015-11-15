@@ -17,9 +17,11 @@ class GLForwardRenderer : Renderer {
     static let DepthRangeFar = 1.0;
     
     private var _shader : Shader = {
-        let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("PassthroughShader", ofType: "vert")!)
-        let fragmentShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("PickerShader", ofType: "frag")!)
-        return Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
+        let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("ForwardRenderer", ofType: "vert")!)
+        let fragmentShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("ForwardRenderer", ofType: "frag")!)
+        var shader = Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
+        shader.addTextureMappings([.AmbientColourMap : .AmbientColourUnit, .DiffuseColourMap : .DiffuseColourUnit, .SpecularColourMap : .SpecularColourUnit, .SpecularityMap : .SpecularityUnit, .NormalMap : .NormalMapUnit])
+        return shader
     }()
     
     var size : WindowDimension = WindowDimension.defaultDimension {
@@ -79,6 +81,7 @@ class GLForwardRenderer : Renderer {
     }
     
     func render(nodes: [GameObject], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
+        
         var error = glGetError()
         if error != 0 {
             assertionFailure("OpenGL error \(error)")
@@ -88,17 +91,21 @@ class GLForwardRenderer : Renderer {
         
         _shader.useProgram();
         
-        _shader.setMatrix(Matrix4.Identity /*projectionMatrix*/, forProperty: .Matrix4CameraToClip)
+        _shader.setMatrix(projectionMatrix, forProperty: .Matrix4CameraToClip)
         
-  //      _shader.setLightData(Light.toLightBlock(lights.stream().filter(Light::isOn).collect(Collectors.toList()), worldToCameraMatrix, hdrMaxIntensity));
+        let lightBlock = Light.toLightBlock(lights.filter({$0.isEnabled}), worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
+        _shader.setBuffer(lightBlock, forProperty: .LightBlock)
+        
+        let nodesShouldProbablyReallyBeZSorted = true
         
         for node in nodes {
             guard !node.meshes.isEmpty else { continue }
             let nodeToCameraSpaceTransform = worldToCameraMatrix * node.nodeToWorldSpaceTransform
             let normalModelToCameraSpaceTransform = nodeToCameraSpaceTransform.matrix3.inverse.transpose;
             
-            _shader.setMatrix(Matrix4.Identity/*nodeToCameraSpaceTransform*/, forProperty: .Matrix4ModelToCamera);
-        //    _shader.setMatrix(normalModelToCameraSpaceTransform, forProperty: .Matrix4NormalModelToCamera)
+            _shader.setMatrix(nodeToCameraSpaceTransform, forProperty: .Matrix4ModelToCamera);
+            _shader.setMatrix(nodeToCameraSpaceTransform.matrix3, forProperty: .Matrix3ModelToCamera);
+            _shader.setMatrix(normalModelToCameraSpaceTransform, forProperty: .Matrix4NormalModelToCamera)
             
             for mesh in node.meshes {
                 mesh.renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)

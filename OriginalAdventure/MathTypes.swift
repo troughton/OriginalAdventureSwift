@@ -8,6 +8,15 @@
 
 import Foundation
 import simd
+import OpenGL.GL3
+
+class Reference<T> {
+    var value: T
+    
+    init(_ value: T) {
+        self.value = value
+    }
+}
 
 struct WindowDimension {
     let width : Int32
@@ -20,7 +29,7 @@ struct WindowDimension {
     static let defaultDimension = WindowDimension(width: 800, height: 600)
 }
 
-
+typealias Vector2 = float2
 
 typealias Matrix4 = float4x4
 
@@ -43,7 +52,7 @@ extension Matrix4 {
     }
     
     init(withQuaternion quaternion: Quaternion) {
-        let normalised = normalize(quaternion) * 2
+        let normalised = normalize(quaternion)
         
         let (x, y, z, w) = (normalised.x, normalised.y, normalised.z, normalised.w)
         let (_2x, _2y, _2z, _2w) = (x + x, y + y, z + z, w + w)
@@ -90,18 +99,26 @@ extension Matrix3 {
 
 typealias Vector3 = float3
 
-extension Vector3 {
+extension Vector3 : Equatable {
     static let Zero = Vector3()
     static let One = Vector3(1)
 }
 
 func *(lhs: Vector3, rhs: Vector3) -> Vector3 {
-    return [lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z]
+    return Vector3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z)
+}
+
+func /(lhs: Vector3, rhs: Float) -> Vector3 {
+    return Vector3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs)
+}
+
+public func ==(lhs: float3, rhs: float3) -> Bool {
+    return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z
 }
 
 typealias Vector4 = float4
 
-extension Vector4 {
+extension Vector4 : Equatable {
     static let ZeroPosition = Vector4(0, 0, 0, 1)
     static let Zero = Vector4(0)
     
@@ -114,12 +131,12 @@ extension Vector4 {
     }
 }
 
-func *(lhs: Matrix4, rhs: Vector4) -> Vector4 {
-    return lhs * (rhs as float4)
+public func ==(lhs: float4, rhs: float4) -> Bool {
+    return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w
 }
 
 
-struct Quaternion : ArrayLiteralConvertible {
+struct Quaternion : ArrayLiteralConvertible, Equatable {
     let q : float4
     
     var x : Float { return q.x }
@@ -144,6 +161,10 @@ struct Quaternion : ArrayLiteralConvertible {
     var conjugate : Quaternion {
         return [-self.x, -self.y, -self.z, self.w]
     }
+}
+
+func ==(lhs: Quaternion, rhs: Quaternion) -> Bool {
+    return lhs.q == rhs.q
 }
 
 /// Unit vector pointing in the same direction as `x`.

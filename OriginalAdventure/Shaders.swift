@@ -14,12 +14,27 @@ enum ShaderProperty : String {
     case Matrix4ModelToCamera = "modelToCameraMatrix"
     case Matrix4NormalModelToCamera = "normalModelToCameraMatrix"
     case Matrix4ModelToClip = "modelToClipMatrix"
+    case Matrix3ModelToCamera = "nodeToCamera3x3Matrix"
     case ScreenSize = "screenSize"
     case DepthRange = "depthRange"
     case HalfSizeNearPlane = "halfSizeNearPlane"
+    
+    case TextureRepeat = "textureRepeat"
+    
+    case LightBlock = "LightBlock"
+    case Material = "Material"
+    
+    case AmbientColourMap = "ambientColourSampler"
+    case DiffuseColourMap = "diffuseColourSampler"
+    case SpecularColourMap = "specularColourSampler"
+    case SpecularityMap = "specularitySampler"
+    case NormalMap = "normalMapSampler"
 }
 
-struct Shader {
+class Shader {
+    
+    private var _nextUniformBlockBinding : GLuint = 0;
+    
     private let _glProgramRef : GLuint
     
     init(withVertexShader vertexShader: String, fragmentShader: String) {
@@ -36,7 +51,7 @@ struct Shader {
         glUseProgram(0)
     }
     
-    lazy var uniformMappings : [String : GLint] = {
+    private lazy var uniformMappings : [String : GLint] = {
         var mappings = [String : GLint]()
         
         var numActiveUniforms : GLint = 0;
@@ -58,8 +73,49 @@ struct Shader {
             mappings[name!] = glGetUniformLocation(self._glProgramRef, nameData)
         }
         
+        var numBlocks : GLint = 0;
+        glGetProgramiv(self._glProgramRef, GLenum(GL_ACTIVE_UNIFORM_BLOCKS), &numBlocks);
+    
+        for blockIndex : GLuint in 0..<GLuint(numBlocks) {
+            var nameLength : GLint = 0;
+            glGetActiveUniformBlockiv(self._glProgramRef, blockIndex, GLenum(GL_UNIFORM_BLOCK_NAME_LENGTH), &nameLength);
+            
+            var name = [GLchar]()
+            name.reserveCapacity(Int(nameLength))
+            glGetActiveUniformBlockName(self._glProgramRef, blockIndex, nameLength, nil, &name);
+            
+            let nameString = String(CString: name, encoding: NSUTF8StringEncoding)!
+            
+            var blockSize : GLint = 0
+            glGetActiveUniformBlockiv(self._glProgramRef, blockIndex,  GLenum(GL_UNIFORM_BLOCK_DATA_SIZE), &blockSize);
+            
+            
+            var bindingPoint = self._nextUniformBlockBinding++
+            glUniformBlockBinding(self._glProgramRef, blockIndex, bindingPoint);
+
+            var uniformBlockRef : GLuint = 0
+            glGenBuffers(1, &uniformBlockRef);
+            glBindBuffer(GLenum(GL_UNIFORM_BUFFER), uniformBlockRef);
+            glBufferData(GLenum(GL_UNIFORM_BUFFER), GLsizeiptr(blockSize), nil, GLenum(GL_DYNAMIC_DRAW));
+            
+            //Bind the static buffer
+            glBindBufferRange(GLenum(GL_UNIFORM_BUFFER), bindingPoint, uniformBlockRef, 0, GLsizeiptr(blockSize));
+            
+            mappings[nameString] = GLint(uniformBlockRef)
+        }
+        
+        glBindBuffer(GLenum(GL_UNIFORM_BUFFER), 0);
+        
         return mappings
     }()
+    
+    func addTextureMappings(textureMappings : [ShaderProperty : TextureUnit]) {
+        for (property, textureUnit) in textureMappings {
+            self.useProgram()
+            self.setUniform(GLint(textureUnit.rawValue), forProperty: property)
+            self.endUseProgram()
+        }
+    }
 }
 
 extension Shader {
@@ -86,11 +142,15 @@ extension Shader {
             var infoLogLength : GLint = 0
             glGetProgramiv(program, GLenum(GL_INFO_LOG_LENGTH), &infoLogLength);
     
-            var error = [GLchar]()
-            error.reserveCapacity(Int(infoLogLength))
-                
-            glGetProgramInfoLog(program, infoLogLength, nil, &error);
-            print("Linker failure: \(error)");
+            let error = UnsafeMutablePointer<GLchar>(calloc(sizeof(GLchar), Int(infoLogLength)))
+            
+            glGetProgramInfoLog(program, infoLogLength, nil, error);
+            
+            let errorString = String(CString: error, encoding: NSUTF8StringEncoding)
+            
+            free(error)
+            
+            print("Linker failure: \(errorString!)");
         }
     
         for shader in shaderList {
@@ -125,10 +185,13 @@ extension Shader {
             var infoLogLength : GLint = 0
             glGetShaderiv(shader, GLenum(GL_INFO_LOG_LENGTH), &infoLogLength);
     
-            var error = [GLchar]()
-            error.reserveCapacity(Int(infoLogLength))
+            let error = UnsafeMutablePointer<GLchar>(calloc(sizeof(GLchar), Int(infoLogLength)))
             
-            glGetShaderInfoLog(shader, infoLogLength, nil, &error);
+            glGetShaderInfoLog(shader, infoLogLength, nil, error);
+            
+            let errorString = String(CString: error, encoding: NSUTF8StringEncoding)
+            
+            free(error)
     
             let strShaderType : String;
             switch (shaderType) {
@@ -137,7 +200,7 @@ extension Shader {
                 case GLenum(GL_FRAGMENT_SHADER): strShaderType = "fragment";
                 default: strShaderType = "";
             }
-            print("Compile failure in \(strShaderType) shader:\n\(error)")
+            print("Compile failure in \(strShaderType) shader:\n\(errorString!)")
         }
         return shader;
     }
@@ -146,7 +209,7 @@ extension Shader {
 /** Matrix setting. */
 extension Shader {
     
-    mutating func setMatrix(matrix : Matrix4, forProperty property: ShaderProperty) {
+    func setMatrix(matrix : Matrix4, forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
             assertionFailure("No uniform exists for the name \(property.rawValue)")
             return
@@ -160,24 +223,22 @@ extension Shader {
         glUniformMatrix4fv(uniformRef, 1, 0, matrixPtr)
     }
     
-    mutating func setMatrix(matrix : Matrix3, forProperty property: ShaderProperty) {
+    func setMatrix(matrix : Matrix3, forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
             assertionFailure("No uniform exists for the name \(property.rawValue)")
             return
         }
         
-        var cmatrix = matrix.cmatrix
-        let matrixPtr = withUnsafePointer(&cmatrix) { (cmatrix) -> UnsafePointer<Float> in
-            return UnsafePointer<Float>(cmatrix)
-        }
-        glUniformMatrix3fv(uniformRef, 1, 0, matrixPtr)
+        let matrixArray = [matrix[0][0], matrix[0][1], matrix[0][2], matrix[1][0], matrix[1][1], matrix[1][2], matrix[2][0], matrix[2][1], matrix[2][2]]
+
+        glUniformMatrix3fv(uniformRef, 1, 0, matrixArray)
     }
 }
 
 /** Uniform setting. */
 extension Shader {
     
-    mutating func setUniform(values : Float..., forProperty property: ShaderProperty) {
+    func setUniform(values : Float..., forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
             assertionFailure("No uniform exists for the name \(property.rawValue)")
             return
@@ -197,11 +258,44 @@ extension Shader {
             break;
         }
     }
+    
+    func setUniform(values : GLint..., forProperty property: ShaderProperty) {
+        guard let uniformRef = self.uniformMappings[property.rawValue] else {
+            assertionFailure("No uniform exists for the name \(property.rawValue)")
+            return
+        }
+        
+        switch values.count {
+        case 1:
+            glUniform1i(uniformRef, values[0])
+        case 2:
+            glUniform2i(uniformRef, values[0], values[1])
+        case 3:
+            glUniform3i(uniformRef, values[0], values[1], values[2])
+        case 4:
+            glUniform4i(uniformRef, values[0], values[1], values[2], values[3])
+        default:
+            assertionFailure("There is no uniform mapping for the values \(values) of length \(values.count)")
+            break;
+        }
+    }
 }
 
 /** Materials. */
 extension Shader {
-    func applyMaterial(material : Material) {
-        ///TODO
+    func setBuffer<T>(var buffer : T, forProperty property: ShaderProperty) {
+        guard let uniformRef = self.uniformMappings[property.rawValue] else {
+            assertionFailure("No uniform exists for the name \(property.rawValue)")
+            return
+        }
+        
+        
+        glBindBuffer(GLenum(GL_UNIFORM_BUFFER), GLuint(uniformRef));
+
+        withUnsafePointer(&buffer) { (bufferPtr) -> Void in
+            glBufferSubData(GLenum(GL_UNIFORM_BUFFER), 0, sizeof(T), bufferPtr);
+        }
+       
+        glBindBuffer(GLenum(GL_UNIFORM_BUFFER), 0);
     }
 }

@@ -1,0 +1,413 @@
+<root>
+    <Region id="The Tomb" boundingBox="-600, 0, -900, 600, 280, 900"/>
+    <TransformNode id="groundPlaneTransform" rotation="-0.70710677, 0.0, 0.0, 0.70710677" scale="600, 900, 0.2">
+        <MeshNode id="groundPlaneMesh" fileName="Plane.obj" materialDirectory="MedievalModels" materialFileName="MedievalMaterials.mtl" materialName="corner_fullSG" textureRepeat="24, 36, 0.2"/>
+    </TransformNode>
+
+    <TransformNode id="ceilingPlaneTransform" translation="0, 280, 0" rotation="0.70710677, 0.0, 0.0, 0.70710677" scale="600, 900, 0.2">
+        <MeshNode id="ceilingPlaneMesh" fileName="Plane.obj" materialFileName="StoneWall.mtl" materialName="StoneWall" textureRepeat="10, 10, 0.2"/>
+    </TransformNode>
+
+    <TransformNode id="spawnPointTransform" translation="0, 0, 200" isDynamic="true">
+        <SpawnNode id="spawnPoint" />
+        <!--<TransformNode id="cameraTransform" translation="0, 40, 0">
+            <Camera id="playerCamera"/>
+        </TransformNode>
+        <Player id="player" boundingBox="-30, -60, -10, 30, 60, 10"/>-->
+    </TransformNode>
+    <AmbientLight id="ambientLight" colour="0.5, 0.5, 0.5" intensity="1.0"/>
+
+    <!-- Room 1 starts here. Centred at origin, dimensions are 1200 x 1800. -->
+    
+    <TransformNode id="greenLightLeverTransform" translation="-600, 110, 90" rotation="0, 0, -0.7071067812, 0.7071067812" scale="0.5, 0.5, 0.5">
+        <Lever id="greenLightLever" isDown="false" />
+    </TransformNode>
+
+    <TransformNode id="redLightLeverTransform" translation="600, 110, -340" rotation="-0.7071067812, 0.7071067812, 0, 0" scale="0.5, 0.5, 0.5">
+        <Lever id="redLightLever" isDown="false" />
+    </TransformNode>
+
+    <TransformNode id="blueLightLeverTransform" translation="-400, 110, 900" rotation="-0.5, 0.5, -0.5, 0.5" scale="0.5, 0.5, 0.5">
+        <Lever id="blueLightLever" isDown="false" />
+    </TransformNode>
+    
+    <TransformNode id="chestTransform" translation="580, 0, -400" rotation="0, -0.7071067812, 0, 0.7071067812" scale="30, 30, 30">
+        <TransformNode id="chestContentsTransform" translation="-0.4, 0.88, 0.5" rotation="-0.66753083, 0.074032836, 0.066976495, 0.73785895" scale="0.03333, 0.03333, 0.03333">
+            <Container id="chestContainer" showTopItem="true" />
+
+            <TransformNode id="noteTransform" scale="10.0, 10.0, 10.0" isDynamic="true">
+                <Note id="note" inContainer="chestContainer"/>
+            </TransformNode>
+        </TransformNode>
+
+        <Chest id="chest" container="chestContainer"/>
+    </TransformNode>
+
+    <TransformNode id="wallsTransform" scale="1, 1.4, 1">
+        <TransformNode id="leftWallTransform" translation="-600, 0, 0" rotation="0, 0.7071067812, 0, 0.7071067812" scale="18, 1, 1">
+            <MeshNode id="leftWall" directory="MedievalModels" fileName="Wall.obj" textureRepeat="18, 1, 1" isCollidable="true"/>
+        </TransformNode>
+        <TransformNode id="rightWallTransform" translation="600, 0, 0" rotation="0, -0.7071067812, 0, 0.7071067812" scale="18, 1, 1">
+            <MeshNode id="rightWall" directory="MedievalModels" fileName="Wall.obj" textureRepeat="18, 1, 1" isCollidable="true"/>
+        </TransformNode>
+        <TransformNode id="backWallTransform" translation="0, 0, 900" rotation="0, 1, 0, 0" scale="12, 1, 1">
+            <MeshNode id="backWall" directory="MedievalModels" fileName="Wall.obj" textureRepeat="12, 1, 1" isCollidable="true"/>
+        </TransformNode>
+
+
+        <TransformNode id="frontWallTransform" translation="0, 0, -900">
+            <TransformNode id="doorTransform" scale="1.4, 1, 1.7" translation="230, 0.3, 0"> <!-- width is 140 units. -->
+                <Door id="door" requiresKey="true"/>
+            </TransformNode>
+
+            <TransformNode id="frontWallLeftTransform" translation="-490, 0, 0" scale="13, 1, 1">
+                <MeshNode id="frontWallLeft" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="13, 1, 1" isCollidable="true"/>
+            </TransformNode>
+            <TransformNode id="frontWallRightTransform" translation="700, 0, 0" scale="8.2, 1, 1">
+                <MeshNode id="frontWalRight" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="8.2, 1, 1" isCollidable="true"/>
+            </TransformNode>
+        </TransformNode>
+    </TransformNode>
+
+    
+    <TransformNode id="cryptTransform" rotation="0, 0.7071067812, 0, 0.7071067812">
+        <MeshNode id="crypt" directory="MedievalModels" fileName="Crypt.obj" isCollidable="true"/>
+        
+        <TransformNode id="brazier1T" translation="105, 0, 95">
+            <MeshNode id="brazier1M" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="flame1T" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="flame1M" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="11.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+        
+        <TransformNode id="brazier2T" translation="-105, 0, 95">
+            <MeshNode id="brazier2M" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="flame2T" translation="0, 40, -8" scale="68, 74, 72">
+                <FlickeringLight id="flame2M" directory="Flame" fileName="flame.obj" colour="0.96, 0.23, 0.02" intensity="8.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+        
+        <TransformNode id="brazier3T" translation="105, 0, -95">
+            <MeshNode id="brazier3M" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="flame3T" translation="0, 40, -8" rotation="0, -0.4338837391, 0, 0.9009688679" scale="72, 71, 68">
+                <FlickeringLight id="flame3M" directory="Flame" fileName="flame.obj" colour="0.95, 0.27, 0.04" intensity="11.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+        
+        <TransformNode id="brazier4T" translation="-105, 0, -95">
+            <MeshNode id="brazier4M" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="flame4T" translation="0, 40, -8" scale="69, 68, 67">
+                <FlickeringLight id="flame4M" directory="Flame" fileName="flame.obj" colour="0.96, 0.26, 0.02" intensity="8.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+    </TransformNode>
+
+    <TransformNode id="wallTorchesTransform" translation="0, -20, 840" rotation="0, 1, 0, 0">
+
+        <TransformNode id="keyLocationT" translation="0, 165, -46" isDynamic="true">
+            <TransformNode id="keyT" scale="5, 5, 5" isDynamic="true">
+                <Key id="key" enabled="false"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="redTorchT" translation="-40.0, -10.0, 0.0">
+            <MeshNode id="redTorchM" directory="MedievalModels" fileName="Torch.obj" isCollidable="true"/>
+            <TransformNode id="redTorchFlameT" translation="2, 152, -33" scale="16, 24, 16">
+                <FlickeringLight id="redTorchFlame" directory="Flame" fileName="flame.obj" colour="1.0, 0.0, 0.0" intensity="5.0" intensityVariation="2.0" isOn="false"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="greenTorchT" translation="40.0, -10.0, 0.0">
+            <MeshNode id="greenTorchM" directory="MedievalModels" fileName="Torch.obj" isCollidable="true"/>
+            <TransformNode id="greenTorchFlameT" translation="2, 152, -33" scale="16, 24, 16">
+                <FlickeringLight id="greenTorchFlame" directory="Flame" fileName="flame.obj" colour="0.0, 1.0, 0.0" intensity="5.0" intensityVariation="2.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="blueTorchT" translation="0.0, 70.0, 0.0">
+            <MeshNode id="blueTorchM" directory="MedievalModels" fileName="Torch.obj" isCollidable="true"/>
+            <TransformNode id="blueTorchFlameT" translation="2, 152, -33" scale="16, 24, 16">
+                <FlickeringLight id="blueTorchFlame" directory="Flame" fileName="flame.obj" colour="0.0, 0.0, 1.0" intensity="5.0" intensityVariation="2.0" isOn="false"/>
+            </TransformNode>
+
+        </TransformNode>
+
+    </TransformNode>
+
+    <Puzzle id="keyPuzzle" conditions="redTorchFlame, isOn, true; greenTorchFlame, isOn, false; blueTorchFlame, isOn, true"/>
+
+    <!-- Room 2 starts here. -->
+
+    <TransformNode id="room2" translation="0, 0, -1200"> <!-- -1200 from the centre of room 1 !-->
+        <TransformNode id="room2GroundAndCeiling" scale="1100, 1.4, 300">
+            <TransformNode id="r2GroundPlaneT" rotation="-0.70710677, 0.0, 0.0, 0.70710677">
+                <MeshNode id="r2GroundPlane" fileName="Plane.obj" materialDirectory="MedievalModels" materialFileName="MedievalMaterials.mtl" materialName="corner_fullSG" textureRepeat="44, 12, 0.2"/>
+            </TransformNode>
+
+            <!-- place the ceiling 200 units up from the floor !-->
+            <TransformNode id="r2CeilingPlaneT" translation="0, 200, 0" rotation="0.70710677, 0.0, 0.0, 0.70710677">
+                <MeshNode id="r2CeilingPlane" fileName="Plane.obj" materialFileName="StoneWall.mtl" materialName="StoneWall" textureRepeat="44, 12, 0.2"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2LeftWall" scale="6, 1.4, 1" translation="-1100, 0, 0" rotation="0, 0.7071067812, 0, 0.7071067812">
+            <MeshNode id="room2LeftWallM" directory="MedievalModels" fileName="Wall.obj" textureRepeat="6, 1.4, 1" isCollidable="true"/>
+        </TransformNode>
+
+        <TransformNode id="room2RightWall" scale="6, 1.4, 1" translation="1100, 0, 0" rotation="0, -0.7071067812, 0, 0.7071067812">
+            <MeshNode id="room2RightWallM" directory="MedievalModels" fileName="Wall.obj" textureRepeat="6, 1.4, 1" isCollidable="true"/>
+        </TransformNode>
+
+        <TransformNode id="room2FrontWallLeft" scale="5, 1.4, 1" translation="-850, 0, -300">
+            <MeshNode id="room2FrontWallLeftM" directory="MedievalModels" fileName="Wall.obj" textureRepeat="5, 1.4, 1" isCollidable="true"/>
+        </TransformNode>
+
+        <TransformNode id="room2FrontWallRight" scale="5, 1.4, 1" translation="850, 0, -300">
+            <MeshNode id="room2FrontWallRightM" directory="MedievalModels" fileName="Wall.obj" textureRepeat="5, 1.4, 1" isCollidable="true"/>
+        </TransformNode>
+
+        <TransformNode id="room2Chain1" translation="-800, 0, -250">
+            <MeshNode id="room2Chains1M" fileName="Chain2.obj" directory="MedievalModels" />
+        </TransformNode>
+
+        <TransformNode id="room2Chain2" translation="-700, 0, -250">
+            <MeshNode id="room2Chains2M" fileName="Chain.obj" directory="MedievalModels" />
+        </TransformNode>
+
+        <TransformNode id="room2BrazierLeft" translation="-800, 0, -40">
+            <MeshNode id="room2BrazierLeftM" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierLeftFlame1T" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierLeftFlame1M" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor" translation="-500, 0, -500">
+            <MeshNode id="room2BrazierBlueDoorM" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor2" translation="-500, 0, -1000">
+            <MeshNode id="room2BrazierBlueDoorM2" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T2" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M2" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor3" translation="-500, 0, -2500">
+            <MeshNode id="room2BrazierBlueDoorM3" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T3" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M3" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor4" translation="500, 0, -500">
+            <MeshNode id="room2BrazierBlueDoorM4" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T4" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M4" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor5" translation="500, 0, -1000">
+            <MeshNode id="room2BrazierBlueDoorM5" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T5" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M5" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor6" translation="500, 0, -2500">
+            <MeshNode id="room2BrazierBlueDoorM6" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T6" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M6" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierBlueDoor7" translation="500, 0, -3500">
+            <MeshNode id="room2BrazierBlueDoorM7" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierBlueDoor1T7" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierBlueDoor1M7" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="grapefruitChestLight1Transform" translation="500, 0, -5600">
+            <MeshNode id="grapefruitChestLight1M" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="grapefruitChestLight1Transform2" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="20, 20, 20">
+                <FlickeringLight id="grapefruitChestLight1" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="grapefruitChestLight2Transform" translation="300, 0, -5600">
+            <MeshNode id="grapefruitChestLight2M" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="grapefruitChestLight2Transform2" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="20, 20, 20">
+                <FlickeringLight id="grapefruitChestLight2" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="room2BrazierRight" translation="800, 0, -40">
+            <MeshNode id="room2BrazierRightM" directory="MedievalModels" fileName="BigTorch.obj" isCollidable="true"/>
+            <TransformNode id="room2BrazierRightFlame1T" translation="0, 40, -8" rotation="0, 0.4338837391, 0, 0.9009688679" scale="70, 70, 70">
+                <FlickeringLight id="room2BrazierRightFlame1M" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="7.0" intensityVariation="4.0"/>
+            </TransformNode>
+        </TransformNode>
+    </TransformNode>
+
+    <TransformNode id="longCorridors" translation="0, 0, -4260">
+        <TransformNode id="corridorsGroundAndCeiling" scale="600, 1.4, 2760">
+            <TransformNode id="corridorsGroundPlaneT" rotation="-0.70710677, 0.0, 0.0, 0.70710677">
+                <MeshNode id="corridorsGroundPlane" fileName="Plane.obj" materialDirectory="MedievalModels" materialFileName="MedievalMaterials.mtl" materialName="corner_fullSG" textureRepeat="12, 55.2, 0.2"/>
+            </TransformNode>
+
+            <TransformNode id="corridorsCeilingPlaneT" translation="0, 200, 0" rotation="0.70710677, 0.0, 0.0, 0.70710677">
+                <MeshNode id="corridorsCeilingPlane" fileName="Plane.obj" materialFileName="StoneWall.mtl" materialName="StoneWall" textureRepeat="12, 110.4, 0.2"/>
+            </TransformNode>
+
+            <TransformNode id="centreCorridorT" scale="0.4, 200, 1">
+                <Region id="The Escape" boundingBox="-0.5, 0, -0.5, 0.5, 1, 0.5"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="corridorFrontDoorLightLeft" translation="-125, 100, 2860">
+            <MeshNode id="corridorFrontDoorLightLeftM" directory="MedievalModels" fileName="Torch.obj" isCollidable="true"/>
+            <TransformNode id="corridorFrontDoorLightLeftFlameT" translation="2, 152, -33" scale="16, 24, 16">
+                <FlickeringLight id="corridorFrontDoorLightLeftFlameM" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="2.0" intensityVariation="1.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="corridorFrontDoorLightRight" translation="125, 100, 2860">
+            <MeshNode id="corridorFrontDoorLightRightM" directory="MedievalModels" fileName="Torch.obj" isCollidable="true"/>
+            <TransformNode id="corridorFrontDoorLightRightFlameT" translation="2, 152, -33" scale="16, 24, 16">
+                <FlickeringLight id="corridorFrontDoorLightRightFlameM" directory="Flame" fileName="flame.obj" colour="0.96, 0.3, 0.06" intensity="2.0" intensityVariation="1.0"/>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="corridorEscapeDoorTransform"  translation="0, 0, 2820" scale="2.1, 1.4, 1.4">
+            <Door id="corridorEscapeDoor" requiresKey="true"/>
+        </TransformNode>
+
+        <!-- The red gate is the gate on the right on the corridor !-->
+        <TransformNode id="redGateTransform" translation="400, 0, 1500" rotation="0, 1, 0, 0" scale="5, 1.4, 5">
+            <Door id="redGate" canDirectlyInteractWith="false"/>
+
+            <TransformNode id="redGateFlameTransform" translation="0, 0, 0" scale="0.01, 0.01, 0.01">
+                <FlickeringLight id="redGateFlame" directory="Flame" fileName="flame.obj" colour="1.0, 0.0, 0.0" intensity="1.0" intensityVariation="0.5" isOn="true"/>
+            </TransformNode>
+        </TransformNode>
+
+        <!-- The blue gate is the gate on the left on the corridor !-->
+        <TransformNode id="blueGateTransform" translation="-400, 0, 2400" scale="5, 1.4, 5">
+            <Door id="blueGate" requiresKey="true" />
+
+            <TransformNode id="blueGateFlameTransform" translation="0, 0, 0" scale="0.01, 0.01, 0.01">
+                <FlickeringLight id="blueGateFlame" directory="Flame" fileName="flame.obj" colour="0.0, 0.0, 1.0" intensity="1.0" intensityVariation="0.5" isOn="true"/>
+            </TransformNode>
+        </TransformNode>
+
+        <!-- The red gate lever is in the blue corridor !-->
+        <TransformNode id="redGateLeverTransform" translation="-200, 0, 1400" rotation="0, 0.7071067812, 0, 0.7071067812" scale="1, 1, 1">
+            <Lever id="redGateLever"/>
+
+            <TransformNode id="redGateNotificationTransform" translation="0, 0, 0" scale="0.01, 0.01, 0.01">
+                <FlickeringLight id="redGateNotification" directory="Flame" fileName="flame.obj" colour="1.0, 0.0, 0.0" intensity="1.0" intensityVariation="0.5" />
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="redBlueGateLeverTransform" translation="500, 0, 2700" rotation="0, 0.7071067812, 0, 0.7071067812" scale="1, 1, 1">
+            <Lever id="redBlueGateLever"/>
+
+            <TransformNode id="redBlueGateNotificationTransformBlue" translation="0, 0, 0" scale="0.01, 0.01, 0.01">
+                <FlickeringLight id="redBlueGateNotificationBlue" directory="Flame" fileName="flame.obj" colour="0.0, 0.0, 1.0" intensity="1.0" intensityVariation="0.5" />
+            </TransformNode>
+            <TransformNode id="redBlueGateNotificationTransformRed" translation="0, 0, 0" scale="0.01, 0.01, 0.01">
+                <FlickeringLight id="redBlueGateNotificationRed" directory="Flame" fileName="flame.obj" colour="1.0, 0.0, 0.0" intensity="1.0" intensityVariation="0.5" />
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="corridors" rotation="0, -0.7071067812, 0, 0.7071067812"> <!-- Rotation of 90 degress around y !-->
+            <TransformNode id="corridorsLeftColumn" scale="55.2, 1.4, 1" translation="0, 0, 120">
+                <TransformNode id="corridorsLeftColumnMiddle" scale="0.1, 0.3, 1" translation="0, 0, 0">
+                    <MeshNode id="corridorsLeftColumnMiddleMesh" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="5.52, 0.42  , 1" isCollidable="true"/>
+                </TransformNode>
+
+                <TransformNode id="corridorsLeftColumnBack" scale="0.45, 1, 1" translation="-27, 0, 0">
+                    <MeshNode id="corridorsLeftColumnBackMesh" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="24.84, 1.4, 1" isCollidable="true"/>
+                </TransformNode>
+
+                <TransformNode id="corridorsLeftColumnFront" scale="0.45, 1, 1" translation="27, 0, 0">
+                    <MeshNode id="corridorsLeftColumnFrontMesh" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="24.84, 1.4, 1" isCollidable="true"/>
+                </TransformNode>
+
+                <TransformNode id="corridorsLeftColumnCapT" translation="50, 0, 0" rotation="0, 1, 0, 0" scale="0.018115942028986, 1, 1.02">
+                    <MeshNode id="corridorsLeftColumnCapMesh" directory="MedievalModels" fileName="WallColumnEnd.obj" textureRepeat="1, 0.8, 1" isCollidable="true"/>
+                </TransformNode>
+            </TransformNode>
+
+            <TransformNode id="corridorsRightColumn" scale="55.2, 1.4, 1" translation="0, 0, -120">
+                <TransformNode id="corridorsRightColumnMiddle" scale="0.1, 0.3, 1" translation="0, 0, 0">
+                    <MeshNode id="corridorsRightColumnMiddleMesh" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="5.52, 0.42  , 1" isCollidable="true"/>
+                </TransformNode>
+
+                <TransformNode id="corridorsRightColumnBack" scale="0.45, 1, 1" translation="-27, 0, 0">
+                    <MeshNode id="corridorsRightColumnBackMesh" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="24.84, 1.4, 1" isCollidable="true"/>
+                </TransformNode>
+
+                <TransformNode id="corridorsRightColumnFront" scale="0.45, 1, 1" translation="27, 0, 0">
+                    <MeshNode id="corridorsRightColumnFrontMesh" directory="MedievalModels" fileName="WallColumnMiddle.obj" textureRepeat="24.84, 1.4, 1" isCollidable="true"/>
+                </TransformNode>
+
+                <TransformNode id="corridorsRightColumnCapT" translation="50, 0, 0" rotation="0, 1, 0, 0" scale="0.018115942028986, 1, 1.02">
+                    <MeshNode id="corridorsRightColumnCapMesh" directory="MedievalModels" fileName="WallColumnEnd.obj" textureRepeat="1, 0.8, 1" isCollidable="true"/>
+                </TransformNode>
+            </TransformNode>
+
+
+            <TransformNode id="corridorsLeftWall" scale="55.2, 1.4, 1" rotation="0, 1, 0, 0" translation="0, 0, 600">
+                <MeshNode id="corridorsLeftColumnWallMesh" directory="MedievalModels" fileName="Wall.obj" textureRepeat="55.2, 1.4, 1" isCollidable="true"/>
+                <TransformNode id="corridorsLeftColumnWallCapT" translation="-50, 0, 0" scale="0.018115942028986, 1, 1">
+                    <MeshNode id="corridorsLeftColumnWallCapMesh" directory="MedievalModels" fileName="Column2.obj" textureRepeat="1, 1.4, 1" isCollidable="true"/>
+                </TransformNode>
+            </TransformNode>
+
+            <TransformNode id="corridorsRightWall" scale="55.2, 1.4, 1" translation="0, 0, -600">
+                <MeshNode id="corridorsRightColumnWallMesh" directory="MedievalModels" fileName="Wall.obj" textureRepeat="55.2, 1.4, 1" isCollidable="true"/>
+                <TransformNode id="corridorsRightColumnWallCapT" translation="50, 0, 0" scale="0.018115942028986, 1, 1">
+                    <MeshNode id="corridorsRightColumnWallCapMesh" directory="MedievalModels" fileName="Column2.obj" textureRepeat="1, 1.4, 1" isCollidable="true"/>
+                </TransformNode>
+            </TransformNode>
+        </TransformNode>
+
+        <TransformNode id="grapefruitChestTransform" translation="400, 0, -2500" scale="50, 50, 50">
+            <TransformNode id="grapefruitChestContentsTransform" translation="-0.4, 0.88, 0.5" rotation="-0.66753083, 0.074032836, 0.066976495, 0.73785895" scale="0.03333, 0.03333, 0.03333">
+                <Container id="grapefruitContainer" showTopItem="true" />
+
+                <TransformNode id="grapefruitKeyTransform" scale="5.0, 5.0, 5.0" isDynamic="true">
+                    <Key id="grapefruitKey" inContainer="grapefruitContainer"/>
+                </TransformNode>
+            </TransformNode>
+
+            <TransformNode id="grapefruitChestGlow" translation="0, 0, 0" scale="0.01, 0.01, 0.01">
+                <FlickeringLight id="grapefruitChestLight" directory="Flame" fileName="flame.obj" colour="0.0, 1.0, 0.0" intensity="3.0" intensityVariation="2.0" isOn="false"/>
+            </TransformNode>
+
+            <Chest id="grapefruitChest" container="grapefruitContainer"/>
+        </TransformNode>
+
+
+        <TransformNode id="corridorsBackWalls" translation="0, 0, -2760">
+            <TransformNode id="corridorsBackWallLeft" translation="-350, 0, 2520" scale="5.3, 1.4, 1">
+                <MeshNode id="corridorsBackWallLeftMesh" directory="MedievalModels" fileName="Wall.obj" textureRepeat="4.8, 1.4, 1" isCollidable="true"/>
+            </TransformNode>
+            <TransformNode id="corridorsBackWallRight" translation="350, 0, 0" scale="5.3, 1.4, 1">
+                <MeshNode id="corridorsBackWallLightMesh" directory="MedievalModels" fileName="Wall.obj" textureRepeat="4.8, 1.4, 1" isCollidable="true"/>
+            </TransformNode>
+
+            <TransformNode id="corridorEndDoorTransform" scale="2.1, 1.4, 1.4">
+                <Door id="corridorEndDoor"/>
+
+                <Region id="Congratulations! That's all that's here right now." boundingBox="-50, 0, 0, 50, 280, 300"/>
+            </TransformNode>
+        </TransformNode>
+
+    </TransformNode>
+    
+</root>

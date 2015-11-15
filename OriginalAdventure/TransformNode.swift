@@ -11,7 +11,7 @@ import simd
 
 class TransformNode : SceneNode {
     
-    override var parent : TransformNode? {
+    override var parent : SceneNode? {
         willSet(newParent) {
             if parent != nil && parent != newParent {
                 self.checkForModificationOfStaticNode()
@@ -58,7 +58,7 @@ class TransformNode : SceneNode {
         super.init(rootNodeWithId: id);
     }
     
-    init(id: String, parent: TransformNode, isDynamic: Bool = false, translation : Vector3 = Vector3(), rotation : Quaternion = Quaternion.Identity, scale : Vector3 = Vector3.One) {
+    init(id: String, parent: SceneNode, isDynamic: Bool = false, translation : Vector3 = Vector3.Zero, rotation : Quaternion = Quaternion.Identity, scale : Vector3 = Vector3.One) {
         self.translation = translation;
         self.rotation = rotation;
         self.scale = scale;
@@ -84,7 +84,7 @@ class TransformNode : SceneNode {
     */
     private func calculateNodeToWorldTransform() -> Matrix4 {
         var transform = self.parent?.nodeToWorldSpaceTransform ?? Matrix4.Identity
-    
+        
         transform = transform.translate(self.translation)
         transform = transform * self.rotation
         transform = transform * Matrix4(withScale: self.scale)
@@ -97,7 +97,6 @@ class TransformNode : SceneNode {
     */
     private func calculateWorldToNodeTransform() -> Matrix4 {
         let parentTransform = self.parent?.worldToNodeSpaceTransform ?? Matrix4.Identity
-        
         var transform = Matrix4(withScale: [1/self.scale.x, 1/self.scale.y, 1/self.scale.z])
         transform = transform * self.rotation.conjugate
         transform = transform.translate(-translation)

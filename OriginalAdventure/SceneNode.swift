@@ -26,8 +26,8 @@ func ==(lhs: SceneNodeType, rhs: SceneNodeType) -> Bool {
 }
 
 class SceneNode : Hashable {
-    private var _parent : TransformNode?
-    var parent : TransformNode? {
+    private var _parent : SceneNode?
+    var parent : SceneNode? {
         get {
             return _parent
         }
@@ -56,31 +56,29 @@ class SceneNode : Hashable {
     
     let id : String
     
-    var idsToNodes : [String : SceneNode];
-    private var _rootNodesOfType : [SceneNodeType : [SceneNode]]?
-    private var _nodesOfType : UnsafeMutablePointer<[SceneNodeType : [SceneNode]]>
+    var idsToNodes : Reference<[String : SceneNode]>;
+    private var _nodesOfType : Reference<[SceneNodeType : [SceneNode]]>
     
     init(rootNodeWithId id : String) {
         self.id = id;
-        self.idsToNodes = [String : SceneNode]();
+        self.idsToNodes = Reference([String : SceneNode]());
         self.isDynamic = false;
         
-        _rootNodesOfType = [SceneNodeType : [SceneNode]]();
-        _nodesOfType = withUnsafeMutablePointer(&_rootNodesOfType!, { return $0 })
+        _nodesOfType = Reference([SceneNodeType : [SceneNode]]());
         
-        self.idsToNodes[id] = self;
+        self.idsToNodes.value[id] = self;
         self.parent = nil;
         
     }
     
-    init(id : String, parent : TransformNode, isDynamic : Bool = false) {
+    init(id : String, parent : SceneNode, isDynamic : Bool = false) {
         self.idsToNodes = parent.idsToNodes
         _nodesOfType = parent._nodesOfType
         
         self.isDynamic = isDynamic || parent.isDynamic
         
         self.id = id
-        self.idsToNodes[id] = self;
+        self.idsToNodes.value[id] = self;
         
         self.parent = parent
         
@@ -92,15 +90,14 @@ class SceneNode : Hashable {
             nodes.append(node)
             return
         }
-        
     }
     
     func withAllNodesOfType<T : SceneNode, Result>(type : T.Type, @noescape _ f : (inout [T]) -> Result) -> Result {
         let sceneNodeType = SceneNodeType(type: type);
-        let optionalNodes = _nodesOfType.memory[sceneNodeType] as! [T]?
+        let optionalNodes = _nodesOfType.value[sceneNodeType] as! [T]?
         var nodes = optionalNodes ?? [T]()
         let retVal = f(&nodes)
-        _nodesOfType.memory[sceneNodeType] = nodes;
+        _nodesOfType.value[sceneNodeType] = nodes;
         return retVal
     }
     
@@ -124,7 +121,7 @@ class SceneNode : Hashable {
     func transformDidChange() {}
     
     func nodeWithID(id : String) -> SceneNode? {
-        return self.idsToNodes[id]
+        return self.idsToNodes.value[id]
     }
     
     func traverse(traversalFunc : SceneNode -> ()) {
