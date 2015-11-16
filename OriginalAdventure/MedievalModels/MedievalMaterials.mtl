@@ -2,6 +2,7 @@ newmtl HandleSG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
+Ks 0.5 0.5 0.5
 Tf 1.00 1.00 1.00
 map_Kd -o 0 -1 oldmetal-2.png
 Ni 1.00
@@ -10,6 +11,7 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
+Ks 0.3 0.3 0.3
 map_Kd -o 0 -1 clay-1.png
 Ni 1.00
 newmtl carpetSG
@@ -22,6 +24,7 @@ newmtl corner_fullSG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
+Ks 0.2 0.2 0.2
 Tf 1.00 1.00 1.00
 map_Kd -o 0 -1 stone-tile-3.png
 map_normal stone-tile-3_NRM.png
@@ -30,6 +33,7 @@ newmtl crypt_topSG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
+Ks 0.3 0.3 0.3
 Tf 1.00 1.00 1.00
 map_Kd -o 0 -1 marble-tile-1.png
 Ni 1.00
@@ -38,6 +42,8 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
+Ks 0.4 0.4 0.4
+Ns 1.4
 map_Kd -o 0 -1 clay-2.png
 Ni 1.00
 newmtl metal_handleSG

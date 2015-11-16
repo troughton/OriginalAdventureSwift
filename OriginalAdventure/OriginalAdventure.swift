@@ -24,11 +24,11 @@ class OriginalAdventure: Game {
     }
     
     func setupRendering() {
-        self.sceneGraph = try! SceneGraphParser.parseFileAtURL(NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("SceneGraph", ofType: "xml")!))
+        self.sceneGraph = try! SceneGraphParser.parseFileAtURL(NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("SceneGraph", ofType: "xml")!), parserExtension: OriginalAdventureSceneGraphParser())
         let spawnPoint = self.sceneGraph.nodeWithID(SpawnPointBehaviour.SpawnPointID).flatMap { $0 as? GameObject }
         let player = spawnPoint?.behaviourOfType(SpawnPointBehaviour)?.spawnPlayerWithId("player")
         self.camera = player?.camera
-        
+        self.camera.hdrMaxIntensity = 16
     }
     
     var size : WindowDimension! = nil {
@@ -47,7 +47,7 @@ class OriginalAdventure: Game {
             lights: sceneGraph.allNodesOfType(Light),
             worldToCameraMatrix: self.camera.worldToNodeSpaceTransform,
             fieldOfView: self.camera.fieldOfView,
-            hdrMaxIntensity: 1.0)
+            hdrMaxIntensity: self.camera.hdrMaxIntensity)
         
     }
     
