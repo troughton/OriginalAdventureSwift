@@ -24,16 +24,20 @@ enum ShaderProperty : String {
     case LightBlock = "LightBlock"
     case Material = "Material"
     
+    case Light = "Light"
+    
     case AmbientColourMap = "ambientColourSampler"
     case DiffuseColourMap = "diffuseColourSampler"
     case SpecularColourMap = "specularColourSampler"
     case SpecularityMap = "specularitySampler"
     case NormalMap = "normalMapSampler"
+    
+    case DepthMap = "depthSampler"
 }
 
 class Shader {
     
-    private var _nextUniformBlockBinding : GLuint = 0;
+    private static var _nextUniformBlockBinding : GLuint = 0;
     
     private let _glProgramRef : GLuint
     
@@ -90,7 +94,7 @@ class Shader {
             glGetActiveUniformBlockiv(self._glProgramRef, blockIndex,  GLenum(GL_UNIFORM_BLOCK_DATA_SIZE), &blockSize);
             
             
-            var bindingPoint = self._nextUniformBlockBinding++
+            var bindingPoint = Shader._nextUniformBlockBinding++
             glUniformBlockBinding(self._glProgramRef, blockIndex, bindingPoint);
 
             var uniformBlockRef : GLuint = 0
@@ -110,11 +114,11 @@ class Shader {
     }()
     
     func addTextureMappings(textureMappings : [ShaderProperty : TextureUnit]) {
+        self.useProgram()
         for (property, textureUnit) in textureMappings {
-            self.useProgram()
             self.setUniform(GLint(textureUnit.rawValue), forProperty: property)
-            self.endUseProgram()
         }
+        self.endUseProgram()
     }
 }
 
@@ -291,7 +295,7 @@ extension Shader {
         
         
         glBindBuffer(GLenum(GL_UNIFORM_BUFFER), GLuint(uniformRef));
-
+        
         withUnsafePointer(&buffer) { (bufferPtr) -> Void in
             glBufferSubData(GLenum(GL_UNIFORM_BUFFER), 0, sizeof(T), bufferPtr);
         }

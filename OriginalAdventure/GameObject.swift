@@ -25,18 +25,27 @@ enum VertexArrays {
     case PositionsNormalsTextureCoordinatesAndTangents
 }
 
-struct CollisionNode : Enableable {
+struct Collider : Enableable {
+    let boundingBox : BoundingBox
     var isEnabled : Bool
+    
+    func isColliding() -> Bool {
+        return false
+    }
 }
 
 class GameObject: TransformNode {
-    var collisionNode : CollisionNode?
+    var collider : Collider?
     var light : Light? {
         didSet {
             light?.parent = self
         }
     }
-    var meshes = [Mesh]()
+    var mesh : Mesh? {
+        didSet {
+            mesh?.parent = self
+        }
+    }
     var behaviours = [Behaviour]()
     var camera : Camera?
     
@@ -47,11 +56,9 @@ class GameObject: TransformNode {
         set(enabled) {
             super.isEnabled = enabled
             
-            for var mesh in meshes {
-                mesh.isEnabled = enabled
-            }
+            mesh?.isEnabled = enabled
             light?.isEnabled = enabled
-            collisionNode?.isEnabled = enabled
+            collider?.isEnabled = enabled
         }
     }
     

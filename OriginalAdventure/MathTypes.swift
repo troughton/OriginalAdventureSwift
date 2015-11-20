@@ -135,6 +135,10 @@ public func ==(lhs: float4, rhs: float4) -> Bool {
     return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w
 }
 
+func /(lhs: Vector4, rhs: Float) -> Vector4 {
+    return Vector4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs)
+}
+
 
 struct Quaternion : ArrayLiteralConvertible, Equatable {
     let q : float4
@@ -154,12 +158,23 @@ struct Quaternion : ArrayLiteralConvertible, Equatable {
         self.init(elements[0], elements[1], elements[2], elements[3])
     }
     
+    init(angle: Float, axis x: Float, _ y: Float, _ z: Float) {
+        let halfAngle = angle * 0.5;
+        let scale = sin(halfAngle);
+        self.init(scale * x, scale * y, scale * z, cos(halfAngle));
+    }
+    
     init(_ q : float4) {
         self.q = q
     }
     
     var conjugate : Quaternion {
         return [-self.x, -self.y, -self.z, self.w]
+    }
+    
+    var invert : Quaternion {
+        let scale = 1 / length_squared(self.q)
+        return self.conjugate * scale
     }
 }
 
@@ -175,6 +190,13 @@ func normalize(x: Quaternion) -> Quaternion {
 
 func *(lhs: Quaternion, rhs: Quaternion) -> Quaternion {
     return Quaternion(QuaternionMultiply(lhs.q, rhs.q))
+}
+
+func *(quaternion: Quaternion, vector: Vector3) -> Vector3 {
+    var rotatedQuaternion = Quaternion(vector.x, vector.y, vector.z, 0.0);
+    rotatedQuaternion = (quaternion * rotatedQuaternion) * quaternion.invert;
+    
+    return Vector3(rotatedQuaternion.q[0], rotatedQuaternion.q[1], rotatedQuaternion.q[2]);
 }
 
 func *=(inout lhs: Quaternion, rhs: Quaternion) {

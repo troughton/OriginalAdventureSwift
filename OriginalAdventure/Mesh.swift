@@ -16,6 +16,7 @@ protocol Mesh : Enableable {
     var boundingBox : BoundingBox { get }
     var materialOverride : Material? { get set }
     var textureRepeat : Vector3 { get set }
+    var parent : GameObject! { get set }
 }
 
 var _loadedMeshes = [String : ([Mesh], BoundingBox)]()
@@ -61,7 +62,7 @@ extension Mesh {
                             if mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeNormal) == nil {
                                 mesh.addNormalsWithAttributeNamed(nil, creaseThreshold: 0.8)
                             }
-                            if mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeTangent) == nil {
+                            if mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeTangent) == nil && mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeTextureCoordinate) != nil {
                                 mesh.addTangentBasisForTextureCoordinateAttributeNamed(MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
                             }
                         }

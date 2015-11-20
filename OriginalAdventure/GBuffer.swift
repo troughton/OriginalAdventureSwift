@@ -19,18 +19,21 @@ final class GBuffer {
     
     init(ofSize sizeInPixels: WindowDimension) {
         // Create the FBO
+
         var fbo : GLuint = 0
-        withUnsafeMutablePointer(&fbo) { (fbo) -> Void in
-            glGenFramebuffers(1, fbo)
-        }
+        glGenFramebuffers(1, &fbo)
+
         _frameBufferObject = fbo;
         glBindFramebuffer(GLenum(GL_DRAW_FRAMEBUFFER), _frameBufferObject);
+    
         
         let textureCount = TextureUnit.deferredShadingUnits.count
-        var textureBuffer = [GLuint]()
-        textureBuffer.reserveCapacity(textureCount)
-        glGenTextures(GLsizei(textureCount), &textureBuffer)
-        _glTextures = textureBuffer
+        let textureBuffer = UnsafeMutableBufferPointer<GLuint>(start: UnsafeMutablePointer<GLuint>(malloc(textureCount * sizeof(GLuint))), count: textureCount)
+        glGenTextures(GLsizei(textureCount), textureBuffer.baseAddress)
+
+        let textures = [GLuint](textureBuffer)
+        free(textureBuffer.baseAddress)
+        _glTextures = textures
         
         _depthTexture = glGenTexture();
         _finalTexture = glGenTexture();
@@ -53,7 +56,6 @@ final class GBuffer {
         glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_NEAREST);
         glFramebufferTexture2D(GLenum(GL_DRAW_FRAMEBUFFER), GLenum(GL_DEPTH_STENCIL_ATTACHMENT), GLenum(GL_TEXTURE_2D), _depthTexture, 0);
         
-        
         _finalBufferAttachment = GLenum(GL_COLOR_ATTACHMENT0 + i);
         
         // final
@@ -72,15 +74,12 @@ final class GBuffer {
         
         // restore default FBO
         glBindFramebuffer(GLenum(GL_DRAW_FRAMEBUFFER), 0);
-
     }
     
     deinit {
         if (_frameBufferObject != 0) {
             var fbo = _frameBufferObject
-            withUnsafePointer(&fbo) {
-                glDeleteFramebuffers(1, $0);
-            }
+            glDeleteFramebuffers(1, &fbo)
         }
         
         if (_glTextures[0] != 0) {
@@ -89,16 +88,12 @@ final class GBuffer {
         
         if (_depthTexture != 0) {
             var texture = _depthTexture
-            withUnsafePointer(&texture) {
-                glDeleteTextures(1, $0);
-            }
+            glDeleteTextures(1, &texture)
         }
         
         if (_finalTexture != 0) {
             var texture = _finalTexture
-            withUnsafePointer(&texture) {
-                glDeleteTextures(1, $0)
-            }
+            glDeleteTextures(1, &texture)
         }
     }
     
@@ -118,14 +113,12 @@ final class GBuffer {
     func startFrame() {
         glBindFramebuffer(GLenum(GL_DRAW_FRAMEBUFFER), _frameBufferObject);
         glDrawBuffer(_finalBufferAttachment);
-        glClear(GLenum(GL_COLOR_BUFFER_BIT));
     }
     
     
     func bindForGeometryPass() {
     
         let drawBuffers : [GLenum] = [GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_COLOR_ATTACHMENT1), GLenum(GL_COLOR_ATTACHMENT2), _finalBufferAttachment] //Normals, diffuse, specular, ambient.
-
         glDrawBuffers(GLsizei(drawBuffers.count), drawBuffers)
     }
     
@@ -139,12 +132,12 @@ final class GBuffer {
     
         var i = 0;
         for textureUnit in TextureUnit.deferredShadingUnits {
-            glActiveTexture(GLenum(GL_TEXTURE0) + textureUnit.rawValue)
+            textureUnit.makeActive()
             glBindTexture(GLenum(GL_TEXTURE_2D), _glTextures[i]);
             i++;
         }
     
-        glActiveTexture(GLenum(GL_TEXTURE0) + TextureUnit.DepthTextureUnit.rawValue)
+        TextureUnit.DepthTextureUnit.makeActive()
         glBindTexture(GLenum(GL_TEXTURE_2D), _depthTexture)
     }
     

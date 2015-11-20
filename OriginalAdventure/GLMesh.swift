@@ -38,10 +38,6 @@ struct RenderCommand {
     * @param hdrMaxIntensity The maximum light intensity in the scene, beyond which values will be clipped.
     */
     func renderWithShader(shader : Shader, materialOverride: Material?, hdrMaxIntensity : Float) {
-        var error = glGetError()
-        if error != 0 {
-            assertionFailure("OpenGL error \(error)")
-        }
         
         let material = materialOverride ?? self.material
         shader.setBuffer(material.toStruct(hdrMaxIntensity: hdrMaxIntensity), forProperty: .Material);
@@ -73,6 +69,7 @@ struct GLMesh: Mesh {
     var isEnabled = true
     var materialOverride : Material? = nil
     var textureRepeat = Vector3.One
+    var parent : GameObject! = nil
     
     private let primitives : [RenderCommand]; //The primitives that make up self mesh.
     
@@ -156,7 +153,7 @@ struct GLMesh: Mesh {
     */
     func renderWithShader(shader: Shader, hdrMaxIntensity: Float) {
         shader.setUniform(self.textureRepeat.x, self.textureRepeat.y, forProperty: .TextureRepeat)
-        
+
         for primitive in self.primitives {
             primitive.renderWithShader(shader, materialOverride: self.materialOverride, hdrMaxIntensity: hdrMaxIntensity)
         }

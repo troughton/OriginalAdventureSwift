@@ -57,8 +57,8 @@ class OriginalAdventureSceneGraphParser : SceneGraphParserExtension {
         
         let flickeringLight = parent.nodeWithID(id) as! GameObject? ?? GameObject(id: id, parent: parent, isDynamic: true)
         
-        let mesh = try sceneGraphParser.parseMeshNode(id + "Mesh", attributes: attributes, parent: flickeringLight)
-        let pointLight = try sceneGraphParser.parsePointLight(id + "PointLight", attributes: attributes, parent: flickeringLight)
+        flickeringLight.mesh = try sceneGraphParser.meshFromAttributes(attributes)
+        flickeringLight.light = try sceneGraphParser.parsePointLight(id + "PointLight", attributes: attributes, parent: flickeringLight)
         
         let intensityVariation = Float(fromString: attributes["intensityVariation"]) ?? 0.0
         let isOn = Bool(fromString: attributes["isOn"]) ?? true

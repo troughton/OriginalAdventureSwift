@@ -9,8 +9,8 @@
 #import "CBridges.h"
 
 vector_float4 QuaternionMultiply(vector_float4 quaternionLeft, vector_float4 quaternionRight) {
-    const __m128 ql = _mm_load_ps(&quaternionLeft);
-    const __m128 qr = _mm_load_ps(&quaternionRight);
+    const __m128 ql = _mm_load_ps((const float*)&quaternionLeft);
+    const __m128 qr = _mm_load_ps((const float*)&quaternionRight);
     
     const __m128 ql3012 = _mm_shuffle_ps(ql, ql, _MM_SHUFFLE(2, 1, 0, 3));
     const __m128 ql3120 = _mm_shuffle_ps(ql, ql, _MM_SHUFFLE(0, 2, 1, 3));

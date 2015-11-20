@@ -25,6 +25,10 @@ protocol Game {
     */
     func update(delta delta: Double)
     
+    var input : Input { get }
+    
+    func onMouseMove(delta x: Float, _ y: Float)
+    
 //    /**
 //    * @return The instance of KeyInput that the GameDelegate should pass events to.
 //    */

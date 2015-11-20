@@ -10,7 +10,6 @@
 		E90B21B71BF6B02E00EA118A /* SceneGraphParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B21B61BF6B02E00EA118A /* SceneGraphParser.swift */; };
 		E90B21B91BF7E8C600EA118A /* SceneGraph.xml in Resources */ = {isa = PBXBuildFile; fileRef = E90B21B81BF7E8C600EA118A /* SceneGraph.xml */; };
 		E90B21BB1BF7ED3D00EA118A /* OptionalStringInitialisable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B21BA1BF7ED3D00EA118A /* OptionalStringInitialisable.swift */; };
-		E90B21BD1BF8082D00EA118A /* Collider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B21BC1BF8082D00EA118A /* Collider.swift */; };
 		E90B21C11BF8089900EA118A /* Behaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B21C01BF8089900EA118A /* Behaviour.swift */; };
 		E90B21C41BF808FD00EA118A /* SpawnPointBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B21C31BF808FD00EA118A /* SpawnPointBehaviour.swift */; };
 		E90B21C61BF8096300EA118A /* PlayerBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B21C51BF8096300EA118A /* PlayerBehaviour.swift */; };
@@ -36,6 +35,12 @@
 		E944BD8B1BF0059900E61077 /* MDL+GLTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944BD8A1BF0059900E61077 /* MDL+GLTypes.swift */; };
 		E944BD8F1BF03BAB00E61077 /* GLForwardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E944BD8E1BF03BAB00E61077 /* GLForwardRenderer.swift */; };
 		E944BD971BF0423500E61077 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E944BD961BF0423500E61077 /* libglfw3.a */; };
+		E95E28111BF92770001E4F13 /* FlickeringLightBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E28101BF92770001E4F13 /* FlickeringLightBehaviour.swift */; };
+		E95E28141BF92F75001E4F13 /* Flame in Resources */ = {isa = PBXBuildFile; fileRef = E95E28131BF92F75001E4F13 /* Flame */; };
+		E97FAFF81BFA8C4800025554 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FAFF71BFA8C4800025554 /* Animation.swift */; };
+		E97FB00D1BFAA63E00025554 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FB00C1BFAA63E00025554 /* Event.swift */; };
+		E97FB00F1BFAB52B00025554 /* AnimableProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FB00E1BFAB52B00025554 /* AnimableProperty.swift */; };
+		E97FB0131BFABA1700025554 /* AnimationSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FB0121BFABA1700025554 /* AnimationSystem.swift */; };
 		E9867C541BF19FFA008781B0 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9867C531BF19FFA008781B0 /* GLKit.framework */; };
 		E9867C561BF1A1B4008781B0 /* Plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = E9867C551BF1A1B4008781B0 /* Plane.obj */; };
 		E99FCEBD1BDA2A3500C778A5 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBC1BDA2A3500C778A5 /* Game.swift */; };
@@ -50,6 +55,20 @@
 		E9BE64081BF4249400045FBB /* ForwardRenderer.vert in Resources */ = {isa = PBXBuildFile; fileRef = E9BE64071BF4249400045FBB /* ForwardRenderer.vert */; };
 		E9BE640A1BF4249C00045FBB /* ForwardRenderer.frag in Resources */ = {isa = PBXBuildFile; fileRef = E9BE64091BF4249C00045FBB /* ForwardRenderer.frag */; };
 		E9BE640C1BF439A800045FBB /* TextureSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BE640B1BF439A800045FBB /* TextureSampler.swift */; };
+		E9C13C751BFE8F8400DB4351 /* sphere.mtl in Resources */ = {isa = PBXBuildFile; fileRef = E9C13C731BFE8F8400DB4351 /* sphere.mtl */; };
+		E9C13C761BFE8F8400DB4351 /* sphere.obj in Resources */ = {isa = PBXBuildFile; fileRef = E9C13C741BFE8F8400DB4351 /* sphere.obj */; };
+		E9F48E631BF844FE006B6FED /* SceneGraphParser+OriginalAdventure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F48E621BF844FE006B6FED /* SceneGraphParser+OriginalAdventure.swift */; };
+		E9F774F71BFBF2B6009776F0 /* Input.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F774F61BFBF2B6009776F0 /* Input.swift */; };
+		E9F774F91BFC0EFD009776F0 /* AdventureGameInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F774F81BFC0EFD009776F0 /* AdventureGameInput.swift */; };
+		E9F774FB1BFC1747009776F0 /* EventDataKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F774FA1BFC1747009776F0 /* EventDataKey.swift */; };
+		E9F774FD1BFC1E53009776F0 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F774FC1BFC1E53009776F0 /* Settings.swift */; };
+		E9F774FF1BFC24AF009776F0 /* StoneWall.png in Resources */ = {isa = PBXBuildFile; fileRef = E9F774FE1BFC24AF009776F0 /* StoneWall.png */; };
+		E9F775001BFC2502009776F0 /* GLDeferredRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A734F91BE208C2002BB7FD /* GLDeferredRenderer.swift */; };
+		E9F775071BFC26E8009776F0 /* DirectionalLightPass.frag in Resources */ = {isa = PBXBuildFile; fileRef = E9F775021BFC26E8009776F0 /* DirectionalLightPass.frag */; };
+		E9F775081BFC26E8009776F0 /* DirectionalLightPass.vert in Resources */ = {isa = PBXBuildFile; fileRef = E9F775031BFC26E8009776F0 /* DirectionalLightPass.vert */; };
+		E9F775091BFC26E8009776F0 /* GeometryPass.frag in Resources */ = {isa = PBXBuildFile; fileRef = E9F775041BFC26E8009776F0 /* GeometryPass.frag */; };
+		E9F7750A1BFC26E8009776F0 /* PointLightPass.frag in Resources */ = {isa = PBXBuildFile; fileRef = E9F775051BFC26E8009776F0 /* PointLightPass.frag */; };
+		E9F7750B1BFC26E8009776F0 /* PointLightPass.vert in Resources */ = {isa = PBXBuildFile; fileRef = E9F775061BFC26E8009776F0 /* PointLightPass.vert */; };
 		E9FBA6271BD618B5007052D4 /* GameObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FBA6261BD618B5007052D4 /* GameObject.swift */; };
 		E9FBA6291BD61B8B007052D4 /* MathTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FBA6281BD61B8B007052D4 /* MathTypes.swift */; };
 		E9FBA62B1BD61D2C007052D4 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9FBA62A1BD61D2C007052D4 /* Accelerate.framework */; };
@@ -58,11 +77,23 @@
 		E9FE25691BD4D11F00B0CFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9FE25681BD4D11F00B0CFC0 /* OpenGL.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		E9FFBCCF1BF96A9400E94386 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		E90B21B61BF6B02E00EA118A /* SceneGraphParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneGraphParser.swift; sourceTree = "<group>"; };
 		E90B21B81BF7E8C600EA118A /* SceneGraph.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = SceneGraph.xml; sourceTree = "<group>"; };
 		E90B21BA1BF7ED3D00EA118A /* OptionalStringInitialisable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalStringInitialisable.swift; sourceTree = "<group>"; };
-		E90B21BC1BF8082D00EA118A /* Collider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collider.swift; sourceTree = "<group>"; };
 		E90B21C01BF8089900EA118A /* Behaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Behaviour.swift; sourceTree = "<group>"; };
 		E90B21C31BF808FD00EA118A /* SpawnPointBehaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawnPointBehaviour.swift; sourceTree = "<group>"; };
 		E90B21C51BF8096300EA118A /* PlayerBehaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerBehaviour.swift; sourceTree = "<group>"; };
@@ -126,6 +157,12 @@
 		E944BD921BF03F9800E61077 /* PickerShader.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PickerShader.frag; sourceTree = "<group>"; };
 		E944BD931BF03F9800E61077 /* PickerShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PickerShader.vert; sourceTree = "<group>"; };
 		E944BD961BF0423500E61077 /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libglfw3.a; sourceTree = "<group>"; };
+		E95E28101BF92770001E4F13 /* FlickeringLightBehaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickeringLightBehaviour.swift; sourceTree = "<group>"; };
+		E95E28131BF92F75001E4F13 /* Flame */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Flame; sourceTree = "<group>"; };
+		E97FAFF71BFA8C4800025554 /* Animation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
+		E97FB00C1BFAA63E00025554 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		E97FB00E1BFAB52B00025554 /* AnimableProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimableProperty.swift; sourceTree = "<group>"; };
+		E97FB0121BFABA1700025554 /* AnimationSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationSystem.swift; sourceTree = "<group>"; };
 		E9867C531BF19FFA008781B0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		E9867C551BF1A1B4008781B0 /* Plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Plane.obj; sourceTree = "<group>"; };
 		E99FCEBC1BDA2A3500C778A5 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
@@ -139,6 +176,19 @@
 		E9BE64071BF4249400045FBB /* ForwardRenderer.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ForwardRenderer.vert; sourceTree = "<group>"; };
 		E9BE64091BF4249C00045FBB /* ForwardRenderer.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ForwardRenderer.frag; sourceTree = "<group>"; };
 		E9BE640B1BF439A800045FBB /* TextureSampler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureSampler.swift; sourceTree = "<group>"; };
+		E9C13C731BFE8F8400DB4351 /* sphere.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sphere.mtl; sourceTree = "<group>"; };
+		E9C13C741BFE8F8400DB4351 /* sphere.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sphere.obj; sourceTree = "<group>"; };
+		E9F48E621BF844FE006B6FED /* SceneGraphParser+OriginalAdventure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SceneGraphParser+OriginalAdventure.swift"; sourceTree = "<group>"; };
+		E9F774F61BFBF2B6009776F0 /* Input.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Input.swift; sourceTree = "<group>"; };
+		E9F774F81BFC0EFD009776F0 /* AdventureGameInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdventureGameInput.swift; sourceTree = "<group>"; };
+		E9F774FA1BFC1747009776F0 /* EventDataKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventDataKey.swift; sourceTree = "<group>"; };
+		E9F774FC1BFC1E53009776F0 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		E9F774FE1BFC24AF009776F0 /* StoneWall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StoneWall.png; sourceTree = "<group>"; };
+		E9F775021BFC26E8009776F0 /* DirectionalLightPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = DirectionalLightPass.frag; sourceTree = "<group>"; };
+		E9F775031BFC26E8009776F0 /* DirectionalLightPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = DirectionalLightPass.vert; sourceTree = "<group>"; };
+		E9F775041BFC26E8009776F0 /* GeometryPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = GeometryPass.frag; sourceTree = "<group>"; };
+		E9F775051BFC26E8009776F0 /* PointLightPass.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PointLightPass.frag; sourceTree = "<group>"; };
+		E9F775061BFC26E8009776F0 /* PointLightPass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PointLightPass.vert; sourceTree = "<group>"; };
 		E9FBA6261BD618B5007052D4 /* GameObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameObject.swift; sourceTree = "<group>"; };
 		E9FBA6281BD61B8B007052D4 /* MathTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathTypes.swift; sourceTree = "<group>"; };
 		E9FBA62A1BD61D2C007052D4 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -167,8 +217,6 @@
 		E90B21C21BF808EB00EA118A /* Behaviours */ = {
 			isa = PBXGroup;
 			children = (
-				E90B21C31BF808FD00EA118A /* SpawnPointBehaviour.swift */,
-				E90B21C51BF8096300EA118A /* PlayerBehaviour.swift */,
 			);
 			name = Behaviours;
 			sourceTree = "<group>";
@@ -251,18 +299,10 @@
 		E93EED391BD30245005B6B05 /* OriginalAdventure */ = {
 			isa = PBXGroup;
 			children = (
-				E93CB0FF1BF3EC8F0011267C /* Parsers */,
-				E944BD911BF03F8B00E61077 /* Shaders */,
-				E9A734F61BE20893002BB7FD /* Rendering */,
-				E93EED3A1BD30245005B6B05 /* main.swift */,
+				E95E280E1BF92755001E4F13 /* Game */,
+				E95E280D1BF9274D001E4F13 /* Engine */,
 				E93EED3E1BD30245005B6B05 /* Assets.xcassets */,
 				E93EED431BD30245005B6B05 /* Info.plist */,
-				E90B21C21BF808EB00EA118A /* Behaviours */,
-				E9FE25631BD4CA5600B0CFC0 /* Scene Nodes */,
-				E93EED4D1BD313A3005B6B05 /* OriginalAdventure-Bridging-Header.h */,
-				E944BD561BEDD4D000E61077 /* Maths */,
-				E99FCEBC1BDA2A3500C778A5 /* Game.swift */,
-				E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */,
 				E944BD901BF03F7900E61077 /* Resources */,
 			);
 			path = OriginalAdventure;
@@ -282,7 +322,11 @@
 		E944BD901BF03F7900E61077 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E9C13C731BFE8F8400DB4351 /* sphere.mtl */,
+				E9C13C741BFE8F8400DB4351 /* sphere.obj */,
+				E95E28131BF92F75001E4F13 /* Flame */,
 				E90B21C71BF8122600EA118A /* StoneWall.jpg */,
+				E9F774FE1BFC24AF009776F0 /* StoneWall.png */,
 				E90B21C81BF8122600EA118A /* StoneWall.mtl */,
 				E90B21B81BF7E8C600EA118A /* SceneGraph.xml */,
 				E93CB0FD1BF321850011267C /* MedievalModels.abc */,
@@ -295,6 +339,7 @@
 		E944BD911BF03F8B00E61077 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				E9F775011BFC26DB009776F0 /* Deferred Shading */,
 				E9BE64091BF4249C00045FBB /* ForwardRenderer.frag */,
 				E9BE64071BF4249400045FBB /* ForwardRenderer.vert */,
 				E9A4D4B31BF075F1003FEACC /* PassthroughShader.vert */,
@@ -302,6 +347,74 @@
 				E944BD931BF03F9800E61077 /* PickerShader.vert */,
 			);
 			name = Shaders;
+			sourceTree = "<group>";
+		};
+		E95E280D1BF9274D001E4F13 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				E9F774FA1BFC1747009776F0 /* EventDataKey.swift */,
+				E97FAFF91BFA8D6200025554 /* Events */,
+				E97FAFEA1BFA8C2400025554 /* Animation */,
+				E93CB0FF1BF3EC8F0011267C /* Parsers */,
+				E944BD911BF03F8B00E61077 /* Shaders */,
+				E9A734F61BE20893002BB7FD /* Rendering */,
+				E93EED3A1BD30245005B6B05 /* main.swift */,
+				E90B21C21BF808EB00EA118A /* Behaviours */,
+				E9FE25631BD4CA5600B0CFC0 /* Scene Nodes */,
+				E93EED4D1BD313A3005B6B05 /* OriginalAdventure-Bridging-Header.h */,
+				E944BD561BEDD4D000E61077 /* Maths */,
+				E99FCEBC1BDA2A3500C778A5 /* Game.swift */,
+				E9F774F61BFBF2B6009776F0 /* Input.swift */,
+			);
+			name = Engine;
+			sourceTree = "<group>";
+		};
+		E95E280E1BF92755001E4F13 /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */,
+				E95E28121BF92775001E4F13 /* Behaviours */,
+				E95E280F1BF9275D001E4F13 /* Parsers */,
+				E9F774F81BFC0EFD009776F0 /* AdventureGameInput.swift */,
+				E9F774FC1BFC1E53009776F0 /* Settings.swift */,
+			);
+			name = Game;
+			sourceTree = "<group>";
+		};
+		E95E280F1BF9275D001E4F13 /* Parsers */ = {
+			isa = PBXGroup;
+			children = (
+				E9F48E621BF844FE006B6FED /* SceneGraphParser+OriginalAdventure.swift */,
+			);
+			name = Parsers;
+			sourceTree = "<group>";
+		};
+		E95E28121BF92775001E4F13 /* Behaviours */ = {
+			isa = PBXGroup;
+			children = (
+				E90B21C31BF808FD00EA118A /* SpawnPointBehaviour.swift */,
+				E90B21C51BF8096300EA118A /* PlayerBehaviour.swift */,
+				E95E28101BF92770001E4F13 /* FlickeringLightBehaviour.swift */,
+			);
+			name = Behaviours;
+			sourceTree = "<group>";
+		};
+		E97FAFEA1BFA8C2400025554 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				E97FAFF71BFA8C4800025554 /* Animation.swift */,
+				E97FB00E1BFAB52B00025554 /* AnimableProperty.swift */,
+				E97FB0121BFABA1700025554 /* AnimationSystem.swift */,
+			);
+			name = Animation;
+			sourceTree = "<group>";
+		};
+		E97FAFF91BFA8D6200025554 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				E97FB00C1BFAA63E00025554 /* Event.swift */,
+			);
+			name = Events;
 			sourceTree = "<group>";
 		};
 		E9A734F61BE20893002BB7FD /* Rendering */ = {
@@ -325,6 +438,18 @@
 			name = Rendering;
 			sourceTree = "<group>";
 		};
+		E9F775011BFC26DB009776F0 /* Deferred Shading */ = {
+			isa = PBXGroup;
+			children = (
+				E9F775021BFC26E8009776F0 /* DirectionalLightPass.frag */,
+				E9F775031BFC26E8009776F0 /* DirectionalLightPass.vert */,
+				E9F775041BFC26E8009776F0 /* GeometryPass.frag */,
+				E9F775051BFC26E8009776F0 /* PointLightPass.frag */,
+				E9F775061BFC26E8009776F0 /* PointLightPass.vert */,
+			);
+			name = "Deferred Shading";
+			sourceTree = "<group>";
+		};
 		E9FE25631BD4CA5600B0CFC0 /* Scene Nodes */ = {
 			isa = PBXGroup;
 			children = (
@@ -335,7 +460,6 @@
 				E9FE256B1BD4F4BD00B0CFC0 /* Structs.h */,
 				E9FBA6261BD618B5007052D4 /* GameObject.swift */,
 				E9205DC01BD744DD005B990F /* Material.swift */,
-				E90B21BC1BF8082D00EA118A /* Collider.swift */,
 				E90B21C01BF8089900EA118A /* Behaviour.swift */,
 			);
 			name = "Scene Nodes";
@@ -363,6 +487,7 @@
 				E93EED331BD30245005B6B05 /* Sources */,
 				E93EED341BD30245005B6B05 /* Frameworks */,
 				E93EED351BD30245005B6B05 /* Resources */,
+				E9FFBCCF1BF96A9400E94386 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -411,16 +536,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9F7750B1BFC26E8009776F0 /* PointLightPass.vert in Resources */,
 				E9867C561BF1A1B4008781B0 /* Plane.obj in Resources */,
 				E90B21CA1BF8122600EA118A /* StoneWall.mtl in Resources */,
+				E9F7750A1BFC26E8009776F0 /* PointLightPass.frag in Resources */,
+				E9C13C751BFE8F8400DB4351 /* sphere.mtl in Resources */,
 				E90B21B91BF7E8C600EA118A /* SceneGraph.xml in Resources */,
 				E9A4D4B71BF077CB003FEACC /* PassthroughShader.vert in Resources */,
+				E9C13C761BFE8F8400DB4351 /* sphere.obj in Resources */,
 				E90B21C91BF8122600EA118A /* StoneWall.jpg in Resources */,
+				E9F775081BFC26E8009776F0 /* DirectionalLightPass.vert in Resources */,
+				E9F775071BFC26E8009776F0 /* DirectionalLightPass.frag in Resources */,
 				E9BE64081BF4249400045FBB /* ForwardRenderer.vert in Resources */,
+				E9F775091BFC26E8009776F0 /* GeometryPass.frag in Resources */,
 				E9A4D4B81BF077CB003FEACC /* PickerShader.frag in Resources */,
 				E9A4D4B91BF077CB003FEACC /* PickerShader.vert in Resources */,
 				E9A4D4B61BF077BD003FEACC /* MedievalModels in Resources */,
+				E9F774FF1BFC24AF009776F0 /* StoneWall.png in Resources */,
 				E9BE640A1BF4249C00045FBB /* ForwardRenderer.frag in Resources */,
+				E95E28141BF92F75001E4F13 /* Flame in Resources */,
 				E93CB0FE1BF321850011267C /* MedievalModels.abc in Resources */,
 				E93EED3F1BD30245005B6B05 /* Assets.xcassets in Resources */,
 			);
@@ -433,11 +567,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9F775001BFC2502009776F0 /* GLDeferredRenderer.swift in Sources */,
 				E9FE25651BD4CA8C00B0CFC0 /* Camera.swift in Sources */,
 				E9FBA6271BD618B5007052D4 /* GameObject.swift in Sources */,
+				E9F774FB1BFC1747009776F0 /* EventDataKey.swift in Sources */,
 				E90B21C61BF8096300EA118A /* PlayerBehaviour.swift in Sources */,
 				E9BE640C1BF439A800045FBB /* TextureSampler.swift in Sources */,
 				E91AA9951BEAFC9F0026D9ED /* Shaders.swift in Sources */,
+				E9F48E631BF844FE006B6FED /* SceneGraphParser+OriginalAdventure.swift in Sources */,
 				E93CB1081BF40DEB0011267C /* stb_image.c in Sources */,
 				E93EED4C1BD3026C005B6B05 /* TransformNode.swift in Sources */,
 				E90B21C41BF808FD00EA118A /* SpawnPointBehaviour.swift in Sources */,
@@ -448,21 +585,28 @@
 				E9A734F81BE2089F002BB7FD /* Renderer.swift in Sources */,
 				E9205DBF1BD740CE005B990F /* BoundingBox.swift in Sources */,
 				E90B21B71BF6B02E00EA118A /* SceneGraphParser.swift in Sources */,
+				E97FB00D1BFAA63E00025554 /* Event.swift in Sources */,
 				E93B4C0F1BED59A200792417 /* TextureUnit.swift in Sources */,
+				E9F774FD1BFC1E53009776F0 /* Settings.swift in Sources */,
 				E90B21BB1BF7ED3D00EA118A /* OptionalStringInitialisable.swift in Sources */,
 				E93EED4A1BD30262005B6B05 /* SceneNode.swift in Sources */,
 				E9BE64031BF417AE00045FBB /* MaterialParser.swift in Sources */,
 				E9205DC61BD777B7005B990F /* CBridges.c in Sources */,
 				E91AA9971BEAFDB30026D9ED /* GBuffer.swift in Sources */,
+				E9F774F91BFC0EFD009776F0 /* AdventureGameInput.swift in Sources */,
+				E97FAFF81BFA8C4800025554 /* Animation.swift in Sources */,
 				E93EED3B1BD30245005B6B05 /* main.swift in Sources */,
 				E9205DC11BD744DD005B990F /* Material.swift in Sources */,
+				E9F774F71BFBF2B6009776F0 /* Input.swift in Sources */,
 				E944BD8F1BF03BAB00E61077 /* GLForwardRenderer.swift in Sources */,
 				E944BD8B1BF0059900E61077 /* MDL+GLTypes.swift in Sources */,
 				E9BE64011BF416F700045FBB /* Mesh.swift in Sources */,
-				E90B21BD1BF8082D00EA118A /* Collider.swift in Sources */,
+				E97FB0131BFABA1700025554 /* AnimationSystem.swift in Sources */,
+				E95E28111BF92770001E4F13 /* FlickeringLightBehaviour.swift in Sources */,
 				E93CB1051BF3FF520011267C /* TextureLoader.swift in Sources */,
 				E99FCEBD1BDA2A3500C778A5 /* Game.swift in Sources */,
 				E9FE25671BD4CAE200B0CFC0 /* Light.swift in Sources */,
+				E97FB00F1BFAB52B00025554 /* AnimableProperty.swift in Sources */,
 				E93B4C111BED5D8B00792417 /* GLExtensions.swift in Sources */,
 				E9205DBD1BD73F95005B990F /* GLMesh.swift in Sources */,
 			);
@@ -557,6 +701,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = OriginalAdventure/Info.plist;
@@ -579,6 +724,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				INFOPLIST_FILE = OriginalAdventure/Info.plist;

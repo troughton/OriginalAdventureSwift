@@ -8,11 +8,15 @@
 
 import Foundation
 
-class Behaviour {
+class Behaviour : Equatable {
     let gameObject : GameObject
     
     init(gameObject: GameObject) {
         self.gameObject = gameObject
         gameObject.behaviours.append(self)
     }
+}
+
+func ==(lhs: Behaviour, rhs: Behaviour) -> Bool {
+    return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
 }

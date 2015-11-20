@@ -119,31 +119,33 @@ extension SceneGraphParser {
         return node
     }
     
-    func parseMeshNode(id: String, attributes: [String : String], parent: SceneNode) throws -> GameObject {
-        let isCollidable = Bool(fromString: attributes["isCollidable"]) ?? false
+    func meshFromAttributes(attributes: [String : String]) throws -> Mesh? {
         
         guard let fileName = attributes["fileName"] else { throw SceneGraphParserError.MissingAttribute("Mesh", "fileName") }
         
+        let directory = attributes["directory"];
+        let textureRepeat = try Vector3(fromString: attributes["textureRepeat"]) ?? Vector3.One
+        let materialDirectory = attributes["materialDirectory"]
+        let materialFileName = attributes["materialFileName"]
+        let materialName = attributes["materialName"]
+        
+        var materialOverride : Material? = nil
+        if let materialFileName = materialFileName {
+            materialOverride = MaterialLibrary.library(inDirectory: materialDirectory, withName: materialFileName).materials[materialName!]
+        }
+        return MeshType.meshesFromFile(inDirectory: directory, fileName: fileName).meshes.first.flatMap({ (var mesh) -> Mesh in
+            mesh.textureRepeat = textureRepeat
+            mesh.materialOverride = materialOverride
+            return mesh
+        })
+    }
+    
+    func parseMeshNode(id: String, attributes: [String : String], parent: SceneNode) throws -> GameObject {
+        let isCollidable = Bool(fromString: attributes["isCollidable"]) ?? false
+        
         let node = try _sceneGraph.nodeWithID(id) as! GameObject? ?? {
-            
-            let directory = attributes["directory"];
-            let textureRepeat = try Vector3(fromString: attributes["textureRepeat"]) ?? Vector3.One
-            let materialDirectory = attributes["materialDirectory"]
-            let materialFileName = attributes["materialFileName"]
-            let materialName = attributes["materialName"]
             let retVal = GameObject(id: id, parent: parent)
-            
-            var materialOverride : Material? = nil
-            if let materialFileName = materialFileName {
-               materialOverride = MaterialLibrary.library(inDirectory: materialDirectory, withName: materialFileName).materials[materialName!]
-            }
-            retVal.meshes = MeshType.meshesFromFile(inDirectory: directory, fileName: fileName).meshes.map({ (var mesh) -> Mesh in
-                mesh.textureRepeat = textureRepeat
-                mesh.materialOverride = materialOverride
-                return mesh
-            })
-            
-            
+            retVal.mesh = try self.meshFromAttributes(attributes)
             return retVal
         }()
         

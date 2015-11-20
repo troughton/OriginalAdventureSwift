@@ -99,7 +99,7 @@ class GLForwardRenderer : Renderer {
         let nodesShouldProbablyReallyBeZSorted = true
         
         for node in nodes {
-            guard !node.meshes.isEmpty else { continue }
+            guard let mesh = node.mesh else { continue }
             let nodeToCameraSpaceTransform = worldToCameraMatrix * node.nodeToWorldSpaceTransform
             let normalModelToCameraSpaceTransform = nodeToCameraSpaceTransform.matrix3.inverse.transpose;
             
@@ -107,9 +107,7 @@ class GLForwardRenderer : Renderer {
             _shader.setMatrix(nodeToCameraSpaceTransform.matrix3, forProperty: .Matrix3ModelToCamera);
             _shader.setMatrix(normalModelToCameraSpaceTransform, forProperty: .Matrix4NormalModelToCamera)
             
-            for mesh in node.meshes {
-                mesh.renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)
-            }
+            mesh.renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)
             
         }
     

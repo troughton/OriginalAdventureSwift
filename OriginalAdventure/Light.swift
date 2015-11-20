@@ -106,5 +106,4 @@ class Light : SceneNode {
         
         return lightBlock;
     }
-
 }

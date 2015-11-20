@@ -150,7 +150,7 @@ void main() {
     for (int light = 0; light < MaxLights; light++) {
         PerLightData lightData = lighting.lights[light];
         if (lightData.positionInCameraSpace == vec4(0)) { break; }
-        totalLighting += ComputeLighting(lighting.lights[light], diffuse, specular, specularity);
+        totalLighting += ComputeLighting(lightData, diffuse, specular, specularity);
     }
     
     outputColor = vec4(totalLighting, diffuse.a);

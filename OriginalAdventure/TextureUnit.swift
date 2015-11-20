@@ -13,8 +13,8 @@ import OpenGL.GL3
 * This enum makes things a little nicer than passing integer constants around.
 */
 enum TextureUnit : GLuint {
-    case AmbientColourUnit
     case DiffuseColourUnit
+    case AmbientColourUnit
     case SpecularColourUnit
     case SpecularityUnit
     case NormalMapUnit

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import OpenGL.GL3
 
 /**
  * Created by Thomas Roughton, Student ID 300313924, on 11/10/15.
@@ -15,42 +16,69 @@ import Foundation
  */
 class GLDeferredRenderer : Renderer {
     
+    static let CameraNear : Float = 1.0;
+    static let CameraFar : Float = 10000.0;
+    static let DepthRangeNear = 0.0;
+    static let DepthRangeFar = 1.0;
     
-    private var _geometryPassShader : Shader;
-    private var _pointLightPassShader : Shader;
-    private var _directionalLightPassShader :  Shader;
-    private var _nullShader : Shader;
+    private var _geometryPassShader : Shader = {
+        let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("ForwardRenderer", ofType: "vert")!)
+        let fragmentShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("GeometryPass", ofType: "frag")!)
+        var shader = Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
+        shader.addTextureMappings([.AmbientColourMap : .AmbientColourUnit, .DiffuseColourMap : .DiffuseColourUnit, .SpecularColourMap : .SpecularColourUnit, .SpecularityMap : .SpecularityUnit, .NormalMap : .NormalMapUnit])
+        return shader
+    }()
+    
+    private var _pointLightPassShader : Shader = {
+        let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("PointLightPass", ofType: "vert")!)
+        let fragmentShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("PointLightPass", ofType: "frag")!)
+        var shader = Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
+        shader.addTextureMappings([.DiffuseColourMap : .DiffuseColourUnit, .SpecularColourMap : .SpecularColourUnit, .NormalMap : .VertexNormalUnit, .DepthMap : .DepthTextureUnit])
+        return shader
+    }();
+    
+    private var _directionalLightPassShader :  Shader = {
+        let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("DirectionalLightPass", ofType: "vert")!)
+        let fragmentShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("DirectionalLightPass", ofType: "frag")!)
+        var shader = Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
+        shader.addTextureMappings([.DiffuseColourMap : .DiffuseColourUnit, .SpecularColourMap : .SpecularColourUnit, .NormalMap : .VertexNormalUnit, .DepthMap : .DepthTextureUnit])
+        return shader
+    }()
+    
+    private var _nullShader : Shader = {
+        let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("PointLightPass", ofType: "vert")!)
+        let fragmentShaderText = "#version 330\n" +
+            "\n" +
+            "void main()\n" +
+            "{\n" +
+        "}";
+        
+        var shader = Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
+        return shader
+    }();
 
     private var _currentFOV = Float(M_PI/3.0) {
         didSet {
             _projectionMatrix = Matrix4(perspectiveWithFieldOfView: _currentFOV, aspect: Float(self.size.width)/Float(self.size.height), nearZ: GLDeferredRenderer.CameraNear, farZ: GLDeferredRenderer.CameraFar)
         }
     }
-    private var _projectionMatrix : Matrix4;
+    private var _projectionMatrix : Matrix4! = nil;
     
     private var _gBuffer : GBuffer?;
     
-    init(dimensions : WindowDimension) {
-        
-        _geometryPassShader = Shader();
-        _pointLightPassShader = Shader();
-        _nullShader = Shader();
-        
-        self.size = dimensions
-    }
-    
-    var size : WindowDimension {
+    var size : WindowDimension = WindowDimension.defaultDimension {
         didSet {
             _projectionMatrix = Matrix4(perspectiveWithFieldOfView: _currentFOV, aspect: Float(self.size.width)/Float(self.size.height), nearZ: GLDeferredRenderer.CameraNear, farZ: GLDeferredRenderer.CameraFar)
         }
     }
     
-    var sizeInPixels : WindowDimension {
+    var sizeInPixels : WindowDimension = WindowDimension.defaultDimension {
         didSet {
             _gBuffer = GBuffer(ofSize: self.sizeInPixels);
             
-            _directionalLightPassShader.setUniform(Float(self.sizeInPixels.width), Float(self.sizeInPixels.height), forProperty: .ScreenSize)
+            _pointLightPassShader.useProgram()
             _pointLightPassShader.setUniform(Float(self.sizeInPixels.width), Float(self.sizeInPixels.height), forProperty: .ScreenSize)
+            _pointLightPassShader.endUseProgram()
         }
     }
     
@@ -74,6 +102,8 @@ class GLDeferredRenderer : Renderer {
     func render(nodes: [GameObject], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
         guard let gBuffer = _gBuffer else { return }
         
+        let halfSizeNearPlane = self.computeHalfSizeNearPlane(zNear: GLDeferredRenderer.CameraNear, windowDimensions: self.sizeInPixels, projectionMatrix: projectionMatrix)
+        
         self.preRender();
         
         gBuffer.startFrame();
@@ -85,11 +115,12 @@ class GLDeferredRenderer : Renderer {
         glEnable(GLenum(GL_STENCIL_TEST));
         
         for light in lights {
-            switch light {
-            case .Point(_, _, _, _, _):
+            switch light.type {
+            case .Point(_):
                     let lightToCameraMatrix = self.calculatePointLightSphereToCameraTransform(light: light, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
                     self.performStencilPass(lightToCameraMatrix: lightToCameraMatrix, projectionMatrix: projectionMatrix)
-                    self.performPointLightPass(light, lightToCameraMatrix: lightToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+                    self.performPointLightPass(light, lightToCameraMatrix: lightToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity, halfSizeNearPlane: halfSizeNearPlane)
+            default: break;
             }
         }
         
@@ -97,8 +128,8 @@ class GLDeferredRenderer : Renderer {
         // is unlimited and the final pass simply copies the texture.
         glDisable(GLenum(GL_STENCIL_TEST));
         
-        self.performDirectionalLightPass(lights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity);
-        
+        self.performDirectionalLightPass(lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity, halfSizeNearPlane: halfSizeNearPlane);
+
         self.performFinalPass();
         
         self.postRender();
@@ -109,6 +140,12 @@ class GLDeferredRenderer : Renderer {
     * Setup GL state for rendering.
     */
     func preRender() {
+        
+        let error = glGetError()
+        if error != 0 {
+            assertionFailure("OpenGL error \(error)")
+        }
+        
         glEnable(GLenum(GL_FRAMEBUFFER_SRGB));
         
         glEnable(GLenum(GL_CULL_FACE));
@@ -124,6 +161,9 @@ class GLDeferredRenderer : Renderer {
         glClear(GLenum(GL_DEPTH_BUFFER_BIT));
         
         glDisable(GLenum(GL_BLEND));
+        
+        
+        glClear(GLenum(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
     }
     
     /**
@@ -138,12 +178,18 @@ class GLDeferredRenderer : Renderer {
         
         glBlendEquationSeparate(GLenum(GL_FUNC_ADD), GLenum(GL_FUNC_ADD))
         glBlendFuncSeparate(GLenum(GL_SRC_ALPHA), GLenum(GL_ONE_MINUS_SRC_ALPHA), GLenum(GL_ONE), GLenum(GL_ONE))
+        
+        let error = glGetError()
+        if error != 0 {
+            assertionFailure("OpenGL error \(error)")
+        }
     }
     
     func performGeometryPass(nodes nodes: [GameObject], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, ambientMaxIntensity : Float) {
         _geometryPassShader.useProgram();
         
         _gBuffer!.bindForGeometryPass();
+  
         
         glDepthMask(1);
         
@@ -152,7 +198,6 @@ class GLDeferredRenderer : Renderer {
         glEnable(GLenum(GL_DEPTH_TEST))
         
         _geometryPassShader.setMatrix(projectionMatrix, forProperty: .Matrix4CameraToClip)
-        
         for node in nodes {
             guard let mesh = node.mesh else { continue }
             
@@ -160,8 +205,8 @@ class GLDeferredRenderer : Renderer {
             let normalModelToCameraTransform = nodeToCameraTransform.matrix3.inverse.transpose
             
             _geometryPassShader.setMatrix(nodeToCameraTransform, forProperty: .Matrix4ModelToCamera)
+            _geometryPassShader.setMatrix(nodeToCameraTransform.matrix3, forProperty: .Matrix3ModelToCamera)
             _geometryPassShader.setMatrix(normalModelToCameraTransform, forProperty: .Matrix4NormalModelToCamera)
-            
             mesh.renderWithShader(_geometryPassShader, hdrMaxIntensity: ambientMaxIntensity)
         }
         
@@ -189,7 +234,7 @@ class GLDeferredRenderer : Renderer {
         glStencilOpSeparate(GLenum(GL_BACK), GLenum(GL_KEEP), GLenum(GL_INCR_WRAP), GLenum(GL_KEEP));
         glStencilOpSeparate(GLenum(GL_FRONT), GLenum(GL_KEEP), GLenum(GL_DECR_WRAP), GLenum(GL_KEEP));
         
-        let sphereMesh = MeshType.meshFromFile(fileName: "sphere.obj")
+        let sphereMesh = MeshType.meshesFromFile(fileName: "sphere.obj").meshes.first!
         
         let modelToClipMatrix = lightToCameraMatrix * projectionMatrix
         
@@ -226,9 +271,9 @@ class GLDeferredRenderer : Renderer {
         return (x, y)
     }
     
-    func performPointLightPass(light : Light, lightToCameraMatrix : Matrix4, projectionMatrix : Matrix4, hdrMaxIntensity : Float) {
+    func performPointLightPass(light : Light, lightToCameraMatrix : Matrix4, projectionMatrix : Matrix4, hdrMaxIntensity : Float, halfSizeNearPlane: (x: Float, y: Float)) {
         
-        let sphereMesh = MeshType.meshFromFile(fileName: "sphere.obj")
+        let sphereMesh = MeshType.meshesFromFile(fileName: "sphere.obj").meshes.first!
         
         _gBuffer!.bindForLightPass();
         
@@ -244,13 +289,10 @@ class GLDeferredRenderer : Renderer {
         glEnable(GLenum(GL_CULL_FACE));
         glCullFace(GLenum(GL_FRONT));
         
-        _pointLightPassShader.pointLightData = light.pointLightDataBuffer(lightToCameraMatrix, hdrMaxIntensity);
-        _pointLightPassShader.setMatrix(lightToCameraMatrix, forProperty: .Matrix4ModelToCamera)
-        _pointLightPassShader.setMatrix(projectionMatrix, forProperty: .Matrix4CameraToClip);
+        _pointLightPassShader.setBuffer(light.perLightData(lightToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)!, forProperty: .Light)
+        _pointLightPassShader.setMatrix(projectionMatrix * lightToCameraMatrix, forProperty: .Matrix4ModelToClip)
         
         _pointLightPassShader.setUniform(Float(GLDeferredRenderer.DepthRangeNear), Float(GLDeferredRenderer.DepthRangeFar), forProperty: .DepthRange);
-        
-        let halfSizeNearPlane = self.computeHalfSizeNearPlane(zNear: GLDeferredRenderer.CameraNear, windowDimensions: self.sizeInPixels, projectionMatrix: projectionMatrix)
         _pointLightPassShader.setUniform(halfSizeNearPlane.x, halfSizeNearPlane.y, forProperty: .HalfSizeNearPlane)
         
         sphereMesh.render();
@@ -259,26 +301,29 @@ class GLDeferredRenderer : Renderer {
         glDisable(GLenum(GL_BLEND));
     }
     
-    func performDirectionalLightPass(lights: [Light], worldToCameraMatrix : Matrix4, hdrMaxIntensity : Float) {
+    func performDirectionalLightPass(lights: [Light], worldToCameraMatrix : Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity : Float, halfSizeNearPlane: (x: Float, y: Float)) {
         guard !lights.isEmpty else { return }
         
         _gBuffer!.bindForLightPass();
         _directionalLightPassShader.useProgram();
         
-        let quadMesh = MeshType.meshFromFile(fileName: "Plane.obj");
+        let quadMesh = MeshType.meshesFromFile(fileName: "Plane.obj").meshes.first!;
         
         let filteredLights = lights.filter { (light) -> Bool in
-            switch light {
-            case .Ambient(_, _, _):
+            switch light.type {
+            case .Ambient:
                 return true
-            case .Directional(_, _, _, _):
+            case .Directional(_):
                 return true
             default:
                 return false
             }
         }
         
-        _directionalLightPassShader.lightData = Light.toLightBlock(filteredLights, worldToCameraMatrix, hdrMaxIntensity);
+        _directionalLightPassShader.setBuffer(Light.toLightBlock(filteredLights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity), forProperty: .LightBlock);
+        _pointLightPassShader.setUniform(Float(GLDeferredRenderer.DepthRangeNear), Float(GLDeferredRenderer.DepthRangeFar), forProperty: .DepthRange);
+        _directionalLightPassShader.setUniform(halfSizeNearPlane.x, halfSizeNearPlane.y, forProperty: .HalfSizeNearPlane)
+        _directionalLightPassShader.setMatrix(projectionMatrix, forProperty: .Matrix4CameraToClip)
         
         glDisable(GLenum(GL_DEPTH_TEST));
         glEnable(GLenum(GL_BLEND));
