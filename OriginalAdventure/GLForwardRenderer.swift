@@ -20,7 +20,7 @@ class GLForwardRenderer : Renderer {
         let vertexShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("ForwardRenderer", ofType: "vert")!)
         let fragmentShaderText = try! String(contentsOfFile: NSBundle.mainBundle().pathForResource("ForwardRenderer", ofType: "frag")!)
         var shader = Shader(withVertexShader: vertexShaderText, fragmentShader: fragmentShaderText);
-        shader.addTextureMappings([.AmbientColourMap : .AmbientColourUnit, .DiffuseColourMap : .DiffuseColourUnit, .SpecularColourMap : .SpecularColourUnit, .SpecularityMap : .SpecularityUnit, .NormalMap : .NormalMapUnit])
+        shader.addTextureMappings([.AmbientColourMap : .AmbientColourUnit, .DiffuseColourMap : .DiffuseColourUnit, .SpecularityMap : .SpecularityUnit, .NormalMap : .NormalMapUnit])
         return shader
     }()
     
@@ -71,16 +71,16 @@ class GLForwardRenderer : Renderer {
         glDisable(GLenum(GL_DEPTH_TEST));
     }
     
-    func render(nodes: [GameObject], lights: [Light], worldToCameraMatrix: Matrix4, fieldOfView: Float, hdrMaxIntensity: Float) {
+    func render(meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, fieldOfView: Float, hdrMaxIntensity: Float) {
         if (fieldOfView != _currentFOV) {
             _currentFOV = fieldOfView;
         }
         
-        self.render(nodes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: _projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+        self.render(meshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: _projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
 
     }
     
-    func render(nodes: [GameObject], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
+    func render(meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
         
         var error = glGetError()
         if error != 0 {
@@ -96,18 +96,15 @@ class GLForwardRenderer : Renderer {
         let lightBlock = Light.toLightBlock(lights.filter({$0.isEnabled}), worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
         _shader.setBuffer(lightBlock, forProperty: .LightBlock)
         
-        let nodesShouldProbablyReallyBeZSorted = true
-        
-        for node in nodes {
-            guard let mesh = node.mesh else { continue }
-            let nodeToCameraSpaceTransform = worldToCameraMatrix * node.nodeToWorldSpaceTransform
+        for mesh in meshes {
+            let nodeToCameraSpaceTransform = worldToCameraMatrix * mesh.worldSpaceTransform
             let normalModelToCameraSpaceTransform = nodeToCameraSpaceTransform.matrix3.inverse.transpose;
             
             _shader.setMatrix(nodeToCameraSpaceTransform, forProperty: .Matrix4ModelToCamera);
             _shader.setMatrix(nodeToCameraSpaceTransform.matrix3, forProperty: .Matrix3ModelToCamera);
             _shader.setMatrix(normalModelToCameraSpaceTransform, forProperty: .Matrix4NormalModelToCamera)
             
-            mesh.renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)
+            (mesh as! GLMesh).renderWithShader(_shader, hdrMaxIntensity: hdrMaxIntensity)
             
         }
     

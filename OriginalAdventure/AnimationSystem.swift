@@ -13,7 +13,7 @@ class AnimationSystem {
     private static var _animations = [Animation]();
     
     static var currentTime : AnimationFloat {
-        return AnimationFloat(glfwGetTime());
+        return AnimationFloat(CurrentTime());
     }
     
     static func addAnimation(animation: Animation) {

@@ -11,7 +11,7 @@ import Foundation
 class OriginalAdventure: Game {
     
     var title = "Original Adventure"
-    lazy var _renderer : Renderer = GLDeferredRenderer()
+    lazy var _renderer : Renderer = RendererType()
     var sceneGraph : SceneNode! = nil
     var camera : Camera! = nil
     var player : PlayerBehaviour! = nil
@@ -38,7 +38,7 @@ class OriginalAdventure: Game {
         let playerObject = spawnPoint?.behaviourOfType(SpawnPointBehaviour)?.spawnPlayerWithId("player")
         self.player = playerObject?.behaviourOfType(PlayerBehaviour)
         self.camera = playerObject?.camera
-        self.camera.hdrMaxIntensity = 16
+        self.camera.hdrMaxIntensity = 10
         
         self.setupInput()
     }
@@ -65,9 +65,13 @@ class OriginalAdventure: Game {
         
         self.player.lookInDirection(_viewAngle.x, angleY: _viewAngle.y)
         
-        _renderer.render(sceneGraph.allNodesOfType(GameObject),
-            lights: sceneGraph.allNodesOfType(Light),
-            worldToCameraMatrix: self.camera.worldToNodeSpaceTransform,
+        let meshes = sceneGraph.enabledNodesOfType(GameObject).flatMap { $0.mesh }
+        let worldToCameraMatrix = self.camera.worldToNodeSpaceTransform
+        let sortedMeshes = zSort(meshes, worldToCameraMatrix: worldToCameraMatrix)
+        
+        _renderer.render(sortedMeshes,
+            lights: sceneGraph.enabledNodesOfType(Light),
+            worldToCameraMatrix: worldToCameraMatrix,
             fieldOfView: self.camera.fieldOfView,
             hdrMaxIntensity: self.camera.hdrMaxIntensity)
         

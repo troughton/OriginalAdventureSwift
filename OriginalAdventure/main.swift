@@ -61,7 +61,6 @@ func main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 0);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
     
@@ -73,7 +72,7 @@ func main() {
     
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     
     glfwSetKeyCallback(window, keyCallback);
     glfwSetWindowSizeCallback(window, windowSizeCallback)

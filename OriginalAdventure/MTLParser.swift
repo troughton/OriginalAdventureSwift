@@ -147,9 +147,7 @@ class MTLParser {
                     case .DiffuseMap:
                         material.diffuseMap = try parseTexture(scanner, directory: directory, useSRGB: true, unit: .DiffuseColourUnit)
                         
-                    case .SpecularColourMap:
-                        material.specularColourMap = try parseTexture(scanner, directory: directory, useSRGB: true, unit: .SpecularColourUnit)
-                        
+                    case .SpecularColourMap: fallthrough
                     case .SpecularityMap:
                         material.specularityMap = try parseTexture(scanner, directory: directory, useSRGB: false, unit: .SpecularityUnit)
                         

@@ -18,6 +18,15 @@ class Reference<T> {
     }
 }
 
+func ceil(value: Int, toNearestMultipleOf multiple: Int) -> Int {
+    if multiple == 0 { return value }
+    let remainder = value % multiple
+
+    if remainder == 0 { return value }
+    return value + multiple - remainder
+    
+}
+
 struct WindowDimension {
     let width : Int32
     let height : Int32
@@ -98,6 +107,18 @@ extension Matrix3 {
 }
 
 typealias Vector3 = float3
+
+extension Vector3 : Hashable {
+    public var hashValue : Int {
+        let prime = 31;
+        var result = 1;
+        result = prime * result + self.x.hashValue
+        result = prime * result + self.y.hashValue
+        result = prime * result + self.z.hashValue
+        
+        return result
+    }
+}
 
 extension Vector3 : Equatable {
     static let Zero = Vector3()

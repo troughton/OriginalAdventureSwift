@@ -27,7 +27,7 @@ uniform vec2 halfSizeNearPlane;
 
 uniform sampler2D ambientColourSampler;
 uniform sampler2D diffuseColourSampler;
-uniform sampler2D specularColourSampler;
+uniform sampler2D specularitySampler;
 
 uniform sampler2D normalMapSampler;
 
@@ -77,7 +77,7 @@ void main() {
     vec3 cameraSpacePosition = CalcCameraSpacePositionFromWindow(texture(depthSampler, textureCoordinate).r, cameraDirection);
 
 	vec3 diffuseColour = texture(diffuseColourSampler, textureCoordinate).rgb;
-	vec4 specularColour = texture(specularColourSampler, textureCoordinate);
+	vec4 specularColour = texture(specularitySampler, textureCoordinate);
 	vec4 ambientColour = texture(ambientColourSampler, textureCoordinate);
 
 	vec3 surfaceNormal = texture(normalMapSampler, textureCoordinate).xyz - 1;

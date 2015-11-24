@@ -32,7 +32,6 @@ uniform Material {
 
 uniform sampler2D ambientColourSampler;
 uniform sampler2D diffuseColourSampler;
-uniform sampler2D specularColourSampler;
 uniform sampler2D specularitySampler;
 uniform sampler2D normalMapSampler;
 
@@ -55,22 +54,14 @@ vec4 ambientColour() {
 
 vec4 specularColour() {
     if ((material.booleanMask & (1 << 2)) != 0) {
-        return texture(specularColourSampler, textureCoordinate);
+        return texture(specularitySampler, textureCoordinate);
     } else {
         return material.specularColour;
     }
 }
 
-float specularity() {
-    if ((material.booleanMask & (1 << 3)) != 0) {
-        return 1.f/min(texture(specularitySampler, textureCoordinate).r, 1.f);
-    } else {
-        return material.specularColour.a;
-    }
-}
-
 bool useNormalMap() {
-    return (material.booleanMask & (1 << 4)) != 0;
+    return (material.booleanMask & (1 << 3)) != 0;
 }
 
 float ComputeAttenuation(in vec3 objectPosition,
@@ -113,13 +104,13 @@ float ComputeAngleNormalHalf(in PerLightData lightData, out float cosAngIncidenc
     return angleNormalHalf;
 }
 
-vec3 ComputeLighting(in PerLightData lightData, in vec4 diffuse, in vec4 specular, in float specularity) {
+vec3 ComputeLighting(in PerLightData lightData, in vec4 diffuse, in vec4 specular) {
     vec3 lightIntensity;
     float cosAngIncidence;
     
     float angleNormalHalf = ComputeAngleNormalHalf(lightData, cosAngIncidence, lightIntensity);
     
-    float exponent = angleNormalHalf / specularity;
+    float exponent = angleNormalHalf / specular.w;
     exponent = -(exponent * exponent);
     float gaussianTerm = exp(exponent);
     
@@ -139,7 +130,6 @@ void main() {
     
     vec4 diffuse = diffuseColour();
     vec4 specular = specularColour();
-    float specularity = specularity();
     
     vec3 totalLighting = diffuse.rgb * lighting.ambientIntensity.rgb;
     
@@ -150,7 +140,7 @@ void main() {
     for (int light = 0; light < MaxLights; light++) {
         PerLightData lightData = lighting.lights[light];
         if (lightData.positionInCameraSpace == vec4(0)) { break; }
-        totalLighting += ComputeLighting(lightData, diffuse, specular, specularity);
+        totalLighting += ComputeLighting(lightData, diffuse, specular);
     }
     
     outputColor = vec4(totalLighting, diffuse.a);

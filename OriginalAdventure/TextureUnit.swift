@@ -15,7 +15,6 @@ import OpenGL.GL3
 enum TextureUnit : GLuint {
     case DiffuseColourUnit
     case AmbientColourUnit
-    case SpecularColourUnit
     case SpecularityUnit
     case NormalMapUnit
     
@@ -24,7 +23,7 @@ enum TextureUnit : GLuint {
     case DepthTextureUnit
     case FinalUnit
     
-    static let deferredShadingUnits : [TextureUnit] = [.VertexNormalUnit, .DiffuseColourUnit, .SpecularColourUnit]
+    static let deferredShadingUnits : [TextureUnit] = [.VertexNormalUnit, .DiffuseColourUnit, .SpecularityUnit]
     
     func makeActive() {
         glActiveTexture(GLenum(GL_TEXTURE0) + self.rawValue)

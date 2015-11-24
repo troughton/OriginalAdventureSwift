@@ -54,15 +54,17 @@ extension MDLTextureFilter {
     }
 }
 
-struct TextureSampler {
+struct TextureSampler : Hashable {
     let texture : GLKTextureInfo
     let textureUnit : TextureUnit
-    let textureFilter : MDLTextureFilter
     
     init(texture: GLKTextureInfo, textureUnit: TextureUnit, filter: MDLTextureFilter) {
         self.texture = texture
         self.textureUnit = textureUnit
-        self.textureFilter = filter
+        
+        filter.applyToSampler(_glSamplerRef, useMipMaps: self.texture.containsMipmaps)
+        
+        glSamplerParameterf(_glSamplerRef, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), 4.0);
     }
  
     private let _glSamplerRef : GLuint = {
@@ -73,26 +75,11 @@ struct TextureSampler {
     
     func bindTexture() {
         self.textureUnit.makeActive()
-        var error = glGetError()
-        if error != 0 {
-            assertionFailure("OpenGL error \(error)")
-        }
+
         glBindTexture(texture.target, texture.name)
         
-        error = glGetError()
-        if error != 0 {
-            assertionFailure("OpenGL error \(error)")
-        }
-        
         glBindSampler(self.textureUnit.rawValue, _glSamplerRef)
-        error = glGetError()
-        if error != 0 {
-            assertionFailure("OpenGL error \(error)")
-        }
         
-        self.textureFilter.applyToSampler(_glSamplerRef, useMipMaps: self.texture.containsMipmaps)
-
-        glSamplerParameterf(_glSamplerRef, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), 4.0);
     }
     
     func unbindTexture() {
@@ -101,4 +88,12 @@ struct TextureSampler {
         
         glBindSampler(self.textureUnit.rawValue, 0)
     }
+    
+    var hashValue : Int {
+        return texture.hash * 31 + Int(textureUnit.rawValue)
+    }
+}
+
+func ==(lhs: TextureSampler, rhs: TextureSampler) -> Bool {
+    return lhs.texture === rhs.texture && lhs.textureUnit == rhs.textureUnit
 }

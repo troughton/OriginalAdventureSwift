@@ -57,7 +57,7 @@ class Light : SceneNode {
         }
     }
     
-    func perLightData(worldToCameraMatrix : Matrix4, hdrMaxIntensity: Float) -> PerLightData? {
+    func perLightData(worldToCameraMatrix worldToCameraMatrix : Matrix4, hdrMaxIntensity: Float) -> PerLightData? {
      
         let localSpacePosition : Vector4
         switch self.type {
@@ -73,9 +73,9 @@ class Light : SceneNode {
         let intensity = self.isEnabled ? self.colourVector / hdrMaxIntensity : Vector3.Zero;
 
         var perLightData = PerLightData()
-        perLightData.positionInCameraSpace = (positionInCameraSpace.x, positionInCameraSpace.y, positionInCameraSpace.z, positionInCameraSpace.w)
-        perLightData.intensity = (intensity.x, intensity.y, intensity.z, 0)
-        perLightData.falloff = (self.falloff.constant, self.falloff.linear, self.falloff.quadratic, 0)
+        perLightData.positionInCameraSpace = positionInCameraSpace
+        perLightData.intensity = float4(intensity.x, intensity.y, intensity.z, 0)
+        perLightData.falloff = float4(self.falloff.constant, self.falloff.linear, self.falloff.quadratic, 0)
         
         return perLightData
     }
@@ -91,19 +91,19 @@ class Light : SceneNode {
         })
             .reduce(Colour.Zero) { $0 + $1 }) / hdrMaxIntensity
         
-        let lightData = lights.flatMap { $0.perLightData(worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity) }
+        let lightData = lights.flatMap { $0.perLightData(worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity) }
         
         assert(lightData.count <= Int(MaxLights), "There are too many lights in the scene.")
         
         var lightBlock = LightBlock();
-        lightBlock.ambientIntensity = (ambientIntensity.x, ambientIntensity.y, ambientIntensity.z, 0)
-        withUnsafeMutablePointer(&lightBlock.lights.0) { (lightBlockPointer) -> Void in
-            let perLightBuffer = UnsafeMutableBufferPointer<PerLightData>(start: lightBlockPointer, count: Int(MaxLights))
+        lightBlock.ambientIntensity = float4(ambientIntensity.x, ambientIntensity.y, ambientIntensity.z, 0)
+        withUnsafeMutablePointer(&lightBlock) { (lightBlockPointer) -> Void in
+            let offsetPointer = UnsafeMutablePointer<Void>(lightBlockPointer).advancedBy(sizeof(float4))
+            let perLightBuffer = UnsafeMutableBufferPointer<PerLightData>(start: UnsafeMutablePointer<PerLightData>(offsetPointer), count: Int(MaxLights))
             for i in 0..<min(lightData.count, Int(MaxLights)) {
                 perLightBuffer[i] = lightData[i]
             }
         }
-        
         return lightBlock;
     }
 }

@@ -215,7 +215,7 @@ extension Shader {
     
     func setMatrix(matrix : Matrix4, forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
-            assertionFailure("No uniform exists for the name \(property.rawValue)")
+            print("Warning: No uniform exists for the name \(property.rawValue)")
             return
         }
         
@@ -229,7 +229,7 @@ extension Shader {
     
     func setMatrix(matrix : Matrix3, forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
-            assertionFailure("No uniform exists for the name \(property.rawValue)")
+            print("Warning: No uniform exists for the name \(property.rawValue)")
             return
         }
         
@@ -265,7 +265,7 @@ extension Shader {
     
     func setUniform(values : GLint..., forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
-            assertionFailure("No uniform exists for the name \(property.rawValue)")
+            print("Warning: No uniform exists for the name \(property.rawValue)")
             return
         }
         
@@ -289,7 +289,7 @@ extension Shader {
 extension Shader {
     func setBuffer<T>(var buffer : T, forProperty property: ShaderProperty) {
         guard let uniformRef = self.uniformMappings[property.rawValue] else {
-            assertionFailure("No uniform exists for the name \(property.rawValue)")
+            print("Warning: No uniform exists for the name \(property.rawValue)")
             return
         }
         

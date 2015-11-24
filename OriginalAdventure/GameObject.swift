@@ -43,7 +43,8 @@ class GameObject: TransformNode {
     }
     var mesh : Mesh? {
         didSet {
-            mesh?.parent = self
+            mesh?.isEnabled = self.isEnabled
+            mesh?.worldSpaceTransform = self.nodeToWorldSpaceTransform
         }
     }
     var behaviours = [Behaviour]()
@@ -60,6 +61,11 @@ class GameObject: TransformNode {
             light?.isEnabled = enabled
             collider?.isEnabled = enabled
         }
+    }
+    
+    override func transformDidChange() {
+        super.transformDidChange()
+        mesh?.worldSpaceTransform = self.nodeToWorldSpaceTransform
     }
     
     func behaviourOfType<B : Behaviour>(type : B.Type) -> B? {

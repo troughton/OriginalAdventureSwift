@@ -18,7 +18,7 @@ uniform vec2 screenSize;
 uniform vec2 halfSizeNearPlane;
 
 uniform sampler2D diffuseColourSampler;
-uniform sampler2D specularColourSampler;
+uniform sampler2D specularitySampler;
 
 uniform sampler2D normalMapSampler;
 
@@ -32,15 +32,15 @@ vec3 CalcCameraSpacePositionFromWindow(in float windowZ, in vec3 eyeDirection) {
 }
 
 float ComputeAttenuation(in vec3 objectPosition,
-    in vec3 lightPosition,
-    out vec3 lightDirection) {
-
-        vec3 vectorToLight = lightPosition - objectPosition;
-        float lightDistanceSqr = dot(vectorToLight, vectorToLight);
-        float inverseLightDistance = inversesqrt(lightDistanceSqr);
-        lightDirection = vectorToLight * inverseLightDistance;
-
-        return 1 / (light.falloff[0] + light.falloff[1] / inverseLightDistance + light.falloff[2] * lightDistanceSqr);
+                         in vec3 lightPosition,
+                         out vec3 lightDirection) {
+    
+    vec3 vectorToLight = lightPosition - objectPosition;
+    float lightDistanceSqr = dot(vectorToLight, vectorToLight);
+    float inverseLightDistance = inversesqrt(lightDistanceSqr);
+    lightDirection = vectorToLight * inverseLightDistance;
+    
+    return 1.f / (light.falloff.x + light.falloff.y / inverseLightDistance + light.falloff.z * lightDistanceSqr);
 }
 
 float ComputeAngleNormalHalf(in vec3 cameraSpacePosition, in vec3 surfaceNormal, out float cosAngIncidence, out vec3 lightIntensity) {
@@ -90,12 +90,12 @@ void main() {
     vec3 cameraSpacePosition = CalcCameraSpacePositionFromWindow(texture(depthSampler, textureCoordinate).r, cameraDirection);
 
 	vec3 diffuseColour = texture(diffuseColourSampler, textureCoordinate).rgb;
-	vec4 specularColour = texture(specularColourSampler, textureCoordinate);
+	vec4 specularColour = texture(specularitySampler, textureCoordinate);
 
 	vec3 surfaceNormal = texture(normalMapSampler, textureCoordinate).xyz - 1;
 
     vec3 totalLighting = ComputeLighting(cameraSpacePosition, surfaceNormal, diffuseColour, specularColour);
 
-    outputColor = vec4(totalLighting, 1.f);
+    outputColor = vec4(totalLighting, 1);
 
 }

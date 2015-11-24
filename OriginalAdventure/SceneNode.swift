@@ -108,6 +108,13 @@ class SceneNode : Hashable {
         }
     }
     
+    func enabledNodesOfType<T : SceneNode>(type : T.Type) -> [T] {
+        return self.withAllNodesOfType(type) { (nodes) -> [T] in
+            let retVal = nodes.filter { $0.isEnabled }
+            return retVal
+        }
+    }
+    
     var siblings : [SceneNode] {
         if let parent = self.parent {
             return parent.children.filter({ (element) -> Bool in

@@ -24,14 +24,12 @@ struct Material {
     
     var diffuseMap : TextureSampler?
     var ambientMap : TextureSampler?
-    var specularColourMap : TextureSampler?
     var specularityMap : TextureSampler?
     var normalMap : TextureSampler?
     
     func bindSamplers() {
         self.diffuseMap?.bindTexture()
         self.ambientMap?.bindTexture()
-        self.specularColourMap?.bindTexture()
         self.specularityMap?.bindTexture()
         self.normalMap?.bindTexture()
         
@@ -40,12 +38,11 @@ struct Material {
     func unbindSamplers() {
         self.diffuseMap?.unbindTexture()
         self.ambientMap?.unbindTexture()
-        self.specularColourMap?.unbindTexture()
         self.specularityMap?.unbindTexture()
         self.normalMap?.unbindTexture()
     }
     
-    init(diffuseColour: Vector3 = Vector3.One, specularColour: Vector3 = Vector3.Zero, specularity: Float = 0.5, ambientColour: Vector3 = Vector3.Zero, opacity : Float = 1.0) {
+    init(diffuseColour: Vector3 = Vector3(0.5, 0.5, 0.5), specularColour: Vector3 = Vector3(0.5, 0.5, 0.5), specularity: Float = 0.5, ambientColour: Vector3 = Vector3.Zero, opacity : Float = 1.0) {
         self.diffuseColour = diffuseColour
         self.specularColour = specularColour
         self.specularity = specularity
@@ -59,16 +56,14 @@ struct Material {
         static let None = TextureMapFlag(rawValue: 0)
         static let AmbientMapEnabled = TextureMapFlag(rawValue: 1 << 0)
         static let DiffuseMapEnabled = TextureMapFlag(rawValue: 1 << 1)
-        static let SpecularColourMapEnabled = TextureMapFlag(rawValue: 1 << 2)
-        static let SpecularityMapEnabled = TextureMapFlag(rawValue: 1 << 3)
-        static let NormalMapEnabled = TextureMapFlag(rawValue: 1 << 4)
+        static let SpecularityMapEnabled = TextureMapFlag(rawValue: 1 << 2)
+        static let NormalMapEnabled = TextureMapFlag(rawValue: 1 << 3)
     }
     
     private func packMapFlags() -> TextureMapFlag {
         var result = TextureMapFlag.None;
         if (self.ambientMap != nil) { result.unionInPlace(.AmbientMapEnabled) ; }
         if (self.diffuseMap != nil) { result.unionInPlace(.DiffuseMapEnabled); }
-        if (self.specularColourMap != nil) { result.unionInPlace(.SpecularColourMapEnabled); }
         if (self.specularityMap != nil) { result.unionInPlace(.SpecularityMapEnabled); }
         if (self.normalMap != nil) { result.unionInPlace(.NormalMapEnabled); }
         return result;
@@ -100,11 +95,11 @@ struct Material {
     func toStruct(hdrMaxIntensity hdrMaxIntensity : Float) -> MaterialStruct {
         var materialStruct = MaterialStruct()
         let ambientColour = self.ambientColour / hdrMaxIntensity;
-        materialStruct.ambientColour = (ambientColour.x, ambientColour.y, ambientColour.z, self.useAmbient ? 1 : 0)
+        materialStruct.ambientColour = float4(ambientColour.x, ambientColour.y, ambientColour.z, self.useAmbient ? 1 : 0)
         
-        materialStruct.diffuseColour = (self.diffuseColour.x, self.diffuseColour.y, self.diffuseColour.z, self.opacity)
+        materialStruct.diffuseColour = float4(self.diffuseColour.x, self.diffuseColour.y, self.diffuseColour.z, self.opacity)
         
-        materialStruct.specularColour = (self.specularColour.x, self.specularColour.y, self.specularColour.z, self.specularity)
+        materialStruct.specularColour = float4(self.specularColour.x, self.specularColour.y, self.specularColour.z, self.specularity)
         
         materialStruct.flags = Int32(self.packMapFlags().rawValue)
     
@@ -114,4 +109,37 @@ struct Material {
     static func phongSpecularToGaussian(phong: Float) -> Float {
         return 1.0/phong
     }
+}
+
+extension Material : Hashable {
+    var hashValue : Int {
+        let prime = 31;
+        var result = 1;
+        
+        result = prime &* result &+ self.ambientColour.hashValue
+        result = prime &* result &+ self.diffuseColour.hashValue
+        result = prime &* result &+ self.specularColour.hashValue
+        result = prime &* result &+ self.specularity.hashValue
+        result = prime &* result &+ self.opacity.hashValue
+        result = prime &* result &+ self.useAmbient.hashValue
+        result = prime &* result &+ (self.diffuseMap?.hashValue ?? 0)
+        result = prime &* result &+ (self.ambientMap?.hashValue ?? 0)
+        result = prime &* result &+ (self.specularityMap?.hashValue ?? 0)
+        result = prime &* result &+ (self.normalMap?.hashValue ?? 0)
+        
+        return result
+    }
+}
+
+func ==(lhs: Material, rhs: Material) -> Bool {
+    return lhs.ambientColour == rhs.ambientColour &&
+    lhs.diffuseColour == rhs.diffuseColour &&
+    lhs.specularColour == rhs.specularColour &&
+    lhs.opacity == rhs.opacity &&
+    lhs.specularity == rhs.specularity &&
+    lhs.useAmbient == rhs.useAmbient &&
+    lhs.diffuseMap == rhs.diffuseMap &&
+    lhs.ambientMap == rhs.ambientMap &&
+    lhs.specularityMap == rhs.specularityMap &&
+    lhs.normalMap == rhs.normalMap
 }

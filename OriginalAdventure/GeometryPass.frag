@@ -21,7 +21,6 @@ uniform Material {
 
 uniform sampler2D ambientColourSampler;
 uniform sampler2D diffuseColourSampler;
-uniform sampler2D specularColourSampler;
 uniform sampler2D specularitySampler;
 uniform sampler2D normalMapSampler;
 
@@ -48,17 +47,9 @@ vec4 ambientColour() {
 
 vec4 specularColour() {
     if ((material.booleanMask & (1 << 2)) != 0) {
-        return texture(specularColourSampler, textureCoordinate);
+        return texture(specularitySampler, textureCoordinate);
     } else {
         return material.specularColour;
-    }
-}
-
-float specularity() {
-    if ((material.booleanMask & (1 << 3)) != 0) {
-        return 1.f/min(texture(specularitySampler, textureCoordinate).r, 1.f);
-    } else {
-        return material.specularColour.a;
     }
 }
 											
@@ -85,5 +76,5 @@ void main()
         ambientColourOut = ambientColour.rgb;
     }
 
-    specularColourOut = vec4(specularColour().rgb, specularity());
+    specularColourOut = vec4(specularColour());
 }

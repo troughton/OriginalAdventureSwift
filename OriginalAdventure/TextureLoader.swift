@@ -78,7 +78,7 @@ class TextureLoader {
         var numComponents : Int32 = 0
 
         let image = path.withCString { (path) -> UnsafeMutablePointer<UInt8> in
-            return stbi_load(path, &width, &height, &numComponents, 0)
+            return UnsafeMutablePointer<UInt8>() //stbi_load(path, &width, &height, &numComponents, 0)
         }
         let imageBuffer = UnsafeMutableBufferPointer<UInt8>(start: image, count: Int(width * height * numComponents));
         let normalMap = generateNormalMap(imageBuffer, width: Int(width), height: Int(height), componentsPerPixel: Int(numComponents), extrusion: 2.0, wrap: true)

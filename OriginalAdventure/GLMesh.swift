@@ -9,6 +9,51 @@
 import Foundation
 import GLKit
 
+extension Mesh {
+    static func meshesFromFile(inDirectory directory : String? = nil, fileName: String) -> [Mesh] {
+        var meshes = _loadedMeshes[fileName];
+        
+        if (meshes == nil) {
+            autoreleasepool {
+                do {
+                    meshes = [Mesh]()
+                    
+                    let path = NSBundle.mainBundle().pathForResource(fileName, ofType: nil, inDirectory: directory)!
+                    
+                    let materialLibraries = try loadMaterialsFromOBJAtPath(path, containingDirectory: directory)
+                    
+                    let asset = MDLAsset(URL: NSURL(fileURLWithPath: path), vertexDescriptor: nil, bufferAllocator: GLKMeshBufferAllocator())
+                    
+                    for mdlObject in (0..<asset.count).map({asset[$0]}) {
+                        if let mesh = mdlObject as? MDLMesh {
+                            if mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeNormal) == nil {
+                                mesh.addNormalsWithAttributeNamed(nil, creaseThreshold: 0.8)
+                            }
+                            if mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeTangent) == nil && mesh.vertexDescriptor.attributeNamed(MDLVertexAttributeTextureCoordinate) != nil {
+                                mesh.addTangentBasisForTextureCoordinateAttributeNamed(MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
+                            }
+                        }
+                    }
+                    
+                    var mdlMeshes : NSArray? = nil
+                    let glkMeshes = try GLKMesh.newMeshesFromAsset(asset, sourceMeshes: &mdlMeshes)
+                    
+                    for (glkMesh, mdlMesh) in zip(glkMeshes, mdlMeshes!) {
+                        
+                        meshes!.append(MeshType(glkMesh: glkMesh, mdlMesh: mdlMesh as! MDLMesh, materialLibraries: materialLibraries))
+                    }
+                    
+                    _loadedMeshes[fileName] = meshes;
+                } catch let error {
+                    assertionFailure("Error loading mesh with name \(fileName): \(error)")
+                }
+            }
+        }
+        
+        return meshes!;
+    }
+}
+
 typealias AttributeType = GLenum
 
 /**
@@ -69,7 +114,7 @@ struct GLMesh: Mesh {
     var isEnabled = true
     var materialOverride : Material? = nil
     var textureRepeat = Vector3.One
-    var parent : GameObject! = nil
+    var worldSpaceTransform = Matrix4.Identity
     
     private let primitives : [RenderCommand]; //The primitives that make up self mesh.
     

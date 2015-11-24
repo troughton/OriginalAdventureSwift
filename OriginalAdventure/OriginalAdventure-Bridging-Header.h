@@ -5,4 +5,3 @@
 #import <GLFW/glfw3.h>
 #import "Structs.h"
 #import "CBridges.h"
-#import "stb_image.h"

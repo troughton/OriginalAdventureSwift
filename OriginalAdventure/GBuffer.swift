@@ -41,7 +41,7 @@ final class GBuffer {
         var i = 0;
         for textureUnit in TextureUnit.deferredShadingUnits {
             glBindTexture(GLenum(GL_TEXTURE_2D), _glTextures[i]);
-            glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GBuffer.gBufferFormatForTextureUnit(textureUnit), sizeInPixels.width, sizeInPixels.height, 0, GLenum(GL_RGBA), GLenum(GL_FLOAT), nil);
+            glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GBuffer.gBufferFormatForTextureUnit(textureUnit), sizeInPixels.width, sizeInPixels.height, 0, GLenum(GL_BGRA), GLenum(GL_FLOAT), nil);
             glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_NEAREST)
             glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_NEAREST)
             glFramebufferTexture2D(GLenum(GL_DRAW_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0 + i), GLenum(GL_TEXTURE_2D), _glTextures[i], 0);
@@ -101,7 +101,7 @@ final class GBuffer {
         switch textureUnit {
         case .DiffuseColourUnit:
             return GL_RGB8
-        case .SpecularColourUnit:
+        case .SpecularityUnit:
             return GL_RGBA8_SNORM
         case .VertexNormalUnit:
             return GL_R11F_G11F_B10F //This is a positive-only format, so we need to modify the values in the shader

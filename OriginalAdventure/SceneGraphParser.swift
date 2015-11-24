@@ -133,7 +133,7 @@ extension SceneGraphParser {
         if let materialFileName = materialFileName {
             materialOverride = MaterialLibrary.library(inDirectory: materialDirectory, withName: materialFileName).materials[materialName!]
         }
-        return MeshType.meshesFromFile(inDirectory: directory, fileName: fileName).meshes.first.flatMap({ (var mesh) -> Mesh in
+        return MeshType.meshesFromFile(inDirectory: directory, fileName: fileName).first.flatMap({ (var mesh) -> Mesh in
             mesh.textureRepeat = textureRepeat
             mesh.materialOverride = materialOverride
             return mesh
