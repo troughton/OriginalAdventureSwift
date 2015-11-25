@@ -65,11 +65,11 @@ class OriginalAdventure: Game {
         
         self.player.lookInDirection(_viewAngle.x, angleY: _viewAngle.y)
         
-        let meshes = sceneGraph.enabledNodesOfType(GameObject).flatMap { $0.mesh }
+        var meshes = sceneGraph.enabledNodesOfType(GameObject).flatMap { $0.mesh }
         let worldToCameraMatrix = self.camera.worldToNodeSpaceTransform
-        let sortedMeshes = zSort(meshes, worldToCameraMatrix: worldToCameraMatrix)
+        zSort(&meshes, worldToCameraMatrix: worldToCameraMatrix)
         
-        _renderer.render(sortedMeshes,
+        _renderer.render(meshes,
             lights: sceneGraph.enabledNodesOfType(Light),
             worldToCameraMatrix: worldToCameraMatrix,
             fieldOfView: self.camera.fieldOfView,

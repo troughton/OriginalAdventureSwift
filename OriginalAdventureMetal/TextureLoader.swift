@@ -12,6 +12,10 @@ import MetalKit
 class TextureLoader {
     private static var textureLoader = MTKTextureLoader(device: Metal.device)
     class func loadTexture(atPath path: String, useSRGB : Bool, isHeightMap: Bool = false) throws -> MTLTexture {
-        return try textureLoader.newTextureWithContentsOfURL(NSURL.fileURLWithPath(path), options: [MTKTextureLoaderOptionAllocateMipmaps : true, MTKTextureLoaderOptionSRGB: useSRGB])
+        let texture = try textureLoader.newTextureWithContentsOfURL(NSURL.fileURLWithPath(path), options: [MTKTextureLoaderOptionAllocateMipmaps : true, MTKTextureLoaderOptionSRGB: useSRGB, MTKTextureLoaderOptionTextureUsage : MTLTextureUsage.ShaderRead.rawValue])
+        texturesNeedingMipMapGeneration.append(texture)
+        return texture
     }
+    
+    static var texturesNeedingMipMapGeneration = [MTLTexture]()
 }

@@ -32,7 +32,6 @@ struct Material {
         self.ambientMap?.bindTexture()
         self.specularityMap?.bindTexture()
         self.normalMap?.bindTexture()
-        
     }
     
     func unbindSamplers() {
@@ -50,24 +49,11 @@ struct Material {
         self.opacity = opacity
     }
     
-    struct TextureMapFlag : OptionSetType {
-        let rawValue: Int
-        
-        static let None = TextureMapFlag(rawValue: 0)
-        static let AmbientMapEnabled = TextureMapFlag(rawValue: 1 << 0)
-        static let DiffuseMapEnabled = TextureMapFlag(rawValue: 1 << 1)
-        static let SpecularityMapEnabled = TextureMapFlag(rawValue: 1 << 2)
-        static let NormalMapEnabled = TextureMapFlag(rawValue: 1 << 3)
-    }
-    
-    private func packMapFlags() -> TextureMapFlag {
-        var result = TextureMapFlag.None;
-        if (self.ambientMap != nil) { result.unionInPlace(.AmbientMapEnabled) ; }
-        if (self.diffuseMap != nil) { result.unionInPlace(.DiffuseMapEnabled); }
-        if (self.specularityMap != nil) { result.unionInPlace(.SpecularityMapEnabled); }
-        if (self.normalMap != nil) { result.unionInPlace(.NormalMapEnabled); }
-        return result;
-    }
+    //Flags:
+    //Use an ambient map if ambientColour.x is NaN
+    //Use a diffuse map if diffuseColour.x is NaN
+    //Use a specular map if specularity.x is NaN
+    //Use a normal map if diffuseColour.y isNaN
     
     /**
     * @param hdrMaxIntensity The maximum light intensity in the scene, which the ambient colour is divided by.
@@ -85,29 +71,28 @@ struct Material {
     * //Packed into a single vec4
     * Vector3 specularColour;
     * float specularity;
-    
-    * boolean useAmbientMap; //packed in an integer as 1 << 0
-    * boolean useDiffuseMap; //packed in an integer as 1 << 1
-    * boolean useSpecularColourMap; //packed in an integer as 1 << 2
-    * boolean useSpecularityMap; //packed in an integer as 1 << 3
-    * boolean useNormalMap; //packed in an integer as 1 << 4
     */
     func toStruct(hdrMaxIntensity hdrMaxIntensity : Float) -> MaterialStruct {
         var materialStruct = MaterialStruct()
         let ambientColour = self.ambientColour / hdrMaxIntensity;
-        materialStruct.ambientColour = float4(ambientColour.x, ambientColour.y, ambientColour.z, self.useAmbient ? 1 : 0)
+        materialStruct.ambientColour = float4(self.ambientMap != nil ? Float.NaN : ambientColour.x, ambientColour.y, ambientColour.z, self.useAmbient ? 1 : 0)
         
-        materialStruct.diffuseColour = float4(self.diffuseColour.x, self.diffuseColour.y, self.diffuseColour.z, self.opacity)
+        materialStruct.diffuseColour = float4(self.diffuseMap != nil ? Float.NaN : self.diffuseColour.x, self.normalMap != nil ? Float.NaN : self.diffuseColour.y, self.diffuseColour.z, self.opacity)
         
-        materialStruct.specularColour = float4(self.specularColour.x, self.specularColour.y, self.specularColour.z, self.specularity)
-        
-        materialStruct.flags = Int32(self.packMapFlags().rawValue)
+        materialStruct.specularColour = float4(self.specularityMap != nil ? Float.NaN : self.specularColour.x, self.specularColour.y, self.specularColour.z, self.specularity)
     
         return materialStruct
     }
     
     static func phongSpecularToGaussian(phong: Float) -> Float {
         return 1.0/phong
+    }
+    
+    static func fillTextureWithColour(texture: MTLTexture, colour: float4) -> MTLTexture {
+        let bytes : [UInt8] = [UInt8(min(colour.x * 255, 255)), UInt8(min(colour.y * 255, 255)), UInt8(min(colour.z * 255, 255)), UInt8(min(colour.w * 255, 255))]
+        texture.replaceRegion(MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: bytes, bytesPerRow: 4)
+        
+        return texture
     }
 }
 

@@ -38,8 +38,6 @@ extern "C" {
         
         //Packed into a single vec4
         vector_float4 specularColour;
-        
-        int flags;
     } MaterialStruct;
 
     typedef struct {
@@ -47,6 +45,7 @@ extern "C" {
         matrix_float3x3 normalModelToCameraMatrix;
         matrix_float4x4 modelToCameraMatrix;
         matrix_float4x4 projectionMatrix;
+        vector_float3 textureRepeat;
     } ModelMatrices;
     
 #ifdef __cplusplus

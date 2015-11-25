@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias RendererType = MTKForwardRenderer
+typealias RendererType = MTLDeferredRenderer
 typealias MeshType = MTLMesh
 
 func CurrentTime() -> Double {

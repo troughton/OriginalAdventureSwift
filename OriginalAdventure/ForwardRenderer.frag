@@ -27,7 +27,6 @@ uniform Material {
     vec4 ambientColour; //of which xyz are the colour and w is a 0/1 as to whether ambient self-illumination is enabled.
     vec4 diffuseColour; //r,g,b,a
     vec4 specularColour; //of which xyz are the colour and w is the specularity.
-    int booleanMask;
 } material;
 
 uniform sampler2D ambientColourSampler;
@@ -36,7 +35,7 @@ uniform sampler2D specularitySampler;
 uniform sampler2D normalMapSampler;
 
 vec4 diffuseColour() {
-    if ((material.booleanMask & (1 << 1)) != 0) {
+    if (isnan(material.diffuseColour.x)) {
         return texture(diffuseColourSampler, textureCoordinate);
     } else {
         return material.diffuseColour;
@@ -45,7 +44,7 @@ vec4 diffuseColour() {
 
 vec4 ambientColour() {
     
-    if ((material.booleanMask & (1)) != 0) {
+    if (isnan(material.ambientColour.x)) {
         return texture(ambientColourSampler, textureCoordinate);
     } else {
         return material.ambientColour;
@@ -53,7 +52,7 @@ vec4 ambientColour() {
 }
 
 vec4 specularColour() {
-    if ((material.booleanMask & (1 << 2)) != 0) {
+    if (isnan(material.specularColour.x)) {
         return texture(specularitySampler, textureCoordinate);
     } else {
         return material.specularColour;
@@ -61,7 +60,7 @@ vec4 specularColour() {
 }
 
 bool useNormalMap() {
-    return (material.booleanMask & (1 << 3)) != 0;
+    return isnan(material.diffuseColour.y); //require that textures have a diffuse map if they have a normal map
 }
 
 float ComputeAttenuation(in vec3 objectPosition,
@@ -125,7 +124,8 @@ vec3 ComputeLighting(in PerLightData lightData, in vec4 diffuse, in vec4 specula
 void main() {
     
     if (material.diffuseColour.a < 0.001f) {
-        discard;
+        outputColor = vec4(0);
+        return;
     }
     
     vec4 diffuse = diffuseColour();

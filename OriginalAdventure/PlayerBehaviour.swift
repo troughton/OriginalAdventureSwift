@@ -15,7 +15,7 @@ class PlayerBehaviour : Behaviour {
     override init(gameObject: GameObject) {
         super.init(gameObject: gameObject)
         
-        self.gameObject.camera = Camera(id: gameObject.id + "CameraTranslation", parent: gameObject, translation: Vector3(0, 60, 0))
+        self.gameObject.camera = Camera(id: gameObject.id + "CameraTranslation", parent: gameObject, translation: Vector3(0, 40, 0))
     }
     
     /**

@@ -37,6 +37,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.delegate = self
         view.device = Metal.device
         view.sampleCount = 1
+        view.colorPixelFormat = .BGRA8Unorm_sRGB
         view.depthStencilPixelFormat = .Depth32Float_Stencil8
         
         Metal.view = view
@@ -48,8 +49,17 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func drawInMTKView(view: MTKView) {
         
         AnimationSystem.update()
+        
         let currentTime = CurrentTime()
         let elapsedTime = currentTime - timeLastUpdate
+        
+        game.input.checkHeldKeys({ (inputSource) -> Bool in
+            if let key = inputSource as? UnicodeScalar {
+                return self.keysPressed.contains(key);
+            } else {
+                return false;
+            }
+            }, elapsedTime: Float(elapsedTime))
         
         game.update(delta: elapsedTime)
         
@@ -60,5 +70,19 @@ class GameViewController: NSViewController, MTKViewDelegate {
     
     func mtkView(view: MTKView, drawableSizeWillChange size: CGSize) {
         game.size = WindowDimension(width: Int32(size.width), height: Int32(size.height))
+    }
+    
+    var keysPressed = Set<UnicodeScalar>()
+    
+    override func keyDown(theEvent: NSEvent) {
+        let key = UnicodeScalar(theEvent.keyCode);
+        game.input.pressKey(key)
+        keysPressed.insert(key)
+    }
+    
+    override func keyUp(theEvent: NSEvent) {
+        let key = UnicodeScalar(theEvent.keyCode);
+        game.input.releaseKey(key)
+        keysPressed.remove(key)
     }
 }

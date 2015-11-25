@@ -136,4 +136,26 @@ struct BoundingBox {
     
         return BoundingBox(minPoint: Vector3(minX, minY, minZ), maxPoint: Vector3(maxX, maxY, maxZ));
     }
+    
+    func maxZForBoundingBoxInSpace(nodeToSpaceTransform : Matrix4) -> Float {
+        
+        var maxZ = -Float.infinity
+        
+        //Compute all the vertices for the box.
+        for xToggle in 0..<2 {
+            for yToggle in 0..<2 {
+                for zToggle in 0..<2 {
+                    let x = xToggle == 0 ? minPoint.x : maxPoint.x;
+                    let y = yToggle == 0 ? minPoint.y : maxPoint.y;
+                    let z = zToggle == 0 ? minPoint.z : maxPoint.z;
+                    let vertex = Vector3(x, y, z);
+                    let transformedVertex = nodeToSpaceTransform * Vector4(vertex, 1);
+                    
+                    if (transformedVertex.z > maxZ) { maxZ = transformedVertex.z; }
+                }
+            }
+        }
+        
+        return maxZ;
+    }
 }

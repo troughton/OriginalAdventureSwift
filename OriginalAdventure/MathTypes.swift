@@ -139,7 +139,7 @@ public func ==(lhs: float3, rhs: float3) -> Bool {
 
 typealias Vector4 = float4
 
-extension Vector4 : Equatable {
+extension Vector4 : Hashable, Equatable {
     static let ZeroPosition = Vector4(0, 0, 0, 1)
     static let Zero = Vector4(0)
     
@@ -149,6 +149,17 @@ extension Vector4 : Equatable {
     
     init(_ vector: Vector3, _ w: Float) {
         self.init(vector.x, vector.y, vector.z, w)
+    }
+    
+    public var hashValue : Int {
+        let prime = 31;
+        var result = 1;
+        result = prime &* result &+ self.x.hashValue
+        result = prime &* result &+ self.y.hashValue
+        result = prime &* result &+ self.z.hashValue
+        result = prime &* result &+ self.w.hashValue
+        
+        return result
     }
 }
 

@@ -22,6 +22,7 @@
 		E9205DC11BD744DD005B990F /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9205DC01BD744DD005B990F /* Material.swift */; };
 		E9205DC61BD777B7005B990F /* CBridges.c in Sources */ = {isa = PBXBuildFile; fileRef = E9205DC51BD777B7005B990F /* CBridges.c */; };
 		E9205DC81BD77C97005B990F /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9205DC71BD77C97005B990F /* ModelIO.framework */; };
+		E93A311D1C042C75009240D4 /* MTKInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93A311C1C042C75009240D4 /* MTKInputView.swift */; };
 		E93B4C0F1BED59A200792417 /* TextureUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B4C0E1BED59A200792417 /* TextureUnit.swift */; };
 		E93B4C111BED5D8B00792417 /* GLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B4C101BED5D8B00792417 /* GLExtensions.swift */; };
 		E93CB1031BF3EF450011267C /* MTLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93CB1021BF3EF450011267C /* MTLParser.swift */; };
@@ -46,14 +47,17 @@
 		E99A844F1C01749800D0D63F /* ForwardRendererShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = E99A844E1C01749800D0D63F /* ForwardRendererShaders.metal */; };
 		E99A84511C01749800D0D63F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E99A84501C01749800D0D63F /* Assets.xcassets */; };
 		E99A84541C01749800D0D63F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E99A84521C01749800D0D63F /* MainMenu.xib */; };
+		E99C44411C0532EE00F27679 /* GBuffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = E99C44401C0532EE00F27679 /* GBuffer.metal */; };
+		E99C44431C05449400F27679 /* MTLRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99C44421C05449400F27679 /* MTLRenderer.swift */; };
 		E99FCEBD1BDA2A3500C778A5 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBC1BDA2A3500C778A5 /* Game.swift */; };
 		E99FCEBF1BDA2F4600C778A5 /* OriginalAdventure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */; };
+		E99FDCDE1C050B9B004AFD66 /* MTLDeferredRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FDCDD1C050B9B004AFD66 /* MTLDeferredRenderer.swift */; };
 		E9A4D4B61BF077BD003FEACC /* MedievalModels in Resources */ = {isa = PBXBuildFile; fileRef = E9A4D4B51BF077BD003FEACC /* MedievalModels */; };
 		E9A4D4B71BF077CB003FEACC /* PassthroughShader.vert in Resources */ = {isa = PBXBuildFile; fileRef = E9A4D4B31BF075F1003FEACC /* PassthroughShader.vert */; };
 		E9A4D4B81BF077CB003FEACC /* PickerShader.frag in Resources */ = {isa = PBXBuildFile; fileRef = E944BD921BF03F9800E61077 /* PickerShader.frag */; };
 		E9A4D4B91BF077CB003FEACC /* PickerShader.vert in Resources */ = {isa = PBXBuildFile; fileRef = E944BD931BF03F9800E61077 /* PickerShader.vert */; };
 		E9A734F81BE2089F002BB7FD /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A734F71BE2089F002BB7FD /* Renderer.swift */; };
-		E9B6ABF11C02957600F27FD7 /* MTKForwardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B6ABF01C02957600F27FD7 /* MTKForwardRenderer.swift */; };
+		E9B6ABF11C02957600F27FD7 /* MTLForwardRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B6ABF01C02957600F27FD7 /* MTLForwardRenderer.swift */; };
 		E9B6ABF41C02965500F27FD7 /* EventDataKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F774FA1BFC1747009776F0 /* EventDataKey.swift */; };
 		E9B6ABF51C02965500F27FD7 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FB00C1BFAA63E00025554 /* Event.swift */; };
 		E9B6ABF61C02965500F27FD7 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FAFF71BFA8C4800025554 /* Animation.swift */; };
@@ -222,6 +226,7 @@
 		E9205DE61BD79063005B990F /* Wood.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Wood.obj; sourceTree = "<group>"; };
 		E92549ED1BD8EB1400EA4D58 /* glfw3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glfw3.h; sourceTree = "<group>"; };
 		E92549EE1BD8EB1400EA4D58 /* glfw3native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glfw3native.h; sourceTree = "<group>"; };
+		E93A311C1C042C75009240D4 /* MTKInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MTKInputView.swift; path = OriginalAdventureMetal/MTKInputView.swift; sourceTree = "<group>"; };
 		E93B4C0E1BED59A200792417 /* TextureUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureUnit.swift; sourceTree = "<group>"; };
 		E93B4C101BED5D8B00792417 /* GLExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLExtensions.swift; sourceTree = "<group>"; };
 		E93CB0FD1BF321850011267C /* MedievalModels.abc */ = {isa = PBXFileReference; lastKnownFileType = file; path = MedievalModels.abc; sourceTree = "<group>"; };
@@ -254,13 +259,17 @@
 		E99A84501C01749800D0D63F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = OriginalAdventureMetal/Assets.xcassets; sourceTree = "<group>"; };
 		E99A84531C01749800D0D63F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		E99A84551C01749800D0D63F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = OriginalAdventureMetal/Info.plist; sourceTree = "<group>"; };
+		E99C443F1C05326D00F27679 /* MetalStructs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MetalStructs.h; path = OriginalAdventureMetal/MetalStructs.h; sourceTree = "<group>"; };
+		E99C44401C0532EE00F27679 /* GBuffer.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = GBuffer.metal; path = OriginalAdventureMetal/GBuffer.metal; sourceTree = "<group>"; };
+		E99C44421C05449400F27679 /* MTLRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MTLRenderer.swift; path = OriginalAdventureMetal/MTLRenderer.swift; sourceTree = "<group>"; };
 		E99FCEBC1BDA2A3500C778A5 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Game.swift; path = OriginalAdventure/Game.swift; sourceTree = "<group>"; };
 		E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OriginalAdventure.swift; sourceTree = "<group>"; };
+		E99FDCDD1C050B9B004AFD66 /* MTLDeferredRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTLDeferredRenderer.swift; sourceTree = "<group>"; };
 		E9A4D4B31BF075F1003FEACC /* PassthroughShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PassthroughShader.vert; sourceTree = "<group>"; };
 		E9A4D4B51BF077BD003FEACC /* MedievalModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MedievalModels; path = OriginalAdventure/MedievalModels; sourceTree = "<group>"; };
 		E9A734F71BE2089F002BB7FD /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		E9A734F91BE208C2002BB7FD /* GLDeferredRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLDeferredRenderer.swift; sourceTree = "<group>"; };
-		E9B6ABF01C02957600F27FD7 /* MTKForwardRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MTKForwardRenderer.swift; path = OriginalAdventureMetal/MTKForwardRenderer.swift; sourceTree = "<group>"; };
+		E9B6ABF01C02957600F27FD7 /* MTLForwardRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MTLForwardRenderer.swift; path = OriginalAdventureMetal/MTLForwardRenderer.swift; sourceTree = "<group>"; };
 		E9B6AC201C02979E00F27FD7 /* OriginalAdventureMetal-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "OriginalAdventureMetal-Bridging-Header.h"; path = "OriginalAdventureMetal/OriginalAdventureMetal-Bridging-Header.h"; sourceTree = "<group>"; };
 		E9B6AC221C02991C00F27FD7 /* MetalConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MetalConstants.swift; path = OriginalAdventureMetal/MetalConstants.swift; sourceTree = "<group>"; };
 		E9B6AC241C02994200F27FD7 /* GLConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLConstants.swift; sourceTree = "<group>"; };
@@ -521,6 +530,24 @@
 			path = OriginalAdventure;
 			sourceTree = "<group>";
 		};
+		E99C443D1C05321A00F27679 /* Deferred */ = {
+			isa = PBXGroup;
+			children = (
+				E99C44401C0532EE00F27679 /* GBuffer.metal */,
+			);
+			name = Deferred;
+			sourceTree = "<group>";
+		};
+		E99C443E1C05322100F27679 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				E99A844E1C01749800D0D63F /* ForwardRendererShaders.metal */,
+				E99C443D1C05321A00F27679 /* Deferred */,
+				E99C443F1C05326D00F27679 /* MetalStructs.h */,
+			);
+			name = Shaders;
+			sourceTree = "<group>";
+		};
 		E9A734F61BE20893002BB7FD /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
@@ -583,6 +610,7 @@
 				E9B6AC281C029AEB00F27FD7 /* Rendering */,
 				E99A844A1C01749800D0D63F /* AppDelegate.swift */,
 				E99A844C1C01749800D0D63F /* GameViewController.swift */,
+				E93A311C1C042C75009240D4 /* MTKInputView.swift */,
 				E99A84501C01749800D0D63F /* Assets.xcassets */,
 				E99A84521C01749800D0D63F /* MainMenu.xib */,
 				E99A84551C01749800D0D63F /* Info.plist */,
@@ -595,11 +623,13 @@
 		E9B6AC281C029AEB00F27FD7 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
-				E99A844E1C01749800D0D63F /* ForwardRendererShaders.metal */,
-				E9B6ABF01C02957600F27FD7 /* MTKForwardRenderer.swift */,
+				E99C443E1C05322100F27679 /* Shaders */,
+				E9B6ABF01C02957600F27FD7 /* MTLForwardRenderer.swift */,
 				E9B6AC2D1C029C5100F27FD7 /* MTLMesh.swift */,
 				E9B6AC2F1C029E1800F27FD7 /* TextureLoader.swift */,
 				E9B6AC2B1C029BDB00F27FD7 /* TextureSampler.swift */,
+				E99FDCDD1C050B9B004AFD66 /* MTLDeferredRenderer.swift */,
+				E99C44421C05449400F27679 /* MTLRenderer.swift */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -862,6 +892,7 @@
 				E9B6ABFB1C02965500F27FD7 /* SceneGraphParser.swift in Sources */,
 				E9B6ABFC1C02965500F27FD7 /* OptionalStringInitialisable.swift in Sources */,
 				E9B6AC001C02965500F27FD7 /* Shaders.swift in Sources */,
+				E99FDCDE1C050B9B004AFD66 /* MTLDeferredRenderer.swift in Sources */,
 				E9B6AC011C02965500F27FD7 /* Renderer.swift in Sources */,
 				E9B6AC2E1C029C5100F27FD7 /* MTLMesh.swift in Sources */,
 				E9B6AC041C02965500F27FD7 /* GBuffer.swift in Sources */,
@@ -879,10 +910,12 @@
 				E9B6AC2C1C029BDB00F27FD7 /* TextureSampler.swift in Sources */,
 				E9B6AC131C02965500F27FD7 /* Behaviour.swift in Sources */,
 				E9B6AC141C02965500F27FD7 /* MathTypes.swift in Sources */,
+				E99C44431C05449400F27679 /* MTLRenderer.swift in Sources */,
 				E9B6AC151C02965500F27FD7 /* BoundingBox.swift in Sources */,
 				E9B6AC171C02965500F27FD7 /* CBridges.c in Sources */,
 				E9B6AC181C02965500F27FD7 /* Input.swift in Sources */,
 				E9B6AC191C02965500F27FD7 /* OriginalAdventure.swift in Sources */,
+				E99C44411C0532EE00F27679 /* GBuffer.metal in Sources */,
 				E9B6AC1A1C02965500F27FD7 /* SpawnPointBehaviour.swift in Sources */,
 				E9B6AC1B1C02965500F27FD7 /* PlayerBehaviour.swift in Sources */,
 				E9B6AC1C1C02965500F27FD7 /* FlickeringLightBehaviour.swift in Sources */,
@@ -891,8 +924,9 @@
 				E9B6AC1F1C02965500F27FD7 /* Settings.swift in Sources */,
 				E99A844F1C01749800D0D63F /* ForwardRendererShaders.metal in Sources */,
 				E99A844D1C01749800D0D63F /* GameViewController.swift in Sources */,
+				E93A311D1C042C75009240D4 /* MTKInputView.swift in Sources */,
 				E99A844B1C01749800D0D63F /* AppDelegate.swift in Sources */,
-				E9B6ABF11C02957600F27FD7 /* MTKForwardRenderer.swift in Sources */,
+				E9B6ABF11C02957600F27FD7 /* MTLForwardRenderer.swift in Sources */,
 				E9B6AC231C02991C00F27FD7 /* MetalConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias RendererType = GLForwardRenderer
+typealias RendererType = GLDeferredRenderer
 typealias MeshType = GLMesh
 
 func CurrentTime() -> Double {
