@@ -325,6 +325,9 @@ class MTLDeferredRenderer : MTLRenderer {
     }
     
     func performPointLightPass(encoder: MTLRenderCommandEncoder, lights : [Light], worldToCameraMatrix : Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity : Float) {
+        
+        encoder.pushDebugGroup("Point Lights")
+        
         let pointLights = lights.filter { (light) -> Bool in
                 switch light.type {
                 case .Point(_):
@@ -338,7 +341,7 @@ class MTLDeferredRenderer : MTLRenderer {
         encoder.setStencilReferenceValue(0xFF)
         
         let lightTransformationStep = ceil(sizeof(float4x4), toNearestMultipleOf: 256)
-        let lightTransformationBuffer = self.bufferWithCapacity(sizeof(float4x4) * pointLights.count, label: "Light Transformation Matrices")
+        let lightTransformationBuffer = self.bufferWithCapacity(lightTransformationStep * pointLights.count, label: "Light Transformation Matrices")
         
         let lightDataStep = ceil(sizeof(LightBlock), toNearestMultipleOf: 256)
         let lightDataBuffer = self.bufferWithCapacity(lightDataStep * pointLights.count, label: "Per Light Information")
@@ -346,18 +349,18 @@ class MTLDeferredRenderer : MTLRenderer {
         for (i, light) in pointLights.enumerate() {
             let lightToCameraMatrix = self.calculatePointLightSphereToCameraTransform(light: light, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
             let lightToClipMatrix = projectionMatrix * lightToCameraMatrix
-            UnsafeMutablePointer<float4x4>(lightDataBuffer.contents().advancedBy(i * lightTransformationStep)).memory = lightToClipMatrix
+            UnsafeMutablePointer<float4x4>(lightTransformationBuffer.contents().advancedBy(i * lightTransformationStep)).memory = lightToClipMatrix
             
             UnsafeMutablePointer<LightBlock>(lightDataBuffer.contents().advancedBy(i * lightDataStep)).memory = Light.toLightBlock([light], worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
         }
-        lightTransformationBuffer.didModifyRange(NSRange(location: 0, length: pointLights.count * sizeof(float4x4)))
+        lightTransformationBuffer.didModifyRange(NSRange(location: 0, length: pointLights.count * lightTransformationStep))
         lightDataBuffer.didModifyRange(NSRange(location: 0, length: pointLights.count * lightDataStep))
         
         encoder.setVertexBuffer(self.lightVertexBuffer, offset: 0, atIndex: 0)
         encoder.setVertexBuffer(lightTransformationBuffer, offset: 0, atIndex: 2)
         encoder.setFragmentBuffer(lightDataBuffer, offset: 0, atIndex: 0)
         
-        for (i, light) in pointLights.enumerate() {
+        for i in 0..<pointLights.count {
             
             encoder.pushDebugGroup("Light Stencil")
             
@@ -385,6 +388,8 @@ class MTLDeferredRenderer : MTLRenderer {
             
             encoder.popDebugGroup()
         }
+        
+        encoder.popDebugGroup()
     }
 
     
@@ -442,7 +447,7 @@ class MTLDeferredRenderer : MTLRenderer {
         var matrixTerms = float3(projectionMatrix[3][2], projectionMatrix[2][3], projectionMatrix[2][2]);
         renderEncoder.setFragmentBytes(&matrixTerms, length: sizeof(float3), atIndex: 2)
         
-       //self.performPointLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+       self.performPointLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
         
         self.performDirectionalLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
     }
