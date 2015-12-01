@@ -15,7 +15,7 @@ using namespace Ingenero;
 fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
                                              texture2d<half> ambientTexture [[texture(0)]],
                                              texture2d<float> diffuseTexture [[texture(1)]],
-                                             texture2d<half> specularTexture [[texture(2)]],
+                                             texture2d<float> specularTexture [[texture(2)]],
                                              texture2d<half> normalTexture [[texture(3)]]) {
     
     constexpr sampler s = sampler(coord::normalized,
@@ -29,15 +29,17 @@ fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
     
     float4 diffuse = diffuseTexture.sample(s, textureCoordinate);
     
-    half4 specular = specularTexture.sample(s, textureCoordinate);
+    float4 specular = specularTexture.sample(s, textureCoordinate);
     half4 ambientColour = ambientTexture.sample(s, textureCoordinate);
     half4 localSpaceNormal = normalTexture.sample(s, textureCoordinate) * 2 - 1;
     half3 surfaceNormal = normalize(tangentToCameraSpaceMatrix * localSpaceNormal.xyz);
     
+    float3 specularTintTowardsDiffuse = saturate((specular.rgb - 1)/(diffuse.rgb - 1));
+    float avgTint = (specularTintTowardsDiffuse.x + specularTintTowardsDiffuse.y + specularTintTowardsDiffuse.z)/3;
+    
     GBuffers output;
-    output.diffuse = diffuse;
-    output.normal = surfaceNormal;
-    output.specular = specular;
+    output.diffuse = float4(diffuse.rgb, avgTint);
+    output.normal = half4((surfaceNormal + 1)/2, half(specular.w));
     output.light = float4(ambientColour);
     
     return output;

@@ -22,7 +22,6 @@ class MTLRenderer : Renderer {
     static let DepthRangeNear = 0.0;
     static let DepthRangeFar = 1.0;
     
-    let MaxMeshes = 128
     let MaxTextures = 2048
     
     var size : WindowDimension = WindowDimension.defaultDimension {
@@ -47,7 +46,7 @@ class MTLRenderer : Renderer {
         commandQueue = Metal.device.newCommandQueue()
         commandQueue.label = "main command queue"
         
-        self.setupBuffers(maxMeshes: MaxMeshes, maxTextures: MaxTextures)
+        self.setupTextures(maxTextures: MaxTextures)
         
         self.normalTexture = Metal.device.newTextureWithDescriptor(textureDescriptor)
         Material.fillTextureWithColour(self.normalTexture, colour: float4(0.5, 0.5, 1, 0))
@@ -56,24 +55,14 @@ class MTLRenderer : Renderer {
     
     private let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 1, height: 1, mipmapped: false)
     
-    var transformationBuffers = [MTLBuffer]()
-    var lightBuffers = [MTLBuffer]()
     var textureBuffers = [[MTLTexture]]()
     
     var normalTexture : MTLTexture! = nil
     
-    
-    func setupBuffers(maxMeshes maxMeshes: Int, maxTextures: Int) {
+    func setupTextures(maxTextures maxTextures: Int) {
         textureDescriptor.usage = .ShaderRead
         
         for _ in 0..<MTLRenderer.MaxFrameLag {
-            let transformationBuffer = Metal.device.newBufferWithLength(ceil(sizeof(ModelMatrices), toNearestMultipleOf: 256) * maxMeshes, options: [.StorageModeManaged])
-            transformationBuffer.label = "Model Transformation Buffer"
-            transformationBuffers.append(transformationBuffer)
-            
-            let lightBuffer = Metal.device.newBufferWithLength(ceil(sizeof(LightBlock), toNearestMultipleOf: 256), options: [.StorageModeManaged])
-            lightBuffer.label = "Light Information Buffer"
-            lightBuffers.append(lightBuffer)
             
             var textures = [MTLTexture]()
             for _ in 0..<maxTextures {
@@ -81,6 +70,36 @@ class MTLRenderer : Renderer {
             }
             textureBuffers.append(textures)
         }
+    }
+    
+    var availableBuffers = [MTLBuffer]()
+    var buffersInUse : [[MTLBuffer]] = {
+            var buffers = [[MTLBuffer]]()
+        for _ in 0..<MTLRenderer.MaxFrameLag {
+            buffers.append([MTLBuffer]())
+        }
+        return buffers
+    }()
+    
+    func bufferWithCapacity(capacity: Int, label: String? = nil) -> MTLBuffer {
+        var index = -1;
+        var minimumCapacity = Int.max
+        for (i, buffer) in self.availableBuffers.enumerate() {
+            if buffer.length >= capacity && buffer.length < minimumCapacity {
+                minimumCapacity = buffer.length
+                index = i
+            }
+        }
+        
+        var buffer : MTLBuffer! = nil
+        if index == -1 {
+            buffer = Metal.device.newBufferWithLength(capacity * 2, options: [.StorageModeManaged])
+        } else {
+            buffer = self.availableBuffers.removeAtIndex(index)
+        }
+        buffer.label = label
+        self.buffersInUse[self.currentFrameIndex].append(buffer)
+        return buffer
     }
     
     private final func preRender() -> (MTLCommandBuffer, MTLRenderCommandEncoder, MTLDrawable)? {
@@ -152,6 +171,9 @@ class MTLRenderer : Renderer {
         self.render(commandBuffer: commandBuffer, renderEncoder: renderEncoder, drawable: currentDrawable, meshes: meshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
         
         self.postRender(commandBuffer: commandBuffer, renderEncoder: renderEncoder, drawable: currentDrawable)
+        
+        self.availableBuffers.appendContentsOf(self.buffersInUse[self.currentFrameIndex])
+        self.buffersInUse[self.currentFrameIndex].removeAll(keepCapacity: true)
         currentFrameIndex = (currentFrameIndex + 1) % MTLRenderer.MaxFrameLag
     }
     

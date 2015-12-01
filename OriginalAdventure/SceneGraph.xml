@@ -16,7 +16,7 @@
         <Player id="player" boundingBox="-30, -60, -10, 30, 60, 10"/>-->
     </TransformNode>
     <AmbientLight id="ambientLight" colour="0.5, 0.5, 0.5" intensity="0.4"/>
-
+    <DirectionalLight id="directionalLight" colour="0.7, 0.6, 0.7" intensity="10" fromDirection="1, 1, 1"/>
     <!-- Room 1 starts here. Centred at origin, dimensions are 1200 x 1800. -->
     
     <TransformNode id="greenLightLeverTransform" translation="-600, 110, 90" rotation="0, 0, -0.7071067812, 0.7071067812" scale="0.5, 0.5, 0.5">

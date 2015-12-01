@@ -75,21 +75,24 @@ class MTLForwardRenderer : MTLRenderer {
         return texture!
     }
     
+    let transformationBufferStep = ceil(sizeof(ModelMatrices), toNearestMultipleOf: 256)
+    let lightBufferSize = ceil(sizeof(LightBlock), toNearestMultipleOf: 256)
+    
     override func render(commandBuffer commandBuffer: MTLCommandBuffer, renderEncoder: MTLRenderCommandEncoder, drawable: MTLDrawable, meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
         
-        let mtlTransformationBuffer = self.transformationBuffers[currentFrameIndex]
+        let mtlTransformationBuffer = self.bufferWithCapacity(transformationBufferStep * meshes.count, label: "Transformation Matrices")
         let transformationBuffer = UnsafeMutablePointer<Void>(mtlTransformationBuffer.contents()) //needs to be typed as void so we offset by bytes
-        let transformationBufferStep = ceil(sizeof(ModelMatrices), toNearestMultipleOf: 256)
         
-        let mtlLightBuffer = self.lightBuffers[currentFrameIndex]
+        
+        let mtlLightBuffer = self.bufferWithCapacity(lightBufferSize, label: "Light Information")
         let lightBuffer = UnsafeMutablePointer<LightBlock>(mtlLightBuffer.contents())
         
         let lightBlock = Light.toLightBlock(lights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
         lightBuffer.memory = lightBlock
         mtlLightBuffer.didModifyRange(NSMakeRange(0, sizeof(LightBlock)))
         
-        renderEncoder.setVertexBuffer(self.transformationBuffers[currentFrameIndex], offset: 0, atIndex: 2)
-        renderEncoder.setFragmentBuffer(self.lightBuffers[currentFrameIndex], offset: 0, atIndex: 0)
+        renderEncoder.setVertexBuffer(mtlTransformationBuffer, offset: 0, atIndex: 2)
+        renderEncoder.setFragmentBuffer(mtlLightBuffer, offset: 0, atIndex: 0)
         
         let textureBuffer = self.textureBuffers[currentFrameIndex];
         var nextTextureIndex = 0;

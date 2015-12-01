@@ -49,9 +49,12 @@
 		E99A84541C01749800D0D63F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E99A84521C01749800D0D63F /* MainMenu.xib */; };
 		E99C44411C0532EE00F27679 /* GBuffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = E99C44401C0532EE00F27679 /* GBuffer.metal */; };
 		E99C44431C05449400F27679 /* MTLRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99C44421C05449400F27679 /* MTLRenderer.swift */; };
+		E99C44491C0560B200F27679 /* LightComputations.metal in Sources */ = {isa = PBXBuildFile; fileRef = E99C44481C0560B200F27679 /* LightComputations.metal */; };
+		E99C444D1C0562D400F27679 /* Lighting.metal in Sources */ = {isa = PBXBuildFile; fileRef = E99C444C1C0562D400F27679 /* Lighting.metal */; };
 		E99FCEBD1BDA2A3500C778A5 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBC1BDA2A3500C778A5 /* Game.swift */; };
 		E99FCEBF1BDA2F4600C778A5 /* OriginalAdventure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */; };
 		E99FDCDE1C050B9B004AFD66 /* MTLDeferredRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99FDCDD1C050B9B004AFD66 /* MTLDeferredRenderer.swift */; };
+		E9A212D61C0BCA5C0037EE45 /* DeferredPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A212D51C0BCA5C0037EE45 /* DeferredPrimitives.swift */; };
 		E9A4D4B61BF077BD003FEACC /* MedievalModels in Resources */ = {isa = PBXBuildFile; fileRef = E9A4D4B51BF077BD003FEACC /* MedievalModels */; };
 		E9A4D4B71BF077CB003FEACC /* PassthroughShader.vert in Resources */ = {isa = PBXBuildFile; fileRef = E9A4D4B31BF075F1003FEACC /* PassthroughShader.vert */; };
 		E9A4D4B81BF077CB003FEACC /* PickerShader.frag in Resources */ = {isa = PBXBuildFile; fileRef = E944BD921BF03F9800E61077 /* PickerShader.frag */; };
@@ -262,9 +265,13 @@
 		E99C443F1C05326D00F27679 /* MetalStructs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MetalStructs.h; path = OriginalAdventureMetal/MetalStructs.h; sourceTree = "<group>"; };
 		E99C44401C0532EE00F27679 /* GBuffer.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = GBuffer.metal; path = OriginalAdventureMetal/GBuffer.metal; sourceTree = "<group>"; };
 		E99C44421C05449400F27679 /* MTLRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MTLRenderer.swift; path = OriginalAdventureMetal/MTLRenderer.swift; sourceTree = "<group>"; };
+		E99C44471C0560B200F27679 /* LightComputations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightComputations.h; path = OriginalAdventureMetal/LightComputations.h; sourceTree = "<group>"; };
+		E99C44481C0560B200F27679 /* LightComputations.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = LightComputations.metal; path = OriginalAdventureMetal/LightComputations.metal; sourceTree = "<group>"; };
+		E99C444C1C0562D400F27679 /* Lighting.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Lighting.metal; path = OriginalAdventureMetal/Lighting.metal; sourceTree = "<group>"; };
 		E99FCEBC1BDA2A3500C778A5 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Game.swift; path = OriginalAdventure/Game.swift; sourceTree = "<group>"; };
 		E99FCEBE1BDA2F4600C778A5 /* OriginalAdventure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OriginalAdventure.swift; sourceTree = "<group>"; };
 		E99FDCDD1C050B9B004AFD66 /* MTLDeferredRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTLDeferredRenderer.swift; sourceTree = "<group>"; };
+		E9A212D51C0BCA5C0037EE45 /* DeferredPrimitives.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeferredPrimitives.swift; sourceTree = "<group>"; };
 		E9A4D4B31BF075F1003FEACC /* PassthroughShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = PassthroughShader.vert; sourceTree = "<group>"; };
 		E9A4D4B51BF077BD003FEACC /* MedievalModels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MedievalModels; path = OriginalAdventure/MedievalModels; sourceTree = "<group>"; };
 		E9A734F71BE2089F002BB7FD /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
@@ -534,6 +541,7 @@
 			isa = PBXGroup;
 			children = (
 				E99C44401C0532EE00F27679 /* GBuffer.metal */,
+				E99C444C1C0562D400F27679 /* Lighting.metal */,
 			);
 			name = Deferred;
 			sourceTree = "<group>";
@@ -541,6 +549,8 @@
 		E99C443E1C05322100F27679 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				E99C44471C0560B200F27679 /* LightComputations.h */,
+				E99C44481C0560B200F27679 /* LightComputations.metal */,
 				E99A844E1C01749800D0D63F /* ForwardRendererShaders.metal */,
 				E99C443D1C05321A00F27679 /* Deferred */,
 				E99C443F1C05326D00F27679 /* MetalStructs.h */,
@@ -554,9 +564,6 @@
 				E9B6AC581C02A6BF00F27FD7 /* Structs.h */,
 				E91AA9941BEAFC9F0026D9ED /* Shaders.swift */,
 				E9A734F71BE2089F002BB7FD /* Renderer.swift */,
-				E91AA9961BEAFDB30026D9ED /* GBuffer.swift */,
-				E93B4C0E1BED59A200792417 /* TextureUnit.swift */,
-				E93B4C101BED5D8B00792417 /* GLExtensions.swift */,
 				E9BE64001BF416F700045FBB /* Mesh.swift */,
 				E9C1B1631BFFEC52004D5B4C /* ZSort.swift */,
 			);
@@ -594,6 +601,9 @@
 		E9B6AC261C029A3E00F27FD7 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				E91AA9961BEAFDB30026D9ED /* GBuffer.swift */,
+				E93B4C0E1BED59A200792417 /* TextureUnit.swift */,
+				E93B4C101BED5D8B00792417 /* GLExtensions.swift */,
 				E93CB1041BF3FF520011267C /* TextureLoader.swift */,
 				E9205DBC1BD73F95005B990F /* GLMesh.swift */,
 				E9A734F91BE208C2002BB7FD /* GLDeferredRenderer.swift */,
@@ -624,11 +634,12 @@
 			isa = PBXGroup;
 			children = (
 				E99C443E1C05322100F27679 /* Shaders */,
-				E9B6ABF01C02957600F27FD7 /* MTLForwardRenderer.swift */,
 				E9B6AC2D1C029C5100F27FD7 /* MTLMesh.swift */,
 				E9B6AC2F1C029E1800F27FD7 /* TextureLoader.swift */,
 				E9B6AC2B1C029BDB00F27FD7 /* TextureSampler.swift */,
+				E9B6ABF01C02957600F27FD7 /* MTLForwardRenderer.swift */,
 				E99FDCDD1C050B9B004AFD66 /* MTLDeferredRenderer.swift */,
+				E9A212D51C0BCA5C0037EE45 /* DeferredPrimitives.swift */,
 				E99C44421C05449400F27679 /* MTLRenderer.swift */,
 			);
 			name = Rendering;
@@ -887,6 +898,7 @@
 				E9B6ABF61C02965500F27FD7 /* Animation.swift in Sources */,
 				E9B6ABF71C02965500F27FD7 /* AnimableProperty.swift in Sources */,
 				E9B6ABF81C02965500F27FD7 /* AnimationSystem.swift in Sources */,
+				E99C44491C0560B200F27679 /* LightComputations.metal in Sources */,
 				E9B6ABF91C02965500F27FD7 /* MTLParser.swift in Sources */,
 				E9B6ABFA1C02965500F27FD7 /* MaterialParser.swift in Sources */,
 				E9B6ABFB1C02965500F27FD7 /* SceneGraphParser.swift in Sources */,
@@ -896,6 +908,7 @@
 				E9B6AC011C02965500F27FD7 /* Renderer.swift in Sources */,
 				E9B6AC2E1C029C5100F27FD7 /* MTLMesh.swift in Sources */,
 				E9B6AC041C02965500F27FD7 /* GBuffer.swift in Sources */,
+				E99C444D1C0562D400F27679 /* Lighting.metal in Sources */,
 				E9B6AC051C02965500F27FD7 /* TextureUnit.swift in Sources */,
 				E9B6AC061C02965500F27FD7 /* GLExtensions.swift in Sources */,
 				E9B6AC301C029E1800F27FD7 /* TextureLoader.swift in Sources */,
@@ -907,6 +920,7 @@
 				E9B6AC0F1C02965500F27FD7 /* Light.swift in Sources */,
 				E9B6AC111C02965500F27FD7 /* GameObject.swift in Sources */,
 				E9B6AC121C02965500F27FD7 /* Material.swift in Sources */,
+				E9A212D61C0BCA5C0037EE45 /* DeferredPrimitives.swift in Sources */,
 				E9B6AC2C1C029BDB00F27FD7 /* TextureSampler.swift in Sources */,
 				E9B6AC131C02965500F27FD7 /* Behaviour.swift in Sources */,
 				E9B6AC141C02965500F27FD7 /* MathTypes.swift in Sources */,
