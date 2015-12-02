@@ -26,22 +26,23 @@ class MTLDeferredRenderer : MTLRenderer {
     // set up icosahedron for point lights
     static let X : Float = 0.5 / 0.755761314076171;
     static let Z : Float = X * (1.0 + sqrtf(5.0)) / 2.0;
-    static let lightVData =
+    static let lightVData : [Float] =
     [
-    float4(-X, 0.0, Z, 1.0),
-    float4(X, 0.0, Z, 1.0),
-    float4(-X, 0.0, -Z, 1.0),
-    float4(X, 0.0, -Z, 1.0),
-    float4(0.0, Z, X, 1.0),
-    float4(0.0, Z, -X, 1.0),
-    float4(0.0, -Z, X, 1.0),
-    float4(0.0, -Z, -X, 1.0),
-    float4(Z, X, 0.0, 1.0),
-    float4(-Z, X, 0.0, 1.0),
-    float4(Z, -X, 0.0, 1.0),
-    float4(-Z, -X, 0.0, 1.0)
+    -X, 0.0, Z, 1.0,
+    X, 0.0, Z, 1.0,
+    -X, 0.0, -Z, 1.0,
+    X, 0.0, -Z, 1.0,
+    0.0, Z, X, 1.0,
+    0.0, Z, -X, 1.0,
+    0.0, -Z, X, 1.0,
+    0.0, -Z, -X, 1.0,
+    Z, X, 0.0, 1.0,
+    -Z, X, 0.0, 1.0,
+    Z, -X, 0.0, 1.0,
+    -Z, -X, 0.0, 1.0
     ];
-    static let lightVIndices =
+    
+    static let lightVIndices : [UInt16] =
     [
     0, 1, 4,
     0, 4, 9,
@@ -447,7 +448,7 @@ class MTLDeferredRenderer : MTLRenderer {
         var matrixTerms = float3(projectionMatrix[3][2], projectionMatrix[2][3], projectionMatrix[2][2]);
         renderEncoder.setFragmentBytes(&matrixTerms, length: sizeof(float3), atIndex: 2)
         
-       self.performPointLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+     // self.performPointLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
         
         self.performDirectionalLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
     }

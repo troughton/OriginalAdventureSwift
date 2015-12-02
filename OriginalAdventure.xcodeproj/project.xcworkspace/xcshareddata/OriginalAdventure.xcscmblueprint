@@ -1,17 +1,20 @@
 {
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "FB18DD446080724FAF2255B83853494925F1E549",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
-    "51B210D0D41486D3ADD6940D57E4480BBD4DE4C5" : 0,
     "E084C86B03F81D63323C9E7510697EA528A758C7" : 0,
-    "956D2B21DD155C49504BB67697A67F7C5351A353" : 0
+    "51B210D0D41486D3ADD6940D57E4480BBD4DE4C5" : 0,
+    "956D2B21DD155C49504BB67697A67F7C5351A353" : 0,
+    "FB18DD446080724FAF2255B83853494925F1E549" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "440469C5-80D5-44CC-B218-BAAB4FF96FB6",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
-    "51B210D0D41486D3ADD6940D57E4480BBD4DE4C5" : "OriginalAdventure\/ReactiveCocoa\/",
     "E084C86B03F81D63323C9E7510697EA528A758C7" : "OriginalAdventure\/ReactiveCocoa\/Carthage\/Checkouts\/xcconfigs\/",
-    "956D2B21DD155C49504BB67697A67F7C5351A353" : "OriginalAdventure\/ReactiveCocoa\/Carthage\/Checkouts\/Result\/"
+    "51B210D0D41486D3ADD6940D57E4480BBD4DE4C5" : "OriginalAdventure\/ReactiveCocoa\/",
+    "956D2B21DD155C49504BB67697A67F7C5351A353" : "OriginalAdventure\/ReactiveCocoa\/Carthage\/Checkouts\/Result\/",
+    "FB18DD446080724FAF2255B83853494925F1E549" : "OriginalAdventureSwift\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "OriginalAdventure",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
@@ -31,6 +34,11 @@
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/jspahrsummers\/xcconfigs.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E084C86B03F81D63323C9E7510697EA528A758C7"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/troughton\/OriginalAdventureSwift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "FB18DD446080724FAF2255B83853494925F1E549"
     }
   ]
 }
