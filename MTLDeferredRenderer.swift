@@ -261,6 +261,7 @@ class MTLDeferredRenderer : MTLRenderer {
     
     static let meshBufferSizePerElement = ceil(sizeof(ModelMatrices), toNearestMultipleOf: 256)
     static let lightBufferSizePerElement = ceil(sizeof(LightBlock), toNearestMultipleOf: 256)
+    static let materialBufferSizePerElement = ceil(sizeof(MaterialStruct), toNearestMultipleOf: 256)
     
     func performGeometryPass(renderEncoder: MTLRenderCommandEncoder, meshes: [Mesh], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, ambientMaxIntensity : Float) {
         renderEncoder.pushDebugGroup("Geometry Pass")
@@ -273,10 +274,18 @@ class MTLDeferredRenderer : MTLRenderer {
         let transformationBuffer = UnsafeMutablePointer<Void>(mtlTransformationBuffer.contents()) //needs to be typed as void so we offset by bytes
         let transformationBufferStep = MTLDeferredRenderer.meshBufferSizePerElement
         
-        renderEncoder.setVertexBuffer(mtlTransformationBuffer, offset: 0, atIndex: 2)
+        var numMaterials = 0
+        for mesh in meshes {
+            numMaterials += (mesh as! MTLMesh).materials.count
+            numMaterials += (mesh.materialOverride != nil ? 1 : 0)
+        }
         
-        let textureBuffer = self.textureBuffers[currentFrameIndex];
-        var textureIndex = 0;
+        let mtlMaterialBuffer = self.bufferWithCapacity(numMaterials * MTLDeferredRenderer.materialBufferSizePerElement, label: "Material Buffer")
+        
+        renderEncoder.setVertexBuffer(mtlTransformationBuffer, offset: 0, atIndex: 2)
+        renderEncoder.setFragmentBuffer(mtlMaterialBuffer, offset: 0, atIndex: 0)
+        
+        var materialBufferIndex = 0
         
         for (matricesBufferIndex, mesh) in meshes.enumerate() {
             let transformationBufferOffset = matricesBufferIndex * transformationBufferStep
@@ -288,14 +297,19 @@ class MTLDeferredRenderer : MTLRenderer {
             
             (mesh as! MTLMesh).renderWithMaterials(renderEncoder, useMaterial: { (material) -> () in
                 
+                let materialBufferOffset = MTLDeferredRenderer.materialBufferSizePerElement * materialBufferIndex++
+                UnsafeMutablePointer<MaterialStruct>(mtlMaterialBuffer.contents().advancedBy(materialBufferOffset)).memory = material.toStruct(hdrMaxIntensity: ambientMaxIntensity)
+                mtlMaterialBuffer.didModifyRange(NSRange(location: materialBufferOffset, length: MTLDeferredRenderer.materialBufferSizePerElement))
+                renderEncoder.setFragmentBufferOffset(materialBufferOffset, atIndex: 0)
+                
                 renderEncoder.setFragmentTexture(material.ambientMap?.texture ??
-                    Material.fillTextureWithColour(textureBuffer[textureIndex++], colour: float4(material.ambientColour / ambientMaxIntensity, material.useAmbient ? 1 : 0)),
+                    self.normalTexture,
                     atIndex: 0)
                 renderEncoder.setFragmentTexture(material.diffuseMap?.texture ??
-                    Material.fillTextureWithColour(textureBuffer[textureIndex++], colour: float4(material.diffuseColour, material.opacity)),
+                    self.normalTexture,
                     atIndex: 1)
                 renderEncoder.setFragmentTexture(material.specularityMap?.texture ??
-                    Material.fillTextureWithColour(textureBuffer[textureIndex++], colour: float4(material.specularColour, material.specularity)),
+                    self.normalTexture,
                     atIndex: 2)
                 renderEncoder.setFragmentTexture(material.normalMap?.texture ?? self.normalTexture, atIndex: 3)
                 

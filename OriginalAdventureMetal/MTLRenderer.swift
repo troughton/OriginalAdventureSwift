@@ -46,8 +46,6 @@ class MTLRenderer : Renderer {
         commandQueue = Metal.device.newCommandQueue()
         commandQueue.label = "main command queue"
         
-        self.setupTextures(maxTextures: MaxTextures)
-        
         self.normalTexture = Metal.device.newTextureWithDescriptor(textureDescriptor)
         Material.fillTextureWithColour(self.normalTexture, colour: float4(0.5, 0.5, 1, 0))
     }
@@ -55,22 +53,7 @@ class MTLRenderer : Renderer {
     
     private let textureDescriptor = MTLTextureDescriptor.texture2DDescriptorWithPixelFormat(.RGBA8Unorm, width: 1, height: 1, mipmapped: false)
     
-    var textureBuffers = [[MTLTexture]]()
-    
     var normalTexture : MTLTexture! = nil
-    
-    func setupTextures(maxTextures maxTextures: Int) {
-        textureDescriptor.usage = .ShaderRead
-        
-        for _ in 0..<MTLRenderer.MaxFrameLag {
-            
-            var textures = [MTLTexture]()
-            for _ in 0..<maxTextures {
-                textures.append(Metal.device.newTextureWithDescriptor(textureDescriptor))
-            }
-            textureBuffers.append(textures)
-        }
-    }
     
     var availableBuffers = [MTLBuffer]()
     var buffersInUse : [[MTLBuffer]] = {

@@ -125,7 +125,6 @@ struct MTLMesh: Mesh {
                 }
                 return nil
             }) ?? Material.defaultMaterial
-            
             return material
         })
     }

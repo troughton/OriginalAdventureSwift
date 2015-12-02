@@ -62,27 +62,14 @@ class MTLForwardRenderer : MTLRenderer {
         
     }
     
-    var texturesWithColours = [float4 : MTLTexture]()
-    func textureWithColour(colour: float4, textureBuffer: [MTLTexture], inout nextTextureIndex: Int) -> MTLTexture {
-        var texture = texturesWithColours[colour]
-        
-        if texture == nil {
-            texture = textureBuffer[nextTextureIndex++]
-            Material.fillTextureWithColour(texture!, colour: colour)
-            texturesWithColours[colour] = texture
-        }
-        
-        return texture!
-    }
-    
     let transformationBufferStep = ceil(sizeof(ModelMatrices), toNearestMultipleOf: 256)
     let lightBufferSize = ceil(sizeof(LightBlock), toNearestMultipleOf: 256)
+    let materialBufferStep = ceil(sizeof(MaterialStruct), toNearestMultipleOf: 256)
     
     override func render(commandBuffer commandBuffer: MTLCommandBuffer, renderEncoder: MTLRenderCommandEncoder, drawable: MTLDrawable, meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
         
         let mtlTransformationBuffer = self.bufferWithCapacity(transformationBufferStep * meshes.count, label: "Transformation Matrices")
         let transformationBuffer = UnsafeMutablePointer<Void>(mtlTransformationBuffer.contents()) //needs to be typed as void so we offset by bytes
-        
         
         let mtlLightBuffer = self.bufferWithCapacity(lightBufferSize, label: "Light Information")
         let lightBuffer = UnsafeMutablePointer<LightBlock>(mtlLightBuffer.contents())
@@ -91,15 +78,22 @@ class MTLForwardRenderer : MTLRenderer {
         lightBuffer.memory = lightBlock
         mtlLightBuffer.didModifyRange(NSMakeRange(0, sizeof(LightBlock)))
         
+        var numMaterials = 0
+        for mesh in meshes {
+            numMaterials += (mesh as! MTLMesh).materials.count
+            numMaterials += (mesh.materialOverride != nil ? 1 : 0)
+        }
+        
+        let mtlMaterialBuffer = self.bufferWithCapacity(numMaterials * materialBufferStep, label: "Material Buffer")
+        
         renderEncoder.setVertexBuffer(mtlTransformationBuffer, offset: 0, atIndex: 2)
         renderEncoder.setFragmentBuffer(mtlLightBuffer, offset: 0, atIndex: 0)
+        renderEncoder.setFragmentBuffer(mtlMaterialBuffer, offset: 0, atIndex: 1)
         
-        let textureBuffer = self.textureBuffers[currentFrameIndex];
-        var nextTextureIndex = 0;
-        self.texturesWithColours.removeAll(keepCapacity: true)
+        var materialBufferIndex = 0
         
-        for (matricesBufferIndex, mesh) in meshes.enumerate() {
-            let transformationBufferOffset = matricesBufferIndex * transformationBufferStep
+        for (bufferIndex, mesh) in meshes.enumerate() {
+            let transformationBufferOffset = bufferIndex * transformationBufferStep
             let matricesRef = UnsafeMutablePointer<ModelMatrices>(transformationBuffer.advancedBy(transformationBufferOffset))
             self.setModelMatrices(matricesRef, forMesh: mesh, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix)
             mtlTransformationBuffer.didModifyRange(NSMakeRange(transformationBufferOffset, sizeof(ModelMatrices)))
@@ -108,16 +102,22 @@ class MTLForwardRenderer : MTLRenderer {
             
             (mesh as! MTLMesh).renderWithMaterials(renderEncoder, useMaterial: { (material) -> () in
                 
+                let materialBufferOffset = self.materialBufferStep * materialBufferIndex++
+                UnsafeMutablePointer<MaterialStruct>(mtlMaterialBuffer.contents().advancedBy(materialBufferOffset)).memory = material.toStruct(hdrMaxIntensity: hdrMaxIntensity)
+                mtlMaterialBuffer.didModifyRange(NSRange(location: materialBufferOffset, length: self.materialBufferStep))
+                renderEncoder.setFragmentBufferOffset(materialBufferOffset, atIndex: 1)
+                
                 renderEncoder.setFragmentTexture(material.ambientMap?.texture ??
-                    self.textureWithColour(float4(material.ambientColour / hdrMaxIntensity, material.useAmbient ? 1 : 0), textureBuffer: textureBuffer, nextTextureIndex: &nextTextureIndex),
+                    self.normalTexture,
                     atIndex: 0)
                 renderEncoder.setFragmentTexture(material.diffuseMap?.texture ??
-                    self.textureWithColour(float4(material.diffuseColour, material.opacity), textureBuffer: textureBuffer, nextTextureIndex: &nextTextureIndex),
+                    self.normalTexture,
                     atIndex: 1)
                 renderEncoder.setFragmentTexture(material.specularityMap?.texture ??
-                    self.textureWithColour(float4(material.specularColour, material.specularity), textureBuffer: textureBuffer, nextTextureIndex: &nextTextureIndex),
+                    self.normalTexture,
                     atIndex: 2)
                 renderEncoder.setFragmentTexture(material.normalMap?.texture ?? self.normalTexture, atIndex: 3)
+                
             })
         }
     }

@@ -50,6 +50,7 @@ constexpr sampler s = sampler(coord::normalized,
 
 fragment float4 forwardRendererFragmentShader(VertexInOut inFrag [[stage_in]],
                                              constant LightBlock *lighting [[buffer(0)]],
+                                             constant MaterialStruct &material[[buffer(1)]],
                                              texture2d<half> ambientTexture [[texture(0)]],
                                              texture2d<float> diffuseTexture [[texture(1)]],
                                              texture2d<half> specularTexture [[texture(2)]],
@@ -58,14 +59,14 @@ fragment float4 forwardRendererFragmentShader(VertexInOut inFrag [[stage_in]],
     
     float2 textureCoordinate = inFrag.textureCoordinate;
 
-    float4 diffuse = diffuseTexture.sample(s, textureCoordinate);
+    float4 diffuse = isnan(material.diffuseColour.x) ? diffuseTexture.sample(s, textureCoordinate) : material.diffuseColour;
     
     if (diffuse.a < 0.001f) {
         return float4(0, 0, 0, 0);
     }
     
-    half4 specular = specularTexture.sample(s, textureCoordinate);
-    half4 ambientColour = ambientTexture.sample(s, textureCoordinate);
+    half4 specular = isnan(material.specularColour.x) ? specularTexture.sample(s, textureCoordinate) : half4(material.specularColour);
+    half4 ambientColour = isnan(material.ambientColour.x) ? ambientTexture.sample(s, textureCoordinate) : half4(material.ambientColour);
     half4 localSpaceNormal = normalTexture.sample(s, textureCoordinate) * 2 - 1;
     half3 surfaceNormal = normalize(tangentToCameraSpaceMatrix * localSpaceNormal.xyz);
     

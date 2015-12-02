@@ -8,11 +8,13 @@
 
 #include <metal_stdlib>
 #include "MetalStructs.h"
+#include "Structs.h"
 
 using namespace metal;
 using namespace Ingenero;
 
 fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
+                                        constant MaterialStruct &material[[buffer(0)]],
                                              texture2d<half> ambientTexture [[texture(0)]],
                                              texture2d<float> diffuseTexture [[texture(1)]],
                                              texture2d<float> specularTexture [[texture(2)]],
@@ -27,10 +29,10 @@ fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
     
     float2 textureCoordinate = inFrag.textureCoordinate;
     
-    float4 diffuse = diffuseTexture.sample(s, textureCoordinate);
+    float4 diffuse = isnan(material.diffuseColour.x) ? diffuseTexture.sample(s, textureCoordinate) : material.diffuseColour;
     
-    float4 specular = specularTexture.sample(s, textureCoordinate);
-    half4 ambientColour = ambientTexture.sample(s, textureCoordinate);
+    float4 specular = isnan(material.specularColour.x) ? specularTexture.sample(s, textureCoordinate) :material.specularColour;
+    half4 ambientColour = isnan(material.ambientColour.x) ? ambientTexture.sample(s, textureCoordinate) : half4(material.ambientColour);
     half4 localSpaceNormal = normalTexture.sample(s, textureCoordinate) * 2 - 1;
     half3 surfaceNormal = normalize(tangentToCameraSpaceMatrix * localSpaceNormal.xyz);
     
