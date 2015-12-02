@@ -54,7 +54,7 @@ vertex LightingVertexOutput compositionVertex(constant float2 *posData [[buffer(
 }
 
 fragment float4 lightFrag(LightingVertexOutput in [[stage_in]],
-                                     constant LightBlock &lighting [[buffer(0)]],
+                                     constant PerLightData &light [[buffer(0)]],
                                      constant float2 &depthRange [[buffer(1)]],
                                      constant float3 &matrixTerms [[buffer(2)]],
                                      texture2d<float> depthTexture [[texture(2)]],
@@ -73,8 +73,7 @@ fragment float4 lightFrag(LightingVertexOutput in [[stage_in]],
     half4 normal = half4(normalTexture.sample(s, in.position.xy) * 2 - 1);
     half specularity = normal.w;
     
-    float3 totalLighting = diffuse.rgb * lighting.ambientIntensity.rgb;
-    totalLighting += ComputeLighting(cameraSpacePosition, lighting.lights[0], normal.xyz, diffuse, half4(specularColour, specularity));
+    float3 totalLighting = ComputeLighting(cameraSpacePosition, light, normal.xyz, diffuse, half4(specularColour, specularity));
     
     return float4(totalLighting, 1);
 }

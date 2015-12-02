@@ -15,10 +15,11 @@ using namespace Ingenero;
 
 fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
                                         constant MaterialStruct &material[[buffer(0)]],
-                                             texture2d<half> ambientTexture [[texture(0)]],
-                                             texture2d<float> diffuseTexture [[texture(1)]],
-                                             texture2d<float> specularTexture [[texture(2)]],
-                                             texture2d<half> normalTexture [[texture(3)]]) {
+                                        constant float3 &ambientLightIntensity [[buffer(1)]],
+                                        texture2d<float> ambientTexture [[texture(0)]],
+                                        texture2d<float> diffuseTexture [[texture(1)]],
+                                        texture2d<float> specularTexture [[texture(2)]],
+                                        texture2d<half> normalTexture [[texture(3)]]) {
     
     constexpr sampler s = sampler(coord::normalized,
                                   address::repeat,
@@ -31,8 +32,8 @@ fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
     
     float4 diffuse = isnan(material.diffuseColour.x) ? diffuseTexture.sample(s, textureCoordinate) : material.diffuseColour;
     
-    float4 specular = isnan(material.specularColour.x) ? specularTexture.sample(s, textureCoordinate) :material.specularColour;
-    half4 ambientColour = isnan(material.ambientColour.x) ? ambientTexture.sample(s, textureCoordinate) : half4(material.ambientColour);
+    float4 specular = isnan(material.specularColour.x) ? specularTexture.sample(s, textureCoordinate) : material.specularColour;
+    float4 ambientColour = isnan(material.ambientColour.x) ? ambientTexture.sample(s, textureCoordinate) : material.ambientColour;
     half4 localSpaceNormal = normalTexture.sample(s, textureCoordinate) * 2 - 1;
     half3 surfaceNormal = normalize(tangentToCameraSpaceMatrix * localSpaceNormal.xyz);
     
@@ -42,7 +43,7 @@ fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
     GBuffers output;
     output.diffuse = float4(diffuse.rgb, avgTint);
     output.normal = half4((surfaceNormal + 1)/2, half(specular.w));
-    output.light = float4(ambientColour);
+    output.light = ambientColour + float4(diffuse.rgb * ambientLightIntensity, 0);
     
     return output;
 };

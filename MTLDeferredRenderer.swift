@@ -77,7 +77,7 @@ class MTLDeferredRenderer : MTLRenderer {
     var geometryPassDepthState: MTLDepthStencilState! = nil
     var pointLightStencilPassDepthState: MTLDepthStencilState! = nil
     var pointLightColourPassDepthState: MTLDepthStencilState! = nil
-    var compositionPassDepthState: MTLDepthStencilState! = nil
+    var directionalLightPassDepthState: MTLDepthStencilState! = nil
     
     let colourAttachmentFormats = [Metal.view.colorPixelFormat, .BGRA8Unorm, .BGRA8Unorm ] //lighting, normal, diffuse
     var colourTextures = [MTLTexture]()
@@ -138,9 +138,6 @@ class MTLDeferredRenderer : MTLRenderer {
             print("Failed to create geometry pipeline state, error \(error)")
             NSApp.terminate(nil)
         }
-        
-        
-        
         
         
         pipelineStateDescriptor.label = "Point Light Mask Render"
@@ -217,18 +214,17 @@ class MTLDeferredRenderer : MTLRenderer {
         
         let stencilState = MTLStencilDescriptor()
         
-        stencilState.stencilCompareFunction = .Equal;
+        stencilState.stencilCompareFunction = .Always;
         stencilState.stencilFailureOperation = .Keep;
         stencilState.depthFailureOperation = .IncrementWrap;
         stencilState.depthStencilPassOperation = .Keep;
-        depthStencilDescriptor.backFaceStencil = stencilState;
-        
-        stencilState.depthFailureOperation = .DecrementWrap
+        depthStencilDescriptor.backFaceStencil = stencilState
         depthStencilDescriptor.frontFaceStencil = stencilState
         
         self.pointLightStencilPassDepthState = Metal.device.newDepthStencilStateWithDescriptor(depthStencilDescriptor)
         
-        stencilState.stencilCompareFunction = .NotEqual
+        depthStencilDescriptor.depthCompareFunction = .GreaterEqual
+        stencilState.stencilCompareFunction = .Equal
         stencilState.stencilFailureOperation = .Zero
         stencilState.depthFailureOperation = .Zero
         stencilState.depthStencilPassOperation = .Zero
@@ -241,7 +237,7 @@ class MTLDeferredRenderer : MTLRenderer {
         stencilState.stencilCompareFunction = .Always
         depthStencilDescriptor.frontFaceStencil = stencilState
         depthStencilDescriptor.backFaceStencil = stencilState
-        self.compositionPassDepthState = Metal.device.newDepthStencilStateWithDescriptor(depthStencilDescriptor)
+        self.directionalLightPassDepthState = Metal.device.newDepthStencilStateWithDescriptor(depthStencilDescriptor)
     }
     
     override func preRender(commandBuffer commandBuffer: MTLCommandBuffer, renderPassDescriptor: MTLRenderPassDescriptor, drawable: CAMetalDrawable) -> (MTLCommandBuffer, MTLRenderCommandEncoder, MTLDrawable) {
@@ -249,6 +245,7 @@ class MTLDeferredRenderer : MTLRenderer {
         
         let renderEncoder = commandBuffer.renderCommandEncoderWithDescriptor(renderPassDescriptor)
         renderEncoder.label = "render encoder"
+        renderEncoder.setFrontFacingWinding(.CounterClockwise)
         
         return (commandBuffer, renderEncoder, drawable)
     }
@@ -260,15 +257,18 @@ class MTLDeferredRenderer : MTLRenderer {
     }
     
     static let meshBufferSizePerElement = ceil(sizeof(ModelMatrices), toNearestMultipleOf: 256)
-    static let lightBufferSizePerElement = ceil(sizeof(LightBlock), toNearestMultipleOf: 256)
+    static let lightBufferSizePerElement = ceil(sizeof(PerLightData), toNearestMultipleOf: 256)
     static let materialBufferSizePerElement = ceil(sizeof(MaterialStruct), toNearestMultipleOf: 256)
     
-    func performGeometryPass(renderEncoder: MTLRenderCommandEncoder, meshes: [Mesh], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, ambientMaxIntensity : Float) {
+    func performGeometryPass(renderEncoder: MTLRenderCommandEncoder, meshes: [Mesh], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, ambientMaxIntensity : Float, var ambientLight: float3) {
+        
         renderEncoder.pushDebugGroup("Geometry Pass")
         renderEncoder.setRenderPipelineState(self.geometryPassPipelineState)
         renderEncoder.setDepthStencilState(self.geometryPassDepthState)
-        renderEncoder.setCullMode(.Front)
+        renderEncoder.setCullMode(.Back)
         renderEncoder.setDepthClipMode(.Clamp)
+        
+        renderEncoder.setFragmentBytes(&ambientLight, length: sizeof(float3), atIndex: 1)
         
         let mtlTransformationBuffer = self.bufferWithCapacity(MTLDeferredRenderer.meshBufferSizePerElement * meshes.count, label: "Transformation Matrices")
         let transformationBuffer = UnsafeMutablePointer<Void>(mtlTransformationBuffer.contents()) //needs to be typed as void so we offset by bytes
@@ -299,7 +299,7 @@ class MTLDeferredRenderer : MTLRenderer {
                 
                 let materialBufferOffset = MTLDeferredRenderer.materialBufferSizePerElement * materialBufferIndex++
                 UnsafeMutablePointer<MaterialStruct>(mtlMaterialBuffer.contents().advancedBy(materialBufferOffset)).memory = material.toStruct(hdrMaxIntensity: ambientMaxIntensity)
-                mtlMaterialBuffer.didModifyRange(NSRange(location: materialBufferOffset, length: MTLDeferredRenderer.materialBufferSizePerElement))
+                mtlMaterialBuffer.didModifyRange(NSRange(location: materialBufferOffset, length: sizeof(MaterialStruct)))
                 renderEncoder.setFragmentBufferOffset(materialBufferOffset, atIndex: 0)
                 
                 renderEncoder.setFragmentTexture(material.ambientMap?.texture ??
@@ -343,39 +343,30 @@ class MTLDeferredRenderer : MTLRenderer {
         
         encoder.pushDebugGroup("Point Lights")
         
-        let pointLights = lights.filter { (light) -> Bool in
-                switch light.type {
-                case .Point(_):
-                    return true
-                default:
-                    return false
-            }
-
-        }
-        
-        encoder.setStencilReferenceValue(0xFF)
+        encoder.setStencilReferenceValue(0)
+        encoder.setFrontFacingWinding(.Clockwise)
         
         let lightTransformationStep = ceil(sizeof(float4x4), toNearestMultipleOf: 256)
-        let lightTransformationBuffer = self.bufferWithCapacity(lightTransformationStep * pointLights.count, label: "Light Transformation Matrices")
+        let lightTransformationBuffer = self.bufferWithCapacity(lightTransformationStep * lights.count, label: "Light Transformation Matrices")
         
-        let lightDataStep = ceil(sizeof(LightBlock), toNearestMultipleOf: 256)
-        let lightDataBuffer = self.bufferWithCapacity(lightDataStep * pointLights.count, label: "Per Light Information")
+        let lightDataStep = ceil(sizeof(PerLightData), toNearestMultipleOf: 256)
+        let lightDataBuffer = self.bufferWithCapacity(lightDataStep * lights.count, label: "Per Light Information")
         
-        for (i, light) in pointLights.enumerate() {
+        for (i, light) in lights.enumerate() {
             let lightToCameraMatrix = self.calculatePointLightSphereToCameraTransform(light: light, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
             let lightToClipMatrix = projectionMatrix * lightToCameraMatrix
             UnsafeMutablePointer<float4x4>(lightTransformationBuffer.contents().advancedBy(i * lightTransformationStep)).memory = lightToClipMatrix
             
-            UnsafeMutablePointer<LightBlock>(lightDataBuffer.contents().advancedBy(i * lightDataStep)).memory = Light.toLightBlock([light], worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
+            UnsafeMutablePointer<PerLightData>(lightDataBuffer.contents().advancedBy(i * lightDataStep)).memory = light.perLightData(worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)!
         }
-        lightTransformationBuffer.didModifyRange(NSRange(location: 0, length: pointLights.count * lightTransformationStep))
-        lightDataBuffer.didModifyRange(NSRange(location: 0, length: pointLights.count * lightDataStep))
+        lightTransformationBuffer.didModifyRange(NSRange(location: 0, length: lights.count * lightTransformationStep))
+        lightDataBuffer.didModifyRange(NSRange(location: 0, length: lights.count * lightDataStep))
         
         encoder.setVertexBuffer(self.lightVertexBuffer, offset: 0, atIndex: 0)
         encoder.setVertexBuffer(lightTransformationBuffer, offset: 0, atIndex: 2)
         encoder.setFragmentBuffer(lightDataBuffer, offset: 0, atIndex: 0)
         
-        for i in 0..<pointLights.count {
+        for i in 0..<lights.count {
             
             encoder.pushDebugGroup("Light Stencil")
             
@@ -412,46 +403,48 @@ class MTLDeferredRenderer : MTLRenderer {
         renderEncoder.pushDebugGroup("Composition Pass")
         
         renderEncoder.setRenderPipelineState(self.compositionPassPipelineState)
+        renderEncoder.setDepthStencilState(self.directionalLightPassDepthState)
         renderEncoder.setCullMode(.None)
+    
         
-        let filteredLights = lights.filter { (light) -> Bool in
-            switch light.type {
-            case .Ambient:
-                return true
-            case .Directional(_):
-                return true
-            default:
-                return false
-            }
-        }
         
-        let mtlLightBuffer = self.bufferWithCapacity(sizeof(LightBlock), label: "Directional Light Block")
-        let lightBuffer = UnsafeMutablePointer<LightBlock>(mtlLightBuffer.contents())
+        renderEncoder.setVertexBuffer(self.quadBuffer, offset: 0, atIndex: 0)
         
-        let lightBlock = Light.toLightBlock(filteredLights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
-        lightBuffer.memory = lightBlock
-        mtlLightBuffer.didModifyRange(NSMakeRange(0, sizeof(LightBlock)))
+        let lightBufferStep = ceil(sizeof(PerLightData), toNearestMultipleOf: 256)
+        let mtlLightBuffer = self.bufferWithCapacity(lightBufferStep, label: "Directional Light Block")
         
         renderEncoder.setFragmentBuffer(mtlLightBuffer, offset: 0, atIndex: 0)
         
-        renderEncoder.setDepthStencilState(self.compositionPassDepthState)
-        
-        //Need to enable blending.
-        var i = 0
-        for texture in self.colourTextures {
-            renderEncoder.setFragmentTexture(texture, atIndex: i)
-            i++
+        for (i, light) in lights.enumerate() {
+            let offset = lightBufferStep * i
+            UnsafeMutablePointer<PerLightData>(mtlLightBuffer.contents().advancedBy(offset)).memory = light.perLightData(worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)!
+            mtlLightBuffer.didModifyRange(NSRange(location: offset, length: sizeof(PerLightData)))
+            
+            renderEncoder.setFragmentBufferOffset(offset, atIndex: 0)
+            renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: 6)
         }
-        renderEncoder.setFragmentTexture(Metal.view.depthStencilTexture, atIndex: i)
         
-        renderEncoder.setVertexBuffer(self.quadBuffer, offset: 0, atIndex: 0)
-        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: 6)
         renderEncoder.popDebugGroup()
     }
     
     override func render(commandBuffer commandBuffer: MTLCommandBuffer, renderEncoder: MTLRenderCommandEncoder, drawable: MTLDrawable, meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
         
-        self.performGeometryPass(renderEncoder, meshes: meshes, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, ambientMaxIntensity: hdrMaxIntensity)
+        var ambientIntensity : float3 = float3(0);
+        var directionalLights = [Light]()
+        var pointLights = [Light]()
+        
+        for light in lights {
+            switch light.type {
+            case .Directional(_):
+                directionalLights.append(light)
+            case .Point(_):
+                pointLights.append(light)
+            case .Ambient:
+                ambientIntensity += light.colourVector
+            }
+        }
+        
+        self.performGeometryPass(renderEncoder, meshes: meshes, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, ambientMaxIntensity: hdrMaxIntensity, ambientLight: ambientIntensity)
         
         var halfSizeNearPlane = self.computeHalfSizeNearPlane(zNear: MTLRenderer.CameraNear, windowDimensions: self.sizeInPixels, projectionMatrix: projectionMatrix)
         renderEncoder.setVertexBytes(&halfSizeNearPlane, length: sizeof(float2), atIndex: 1)
@@ -462,9 +455,17 @@ class MTLDeferredRenderer : MTLRenderer {
         var matrixTerms = float3(projectionMatrix[3][2], projectionMatrix[2][3], projectionMatrix[2][2]);
         renderEncoder.setFragmentBytes(&matrixTerms, length: sizeof(float3), atIndex: 2)
         
-     // self.performPointLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+        //bind the textures for the light passes
+        var i = 0
+        for texture in self.colourTextures {
+            renderEncoder.setFragmentTexture(texture, atIndex: i)
+            i++
+        }
+        renderEncoder.setFragmentTexture(Metal.view.depthStencilTexture, atIndex: i)
         
-        self.performDirectionalLightPass(renderEncoder, lights: lights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
+        self.performPointLightPass(renderEncoder, lights: pointLights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+        
+        self.performDirectionalLightPass(renderEncoder, lights: directionalLights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
     }
     
     func computeHalfSizeNearPlane(zNear zNear: Float, windowDimensions : WindowDimension, projectionMatrix: Matrix4) -> float2 {

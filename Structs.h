@@ -11,8 +11,6 @@
 
 #include <simd/simd.h>
 
-#define DEFERRED_RENDERING
-
 #ifdef DEFERRED_RENDERING
 #define MaxLights 1
 #else

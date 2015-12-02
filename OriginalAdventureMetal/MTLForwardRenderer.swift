@@ -104,7 +104,7 @@ class MTLForwardRenderer : MTLRenderer {
                 
                 let materialBufferOffset = self.materialBufferStep * materialBufferIndex++
                 UnsafeMutablePointer<MaterialStruct>(mtlMaterialBuffer.contents().advancedBy(materialBufferOffset)).memory = material.toStruct(hdrMaxIntensity: hdrMaxIntensity)
-                mtlMaterialBuffer.didModifyRange(NSRange(location: materialBufferOffset, length: self.materialBufferStep))
+                mtlMaterialBuffer.didModifyRange(NSRange(location: materialBufferOffset, length: sizeof(MaterialStruct)))
                 renderEncoder.setFragmentBufferOffset(materialBufferOffset, atIndex: 1)
                 
                 renderEncoder.setFragmentTexture(material.ambientMap?.texture ??
