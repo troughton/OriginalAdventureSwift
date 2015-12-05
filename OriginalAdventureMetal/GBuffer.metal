@@ -32,7 +32,7 @@ fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
     
     float4 diffuse = isnan(material.diffuseColour.x) ? diffuseTexture.sample(s, textureCoordinate) : material.diffuseColour;
     
-    float4 specular = isnan(material.specularColour.x) ? specularTexture.sample(s, textureCoordinate) : material.specularColour;
+    float4 specular = isnan(material.specularColour.x) ? specularTexture.sample(s, textureCoordinate) :material.specularColour;
     float4 ambientColour = isnan(material.ambientColour.x) ? ambientTexture.sample(s, textureCoordinate) : material.ambientColour;
     half4 localSpaceNormal = normalTexture.sample(s, textureCoordinate) * 2 - 1;
     half3 surfaceNormal = normalize(tangentToCameraSpaceMatrix * localSpaceNormal.xyz);

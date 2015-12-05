@@ -330,13 +330,13 @@ class MTLDeferredRenderer : MTLRenderer {
     }
     
     func calculatePointLightSphereToCameraTransform(light light : Light, worldToCameraMatrix : Matrix4, hdrMaxIntensity : Float) -> Matrix4 {
-        let nodeToCameraSpaceTransform = worldToCameraMatrix * light.parent!.nodeToWorldSpaceTransform;
+        let nodeToCameraSpaceTransform = worldToCameraMatrix * light.nodeToWorldSpaceTransform;
         
         let translationInWorldSpace = nodeToCameraSpaceTransform * Vector4.ZeroPosition;
         
         let scale = self.calculatePointLightSphereRadius(light, hdrMaxIntensity: hdrMaxIntensity);
         let scaleMatrix = Matrix4(withScale: Vector3(scale));
-        return Matrix4(withTranslation: Vector3(translationInWorldSpace.x, translationInWorldSpace.y, translationInWorldSpace.z)) * scaleMatrix
+        return Matrix4(withTranslation: translationInWorldSpace.xyz) * scaleMatrix
     }
     
     func performPointLightPass(encoder: MTLRenderCommandEncoder, lights : [Light], worldToCameraMatrix : Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity : Float) {
@@ -358,6 +358,7 @@ class MTLDeferredRenderer : MTLRenderer {
             UnsafeMutablePointer<float4x4>(lightTransformationBuffer.contents().advancedBy(i * lightTransformationStep)).memory = lightToClipMatrix
             
             UnsafeMutablePointer<PerLightData>(lightDataBuffer.contents().advancedBy(i * lightDataStep)).memory = light.perLightData(worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)!
+            print(worldToCameraMatrix * float4(light.positionInWorldSpace, 1))
         }
         lightTransformationBuffer.didModifyRange(NSRange(location: 0, length: lights.count * lightTransformationStep))
         lightDataBuffer.didModifyRange(NSRange(location: 0, length: lights.count * lightDataStep))
@@ -446,14 +447,23 @@ class MTLDeferredRenderer : MTLRenderer {
         
         self.performGeometryPass(renderEncoder, meshes: meshes, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, ambientMaxIntensity: hdrMaxIntensity, ambientLight: ambientIntensity)
         
-        var halfSizeNearPlane = self.computeHalfSizeNearPlane(zNear: MTLRenderer.CameraNear, windowDimensions: self.sizeInPixels, projectionMatrix: projectionMatrix)
-        renderEncoder.setVertexBytes(&halfSizeNearPlane, length: sizeof(float2), atIndex: 1)
+        let nearPlaneSize = self.calculateNearPlaneSize(zNear: MTLRenderer.CameraNear, windowDimensions: self.sizeInPixels, projectionMatrix: projectionMatrix)
+        let nearPlaneBuffer = self.bufferWithCapacity(sizeof(float2), label: "Near Plane")
+        UnsafeMutablePointer<float2>(nearPlaneBuffer.contents()).memory = nearPlaneSize
+        nearPlaneBuffer.didModifyRange(NSRange(location: 0, length: sizeof(float2)))
+        renderEncoder.setVertexBuffer(nearPlaneBuffer, offset: 0, atIndex: 1)
         
-        var depthRange = float2(Float(MTLRenderer.DepthRangeNear), Float(MTLRenderer.DepthRangeFar))
-        renderEncoder.setFragmentBytes(&depthRange, length: sizeof(float2), atIndex: 1)
+        let depthRange = float2(Float(MTLRenderer.DepthRangeNear), Float(MTLRenderer.DepthRangeFar))
+        let depthRangeBuffer = self.bufferWithCapacity(sizeof(float2), label: "Depth Range")
+        UnsafeMutablePointer<float2>(depthRangeBuffer.contents()).memory = depthRange
+        depthRangeBuffer.didModifyRange(NSRange(location: 0, length: sizeof(float2)))
+        renderEncoder.setFragmentBuffer(depthRangeBuffer, offset: 0, atIndex: 1)
         
-        var matrixTerms = float3(projectionMatrix[3][2], projectionMatrix[2][3], projectionMatrix[2][2]);
-        renderEncoder.setFragmentBytes(&matrixTerms, length: sizeof(float3), atIndex: 2)
+        let matrixTerms = float3(projectionMatrix[3][2], projectionMatrix[2][3], projectionMatrix[2][2]);
+        let matrixTermsBuffer = self.bufferWithCapacity(sizeof(float3), label: "Matrix Terms")
+        UnsafeMutablePointer<float3>(matrixTermsBuffer.contents()).memory = matrixTerms
+        matrixTermsBuffer.didModifyRange(NSRange(location: 0, length: sizeof(float3)))
+        renderEncoder.setFragmentBuffer(matrixTermsBuffer, offset: 0, atIndex: 2)
         
         //bind the textures for the light passes
         var i = 0
@@ -468,10 +478,10 @@ class MTLDeferredRenderer : MTLRenderer {
         self.performDirectionalLightPass(renderEncoder, lights: directionalLights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
     }
     
-    func computeHalfSizeNearPlane(zNear zNear: Float, windowDimensions : WindowDimension, projectionMatrix: Matrix4) -> float2 {
+    func calculateNearPlaneSize(zNear zNear: Float, windowDimensions : WindowDimension, projectionMatrix: Matrix4) -> float2 {
         let cameraAspect = windowDimensions.aspect;
         let tanHalfFoV = 1/(projectionMatrix[0][0] * cameraAspect);
-        let y = tanHalfFoV * zNear;
+        let y = 2 * tanHalfFoV * zNear;
         let x = y * cameraAspect;
         return float2(x, y)
     }

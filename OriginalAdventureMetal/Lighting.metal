@@ -16,7 +16,7 @@ using namespace Ingenero;
 
 struct LightingVertexOutput {
     float4 position [[position]];
-    float4 cameraDirection;
+    float3 cameraDirection [[center_no_perspective]];
 };
 
 
@@ -27,29 +27,30 @@ float3 CalculateCameraSpacePositionFromWindow(float windowZ,
                                               constant float3 &matrixTerms) {
     float ndcZ = (2.0 * windowZ - depthRange.x - depthRange.y) /
     (depthRange.y - depthRange.x);
-    float eyeZ = matrixTerms.x / ((matrixTerms.y * ndcZ) - matrixTerms.z);
+    float eyeZ = -matrixTerms.x / ((matrixTerms.y * ndcZ) - matrixTerms.z);
     return cameraDirection * eyeZ;
 }
 
 vertex LightingVertexOutput pointLightVertex(device float4 *posData [[buffer(0)]],
-                                            constant float2 &halfSizeNearPlane [[buffer(1)]],
+                                            constant float2 &nearPlane [[buffer(1)]],
                                             constant float4x4 &worldToClipMatrix [[buffer(2)]],
                                             uint vid [[vertex_id]] ) {
     LightingVertexOutput output;
     float4 position = posData[vid];
     float4 clipPosition = worldToClipMatrix * position;
     output.position = clipPosition;
-    output.cameraDirection = float4(clipPosition.xy * halfSizeNearPlane, -1, 0);
+    
+    output.cameraDirection = float3(clipPosition.xy/clipPosition.w * nearPlane, -2);
     return output;
 }
 
 vertex LightingVertexOutput compositionVertex(constant float2 *posData [[buffer(0)]],
-                                      constant float2 &halfSizeNearPlane [[buffer(1)]],
+                                      constant float2 &nearPlane [[buffer(1)]],
                                       uint vid [[vertex_id]] ) {
     LightingVertexOutput output;
     float2 position = posData[vid];
     output.position = float4(position, 0.0f, 1.0f);
-    output.cameraDirection = float4(position * halfSizeNearPlane, -1, 1);
+    output.cameraDirection = float3(position * nearPlane, -2);
     return output;
 }
 
@@ -62,9 +63,8 @@ fragment float4 lightFrag(LightingVertexOutput in [[stage_in]],
                                      texture2d<float> normalTexture [[texture(0)]]
                                      ) {
     constexpr sampler s = sampler(coord::pixel);
-    
     float depth = depthTexture.sample(s, in.position.xy).r;
-    float3 cameraSpacePosition = CalculateCameraSpacePositionFromWindow(depth, in.cameraDirection.xyz, depthRange, matrixTerms);
+    float3 cameraSpacePosition = CalculateCameraSpacePositionFromWindow(depth, in.cameraDirection, depthRange, matrixTerms);
     
     float4 diffuse = diffuseTexture.sample(s, in.position.xy);
     float specularTint = diffuse.w;

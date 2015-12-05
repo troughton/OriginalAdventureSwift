@@ -11,15 +11,18 @@ import simd
 
 struct LightFalloff {
     
-    static let AttenuationFactor : Float = 0.00002
+    static let BaseRadius : Float = 50
+    
+    static let LinearAttenuationFactor : Float = 2/BaseRadius
+    static let QuadraticAttenuationFactor : Float = 1/(BaseRadius * BaseRadius)
     
     let constant : Float
     let linear : Float
     let quadratic : Float
     
     static let None = LightFalloff(constant: 1, linear: 0, quadratic: 0)
-    static let Linear = LightFalloff(constant: 1, linear: AttenuationFactor, quadratic: 0)
-    static let Quadratic = LightFalloff(constant: 1, linear: 0, quadratic: AttenuationFactor)
+    static let Linear = LightFalloff(constant: 1, linear: LinearAttenuationFactor, quadratic: 0)
+    static let Quadratic = LightFalloff(constant: 1, linear: LinearAttenuationFactor, quadratic: QuadraticAttenuationFactor)
 }
 
 typealias Colour = Vector3
@@ -69,7 +72,7 @@ class Light : SceneNode {
         }
         
         //The position vector will have a 0 w component if it's directional.
-        let positionInCameraSpace = worldToCameraMatrix * (self.parent!.nodeToWorldSpaceTransform * localSpacePosition);
+        let positionInCameraSpace = worldToCameraMatrix * (self.nodeToWorldSpaceTransform * localSpacePosition);
         let intensity = self.isEnabled ? self.colourVector / hdrMaxIntensity : Vector3.Zero;
 
         var perLightData = PerLightData()

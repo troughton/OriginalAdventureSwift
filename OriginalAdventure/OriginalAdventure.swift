@@ -38,7 +38,7 @@ class OriginalAdventure: Game {
         let playerObject = spawnPoint?.behaviourOfType(SpawnPointBehaviour)?.spawnPlayerWithId("player")
         self.player = playerObject?.behaviourOfType(PlayerBehaviour)
         self.camera = playerObject?.camera
-        self.camera.hdrMaxIntensity = 10
+        self.camera.hdrMaxIntensity = 4
         
         self.setupInput()
     }
