@@ -17,12 +17,10 @@ class MTLRenderer : Renderer {
     
     let inflightSemaphore = dispatch_semaphore_create(MaxFrameLag)
     
-    static let CameraNear : Float = 1.0;
-    static let CameraFar : Float = 10000.0;
+    static let CameraNear : Float = 10.0;
+    static let CameraFar : Float = 4000.0;
     static let DepthRangeNear = 0.0;
     static let DepthRangeFar = 1.0;
-    
-    let MaxTextures = 2048
     
     var size : WindowDimension = WindowDimension.defaultDimension {
         didSet {
@@ -155,9 +153,10 @@ class MTLRenderer : Renderer {
         
         self.postRender(commandBuffer: commandBuffer, renderEncoder: renderEncoder, drawable: currentDrawable)
         
+        currentFrameIndex = (currentFrameIndex + 1) % MTLRenderer.MaxFrameLag
+        
         self.availableBuffers.appendContentsOf(self.buffersInUse[self.currentFrameIndex])
         self.buffersInUse[self.currentFrameIndex].removeAll(keepCapacity: true)
-        currentFrameIndex = (currentFrameIndex + 1) % MTLRenderer.MaxFrameLag
     }
     
     func render(commandBuffer commandBuffer: MTLCommandBuffer, renderEncoder: MTLRenderCommandEncoder, drawable: MTLDrawable, meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {

@@ -11,8 +11,8 @@ import OpenGL.GL3
 
 class GLForwardRenderer : Renderer {
     
-    static let CameraNear : Float = 1.0;
-    static let CameraFar : Float = 10000.0;
+    static let CameraNear : Float = 10.0;
+    static let CameraFar : Float = 4000.0;
     static let DepthRangeNear = 0.0;
     static let DepthRangeFar = 1.0;
     
