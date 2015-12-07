@@ -25,14 +25,12 @@ float3 CalculateCameraSpacePositionFromWindow(float windowZ,
                                               float3 cameraDirection,
                                               constant float2 &depthRange,
                                               constant float3 &matrixTerms) {
-    float ndcZ = (2.0 * windowZ - depthRange.x - depthRange.y) /
-    (depthRange.y - depthRange.x);
-    float eyeZ = -matrixTerms.x / ((matrixTerms.y * ndcZ) - matrixTerms.z);
+    float eyeZ = -matrixTerms.x / ((matrixTerms.y * windowZ) - matrixTerms.z);
     return cameraDirection * eyeZ;
 }
 
 vertex LightingVertexOutput pointLightVertex(device float4 *posData [[buffer(0)]],
-                                            constant float2 &nearPlane [[buffer(1)]],
+                                            constant float3 &nearPlane [[buffer(1)]],
                                             constant float4x4 &worldToClipMatrix [[buffer(2)]],
                                             uint vid [[vertex_id]] ) {
     LightingVertexOutput output;
@@ -40,17 +38,17 @@ vertex LightingVertexOutput pointLightVertex(device float4 *posData [[buffer(0)]
     float4 clipPosition = worldToClipMatrix * position;
     output.position = clipPosition;
     
-    output.cameraDirection = float3(clipPosition.xy/clipPosition.w * nearPlane, -2);
+    output.cameraDirection = float3(clipPosition.xy/clipPosition.w * nearPlane.xy, nearPlane.z);
     return output;
 }
 
 vertex LightingVertexOutput compositionVertex(constant float2 *posData [[buffer(0)]],
-                                      constant float2 &nearPlane [[buffer(1)]],
+                                      constant float3 &nearPlane [[buffer(1)]],
                                       uint vid [[vertex_id]] ) {
     LightingVertexOutput output;
     float2 position = posData[vid];
     output.position = float4(position, 0.0f, 1.0f);
-    output.cameraDirection = float3(position * nearPlane, -2);
+    output.cameraDirection = float3(position * nearPlane.xy, nearPlane.z);
     return output;
 }
 

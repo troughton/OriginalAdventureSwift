@@ -17,7 +17,7 @@ class MTLRenderer : Renderer {
     
     let inflightSemaphore = dispatch_semaphore_create(MaxFrameLag)
     
-    static let CameraNear : Float = 10.0;
+    static let CameraNear : Float = 1.0;
     static let CameraFar : Float = 4000.0;
     static let DepthRangeNear = 0.0;
     static let DepthRangeFar = 1.0;

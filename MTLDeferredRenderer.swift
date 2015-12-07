@@ -358,7 +358,6 @@ class MTLDeferredRenderer : MTLRenderer {
             UnsafeMutablePointer<float4x4>(lightTransformationBuffer.contents().advancedBy(i * lightTransformationStep)).memory = lightToClipMatrix
             
             UnsafeMutablePointer<PerLightData>(lightDataBuffer.contents().advancedBy(i * lightDataStep)).memory = light.perLightData(worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)!
-            print(worldToCameraMatrix * float4(light.positionInWorldSpace, 1))
         }
         lightTransformationBuffer.didModifyRange(NSRange(location: 0, length: lights.count * lightTransformationStep))
         lightDataBuffer.didModifyRange(NSRange(location: 0, length: lights.count * lightDataStep))
@@ -448,9 +447,9 @@ class MTLDeferredRenderer : MTLRenderer {
         self.performGeometryPass(renderEncoder, meshes: meshes, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, ambientMaxIntensity: hdrMaxIntensity, ambientLight: ambientIntensity)
         
         let nearPlaneSize = self.calculateNearPlaneSize(zNear: MTLRenderer.CameraNear, windowDimensions: self.sizeInPixels, projectionMatrix: projectionMatrix)
-        let nearPlaneBuffer = self.bufferWithCapacity(sizeof(float2), label: "Near Plane")
-        UnsafeMutablePointer<float2>(nearPlaneBuffer.contents()).memory = nearPlaneSize
-        nearPlaneBuffer.didModifyRange(NSRange(location: 0, length: sizeof(float2)))
+        let nearPlaneBuffer = self.bufferWithCapacity(sizeof(float3), label: "Near Plane")
+        UnsafeMutablePointer<float3>(nearPlaneBuffer.contents()).memory = nearPlaneSize
+        nearPlaneBuffer.didModifyRange(NSRange(location: 0, length: sizeof(float3)))
         renderEncoder.setVertexBuffer(nearPlaneBuffer, offset: 0, atIndex: 1)
         
         let depthRange = float2(Float(MTLRenderer.DepthRangeNear), Float(MTLRenderer.DepthRangeFar))
@@ -478,12 +477,12 @@ class MTLDeferredRenderer : MTLRenderer {
         self.performDirectionalLightPass(renderEncoder, lights: directionalLights, worldToCameraMatrix: worldToCameraMatrix, hdrMaxIntensity: hdrMaxIntensity)
     }
     
-    func calculateNearPlaneSize(zNear zNear: Float, windowDimensions : WindowDimension, projectionMatrix: Matrix4) -> float2 {
+    func calculateNearPlaneSize(zNear zNear: Float, windowDimensions : WindowDimension, projectionMatrix: Matrix4) -> float3 {
         let cameraAspect = windowDimensions.aspect;
         let tanHalfFoV = 1/(projectionMatrix[0][0] * cameraAspect);
-        let y = 2 * tanHalfFoV * zNear;
+        let y = tanHalfFoV * zNear;
         let x = y * cameraAspect;
-        return float2(x, y)
+        return float3(x, y, -MTLRenderer.CameraNear)
     }
    
 }
