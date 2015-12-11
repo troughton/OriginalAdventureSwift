@@ -15,7 +15,7 @@
 
 using namespace simd;
 
-float3 ComputeLighting(float3, PerLightData, half3, float4, half4);
+float3 ComputeLighting(float3, PerLightData, float3, float4, float4);
 
 #endif
 #endif /* LightComputations_h */

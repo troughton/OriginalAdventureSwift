@@ -8,6 +8,7 @@
 
 import Foundation
 import MetalKit
+import Swift
 
 extension Mesh {
     

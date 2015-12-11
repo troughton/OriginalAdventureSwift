@@ -71,4 +71,12 @@ class GameObject: TransformNode {
     func behaviourOfType<B : Behaviour>(type : B.Type) -> B? {
         return self.behaviours.flatMap { $0 as? B }.first
     }
+    
+    func respondToInteractionsOnMesh(mesh: Mesh) {
+        
+    }
+    
+    func makeCollidable() throws {
+        
+    }
 }

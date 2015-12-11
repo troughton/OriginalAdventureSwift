@@ -13,14 +13,22 @@ import MetalKit
 class MTLForwardRenderer : MTLRenderer {
     
     var pipelineState: MTLRenderPipelineState! = nil
+    var pipelineStateNormalMaps: MTLRenderPipelineState! = nil
     var depthState: MTLDepthStencilState! = nil
     
     override init() {
         super.init()
         
         let defaultLibrary = Metal.device.newDefaultLibrary()!
+        
+        
         let fragmentProgram = defaultLibrary.newFunctionWithName("forwardRendererFragmentShader")!
+        
+        let fragmentProgramNormalMap = defaultLibrary.newFunctionWithName("forwardRendererFragmentShaderNormalMap")!
+        
         let vertexProgram = defaultLibrary.newFunctionWithName("forwardRendererVertexShader")!
+        
+        let vertexProgramNormalMap = defaultLibrary.newFunctionWithName("forwardRendererVertexShaderNormalMap")!
         
         let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
         pipelineStateDescriptor.vertexFunction = vertexProgram
@@ -33,6 +41,16 @@ class MTLForwardRenderer : MTLRenderer {
         
         do {
             try pipelineState = Metal.device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
+        } catch let error {
+            print("Failed to create pipeline state, error \(error)")
+            NSApp.terminate(nil)
+        }
+        
+        pipelineStateDescriptor.vertexFunction = vertexProgramNormalMap
+        pipelineStateDescriptor.fragmentFunction = fragmentProgramNormalMap
+        
+        do {
+            try pipelineStateNormalMaps = Metal.device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
         } catch let error {
             print("Failed to create pipeline state, error \(error)")
             NSApp.terminate(nil)
@@ -116,7 +134,13 @@ class MTLForwardRenderer : MTLRenderer {
                 renderEncoder.setFragmentTexture(material.specularityMap?.texture ??
                     self.normalTexture,
                     atIndex: 2)
-                renderEncoder.setFragmentTexture(material.normalMap?.texture ?? self.normalTexture, atIndex: 3)
+                
+                if material.normalMap != nil {
+                    renderEncoder.setRenderPipelineState(self.pipelineStateNormalMaps)
+                    renderEncoder.setFragmentTexture(material.normalMap?.texture ?? self.normalTexture, atIndex: 3)
+                } else {
+                    renderEncoder.setRenderPipelineState(self.pipelineState)
+                }
                 
             })
         }

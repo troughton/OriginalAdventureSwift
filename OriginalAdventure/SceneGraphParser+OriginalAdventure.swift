@@ -38,6 +38,8 @@ class OriginalAdventureSceneGraphParser : SceneGraphParserExtension {
                 return self.parseSpawnNode(id, parent: parent, attributes: attributeDict)
             case .FlickeringLight:
                 return try self.parseFlickeringLight(id, parent: parent, attributes: attributeDict, sceneGraphParser: sceneGraphParser)
+            case .Chest:
+                return self.parseChest(id, parent: parent, attributes: attributeDict)
             default:
                 return SceneNode(id: id, parent: parent)
             }
@@ -68,5 +70,35 @@ class OriginalAdventureSceneGraphParser : SceneGraphParserExtension {
         flickeringLightBehaviour.isOn = isOn
         
         return flickeringLight;
+    }
+    
+    func parseChest(id: String, parent: SceneNode, attributes: [String : String]) -> GameObject {
+        
+        let chestObject = parent.nodeWithID(id) as! GameObject? ?? GameObject(id: id, parent: parent, isDynamic: true)
+        
+        let chestMesh = MeshType.meshesFromFile(inDirectory: "Chest", fileName: "Chest.obj").first
+        chestObject.mesh = chestMesh
+        chestObject.respondToInteractionsOnMesh(chestMesh!)
+        
+        try! chestObject.makeCollidable()
+        
+        let closedRotation = Quaternion(angle: Float(M_PI / 180.0 * 68.0), axis: 1, 0, 0)
+        
+        let hingeOffset = Vector3(0, chestMesh!.boundingBox.height - 0.05, 0);
+        
+        let hingeId = id + "ChestHinge";
+        
+        let hingeTransform = chestObject.nodeWithID(hingeId) as! TransformNode? ?? TransformNode(id: hingeId, parent: chestObject, isDynamic: true, translation: hingeOffset, rotation: closedRotation)
+        
+        let lidId = id + "ChestLid";
+        let lidObject = hingeTransform.nodeWithID(lidId) as! GameObject? ?? GameObject(id: lidId, parent: hingeTransform, isDynamic: true, translation: -hingeOffset)
+        
+        let lidMesh = MeshType.meshesFromFile(inDirectory: "Chest", fileName: "ChestLid.obj").first
+        lidObject.mesh = lidMesh
+        chestObject.respondToInteractionsOnMesh(lidMesh!)
+        
+        _ = OpenCloseBehaviour(gameObject: chestObject, hinge: hingeTransform, openRotation: Quaternion.Identity, closedRotation: closedRotation)
+        
+        return chestObject
     }
 }

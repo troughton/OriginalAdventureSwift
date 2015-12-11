@@ -70,6 +70,7 @@ class MTLDeferredRenderer : MTLRenderer {
     let lightIndexBuffer = Metal.device.newBufferWithBytes(MTLDeferredRenderer.lightVIndices, length: sizeof(Int) * MTLDeferredRenderer.lightVIndices.count, options: [.StorageModeManaged])
     
     var geometryPassPipelineState: MTLRenderPipelineState! = nil
+    var geometryPassPipelineStateNormalMaps: MTLRenderPipelineState! = nil
     var pointLightStencilPassPipelineState: MTLRenderPipelineState! = nil
     var pointLightColourPassPipelineState: MTLRenderPipelineState! = nil
     var compositionPassPipelineState: MTLRenderPipelineState! = nil
@@ -139,6 +140,20 @@ class MTLDeferredRenderer : MTLRenderer {
             NSApp.terminate(nil)
         }
         
+        let geometryFragmentFunctionNormalMap = defaultLibrary.newFunctionWithName("gBufferFragmentShaderNormalMap")!
+        let geometryVertexFunctionNormalMap = defaultLibrary.newFunctionWithName("forwardRendererVertexShaderNormalMap")!
+        
+        pipelineStateDescriptor.label = "GBuffer Render with Normal Maps"
+        
+        pipelineStateDescriptor.vertexFunction = geometryVertexFunctionNormalMap
+        pipelineStateDescriptor.fragmentFunction = geometryFragmentFunctionNormalMap
+        
+        do {
+            try geometryPassPipelineStateNormalMaps = Metal.device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
+        } catch let error {
+            print("Failed to create geometry pipeline state, error \(error)")
+            NSApp.terminate(nil)
+        }
         
         pipelineStateDescriptor.label = "Point Light Mask Render"
         
@@ -311,7 +326,14 @@ class MTLDeferredRenderer : MTLRenderer {
                 renderEncoder.setFragmentTexture(material.specularityMap?.texture ??
                     self.normalTexture,
                     atIndex: 2)
-                renderEncoder.setFragmentTexture(material.normalMap?.texture ?? self.normalTexture, atIndex: 3)
+                
+                
+                if material.normalMap != nil {
+                    renderEncoder.setRenderPipelineState(self.geometryPassPipelineStateNormalMaps)
+                    renderEncoder.setFragmentTexture(material.normalMap?.texture ?? self.normalTexture, atIndex: 3)
+                } else {
+                    renderEncoder.setRenderPipelineState(self.geometryPassPipelineState)
+                }
                 
             })
         }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FlickeringLightBehaviour : Behaviour, Hashable {
+class FlickeringLightBehaviour : Behaviour {
  
     private let LightAnimationTime : AnimationFloat = 0.3;
     

@@ -20,19 +20,19 @@ namespace Ingenero
     typedef struct
     {
         float4 diffuse [[color(2)]]; //channel 4 is the specular tint towards the diffuse
-        half4 normal [[color(1)]]; //channel 4 is the specularity
+        float4 normal [[color(1)]]; //channel 4 is the specularity
         float4 light [[color(0)]];
     } GBuffers;
     
     struct VertexInOut
     {
         float2  textureCoordinate;
-        half3  normal;
+        float3  normal;
         float3  cameraSpacePosition;
         float4  position [[position]];
-        half3 tangentToCameraSpaceMatrixC1;
-        half3 tangentToCameraSpaceMatrixC2;
-        half3 tangentToCameraSpaceMatrixC3;
+        float3 tangentToCameraSpaceMatrixC1;
+        float3 tangentToCameraSpaceMatrixC2;
+        float3 tangentToCameraSpaceMatrixC3;
     };
 }
 

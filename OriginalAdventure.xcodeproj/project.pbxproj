@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -23,6 +23,10 @@
 		E9205DC61BD777B7005B990F /* CBridges.c in Sources */ = {isa = PBXBuildFile; fileRef = E9205DC51BD777B7005B990F /* CBridges.c */; };
 		E9205DC81BD77C97005B990F /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9205DC71BD77C97005B990F /* ModelIO.framework */; };
 		E93A311D1C042C75009240D4 /* MTKInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93A311C1C042C75009240D4 /* MTKInputView.swift */; };
+		E93AC70F1C16312A00801A46 /* OpenCloseBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93AC70D1C16311900801A46 /* OpenCloseBehaviour.swift */; };
+		E93AC7101C16312A00801A46 /* OpenCloseBehaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93AC70D1C16311900801A46 /* OpenCloseBehaviour.swift */; };
+		E93AC7121C16377500801A46 /* Chest in Resources */ = {isa = PBXBuildFile; fileRef = E93AC7111C16377500801A46 /* Chest */; };
+		E93AC7131C16377500801A46 /* Chest in Resources */ = {isa = PBXBuildFile; fileRef = E93AC7111C16377500801A46 /* Chest */; };
 		E93B4C0F1BED59A200792417 /* TextureUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B4C0E1BED59A200792417 /* TextureUnit.swift */; };
 		E93B4C111BED5D8B00792417 /* GLExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B4C101BED5D8B00792417 /* GLExtensions.swift */; };
 		E93CB1031BF3EF450011267C /* MTLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93CB1021BF3EF450011267C /* MTLParser.swift */; };
@@ -230,6 +234,8 @@
 		E92549ED1BD8EB1400EA4D58 /* glfw3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glfw3.h; sourceTree = "<group>"; };
 		E92549EE1BD8EB1400EA4D58 /* glfw3native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glfw3native.h; sourceTree = "<group>"; };
 		E93A311C1C042C75009240D4 /* MTKInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MTKInputView.swift; path = OriginalAdventureMetal/MTKInputView.swift; sourceTree = "<group>"; };
+		E93AC70D1C16311900801A46 /* OpenCloseBehaviour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenCloseBehaviour.swift; sourceTree = "<group>"; };
+		E93AC7111C16377500801A46 /* Chest */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Chest; sourceTree = "<group>"; };
 		E93B4C0E1BED59A200792417 /* TextureUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureUnit.swift; sourceTree = "<group>"; };
 		E93B4C101BED5D8B00792417 /* GLExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLExtensions.swift; sourceTree = "<group>"; };
 		E93CB0FD1BF321850011267C /* MedievalModels.abc */ = {isa = PBXFileReference; lastKnownFileType = file; path = MedievalModels.abc; sourceTree = "<group>"; };
@@ -448,6 +454,7 @@
 		E944BD901BF03F7900E61077 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E93AC7111C16377500801A46 /* Chest */,
 				E9C13C731BFE8F8400DB4351 /* sphere.mtl */,
 				E9C13C741BFE8F8400DB4351 /* sphere.obj */,
 				E95E28131BF92F75001E4F13 /* Flame */,
@@ -513,6 +520,7 @@
 				E90B21C31BF808FD00EA118A /* SpawnPointBehaviour.swift */,
 				E90B21C51BF8096300EA118A /* PlayerBehaviour.swift */,
 				E95E28101BF92770001E4F13 /* FlickeringLightBehaviour.swift */,
+				E93AC70D1C16311900801A46 /* OpenCloseBehaviour.swift */,
 			);
 			name = Behaviours;
 			sourceTree = "<group>";
@@ -741,7 +749,7 @@
 				};
 			};
 			buildConfigurationList = E93EED321BD30245005B6B05 /* Build configuration list for PBXProject "OriginalAdventure" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -770,6 +778,7 @@
 				E9F7750A1BFC26E8009776F0 /* PointLightPass.frag in Resources */,
 				E9C13C751BFE8F8400DB4351 /* sphere.mtl in Resources */,
 				E90B21B91BF7E8C600EA118A /* SceneGraph.xml in Resources */,
+				E93AC7121C16377500801A46 /* Chest in Resources */,
 				E9A4D4B71BF077CB003FEACC /* PassthroughShader.vert in Resources */,
 				E9C13C761BFE8F8400DB4351 /* sphere.obj in Resources */,
 				E90B21C91BF8122600EA118A /* StoneWall.jpg in Resources */,
@@ -797,6 +806,7 @@
 				E9B6AC331C02A11400F27FD7 /* Flame in Resources */,
 				E9B6AC341C02A11400F27FD7 /* StoneWall.jpg in Resources */,
 				E9B6AC351C02A11400F27FD7 /* StoneWall.png in Resources */,
+				E93AC7131C16377500801A46 /* Chest in Resources */,
 				E9B6AC361C02A11400F27FD7 /* StoneWall.mtl in Resources */,
 				E9B6AC371C02A11400F27FD7 /* SceneGraph.xml in Resources */,
 				E9B6AC381C02A11400F27FD7 /* MedievalModels.abc in Resources */,
@@ -854,6 +864,7 @@
 				E93EED4C1BD3026C005B6B05 /* TransformNode.swift in Sources */,
 				E90B21C41BF808FD00EA118A /* SpawnPointBehaviour.swift in Sources */,
 				E93CB1031BF3EF450011267C /* MTLParser.swift in Sources */,
+				E93AC7101C16312A00801A46 /* OpenCloseBehaviour.swift in Sources */,
 				E99FCEBF1BDA2F4600C778A5 /* OriginalAdventure.swift in Sources */,
 				E9FBA6291BD61B8B007052D4 /* MathTypes.swift in Sources */,
 				E90B21C11BF8089900EA118A /* Behaviour.swift in Sources */,
@@ -919,6 +930,7 @@
 				E9B6AC0E1C02965500F27FD7 /* Camera.swift in Sources */,
 				E9B6AC0F1C02965500F27FD7 /* Light.swift in Sources */,
 				E9B6AC111C02965500F27FD7 /* GameObject.swift in Sources */,
+				E93AC70F1C16312A00801A46 /* OpenCloseBehaviour.swift in Sources */,
 				E9B6AC121C02965500F27FD7 /* Material.swift in Sources */,
 				E9A212D61C0BCA5C0037EE45 /* DeferredPrimitives.swift in Sources */,
 				E9B6AC2C1C029BDB00F27FD7 /* TextureSampler.swift in Sources */,
@@ -1096,6 +1108,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ingenero.OriginalAdventureMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "OriginalAdventureMetal/OriginalAdventureMetal-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Debug;
 		};

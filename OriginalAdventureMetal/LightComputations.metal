@@ -44,34 +44,34 @@ struct AngleNormalHalfResult {
 };
 
 
-AngleNormalHalfResult ComputeAngleNormalHalf(float3, half3, PerLightData);
+AngleNormalHalfResult ComputeAngleNormalHalf(float3, float3, PerLightData);
 
-AngleNormalHalfResult ComputeAngleNormalHalf(float3 cameraSpacePosition, half3 surfaceNormal, PerLightData lightData) {
-    half3 lightDirection;
+AngleNormalHalfResult ComputeAngleNormalHalf(float3 cameraSpacePosition, float3 surfaceNormal, PerLightData lightData) {
+    float3 lightDirection;
     AngleNormalHalfResult result;
     
     if (lightData.positionInCameraSpace.w < 0.0001) { //DirectionalLight
-        lightDirection = half3(lightData.positionInCameraSpace.xyz);
+        lightDirection = float3(lightData.positionInCameraSpace.xyz);
         result.lightIntensity = lightData.intensity.rgb;
     }
     else {
         AttenuationResult attenuationResult = ComputeAttenuation(cameraSpacePosition,
                                                                  lightData.positionInCameraSpace.xyz, lightData.falloff.xyz);
-        lightDirection = half3(attenuationResult.lightDirection);
+        lightDirection = float3(attenuationResult.lightDirection);
         result.lightIntensity = attenuationResult.attenuation * lightData.intensity.rgb;
     }
-    half3 viewDirection = half3(normalize(-cameraSpacePosition));
+    float3 viewDirection = float3(normalize(-cameraSpacePosition));
     
     float cosAngIncidenceTemp = dot(surfaceNormal, lightDirection);
     result.cosAngIncidence = max(cosAngIncidenceTemp, 0.f); //clamp it to 0
-    half3 halfAngle = normalize(lightDirection + viewDirection);
+    float3 halfAngle = normalize(lightDirection + viewDirection);
     float angleNormalHalf = acos(dot(halfAngle, surfaceNormal));
     result.angleNormalHalf = angleNormalHalf;
     
     return result;
 }
 
-float3 ComputeLighting(float3 cameraSpacePosition, PerLightData lightData, half3 surfaceNormal, float4 diffuse, half4 specular) {
+float3 ComputeLighting(float3 cameraSpacePosition, PerLightData lightData, float3 surfaceNormal, float4 diffuse, float4 specular) {
     
     AngleNormalHalfResult angleNormalHalfResult = ComputeAngleNormalHalf(cameraSpacePosition, surfaceNormal, lightData);
     
