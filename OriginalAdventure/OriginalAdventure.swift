@@ -13,6 +13,8 @@ class OriginalAdventure: Game {
     var title = "Original Adventure"
     lazy var _renderer : Renderer = RendererType()
     var sceneGraph : SceneNode! = nil
+    var sceneTree : OctreeNode<Mesh>! = nil
+    
     var camera : Camera! = nil
     var player : PlayerBehaviour! = nil
     
@@ -39,6 +41,13 @@ class OriginalAdventure: Game {
         self.player = playerObject?.behaviourOfType(PlayerBehaviour)
         self.camera = playerObject?.camera
         self.camera.hdrMaxIntensity = 4
+        
+        self.sceneTree = OctreeNode<Mesh>(boundingVolume: self.sceneGraph.boundingBox!)
+        self.sceneGraph.allNodesOfType(GameObject).forEach { (gameObject) -> () in
+            if let mesh = gameObject.mesh {
+                sceneTree.append(mesh, boundingBox: mesh.boundingBox.axisAlignedBoundingBoxInSpace(mesh.worldSpaceTransform))
+            }
+        }
         
         self.setupInput()
     }

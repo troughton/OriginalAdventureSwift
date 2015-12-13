@@ -101,6 +101,16 @@ struct BoundingBox {
         self.minZ > otherBox.maxZ);
     }
     
+    func contains(otherBox: BoundingBox) -> Bool {
+        return
+            self.minX < otherBox.minX &&
+            self.maxX > otherBox.maxX &&
+            self.minY < otherBox.minY &&
+            self.maxY > otherBox.maxY &&
+            self.minZ < otherBox.minZ &&
+            self.maxZ > otherBox.maxZ
+    }
+    
 
 /**
 * Transforms this bounding box from its local space to the space described by nodeToSpaceTransform.

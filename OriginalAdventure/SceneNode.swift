@@ -153,6 +153,28 @@ class SceneNode : Hashable {
     var hashValue : Int {
         return self.id.hashValue
     }
+    
+    var boundingBox : BoundingBox? {
+        var minX = Float.infinity,
+        minY = Float.infinity,
+        minZ = Float.infinity,
+        maxX = -Float.infinity,
+        maxY = -Float.infinity,
+        maxZ = -Float.infinity
+        
+        
+        for child in self.children {
+            guard let childBox = child.boundingBox else { continue }
+            minX = min(childBox.minX, minX)
+            minY = min(childBox.minY, minY)
+            minZ = min(childBox.minZ, minZ)
+            maxX = max(childBox.maxX, maxX)
+            maxY = max(childBox.maxY, maxY)
+            maxZ = max(childBox.maxZ, maxZ)
+        }
+        
+        return BoundingBox(minPoint: Vector3(minX, minY, minZ), maxPoint: Vector3(maxX, maxY, maxZ))
+    }
 }
 
 func ==(lhs: SceneNode, rhs: SceneNode) -> Bool {

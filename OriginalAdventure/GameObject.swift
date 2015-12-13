@@ -50,6 +50,10 @@ class GameObject: TransformNode {
     var behaviours = [Behaviour]()
     var camera : Camera?
     
+    override var boundingBox : BoundingBox? {
+        return mesh?.boundingBox
+    }
+    
     override var isEnabled : Bool {
         get {
             return super.isEnabled
