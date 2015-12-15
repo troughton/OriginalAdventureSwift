@@ -61,32 +61,18 @@ struct BoundingBox {
             point.z <= self.maxZ;
     }
     
-//    /**
-//    * Returns the vertex of self box in the direction described by direction.
-//    * @param direction The direction to look in.
-//    * @return The vertex in that direction.
-//    */
-//    public Vector3 vertexInDirection(Direction direction) {
-//    switch (direction) {
-//    case FrontUpLeft:
-//    return new Vector3(self.minX, self.maxY, self.maxZ);
-//    case FrontUpRight:
-//    return new Vector3(self.maxX, self.maxY, self.maxZ);
-//    case FrontDownLeft:
-//    return new Vector3(self.minX, self.minY, self.maxZ);
-//    case FrontDownRight:
-//    return new Vector3(self.maxX, self.minY, self.maxZ);
-//    case BackUpLeft:
-//    return new Vector3(self.minX, self.maxY, self.minZ);
-//    case BackUpRight:
-//    return new Vector3(self.maxX, self.maxY, self.minZ);
-//    case BackDownLeft:
-//    return new Vector3(self.minX, self.minY, self.minZ);
-//    case BackDownRight:
-//    return new Vector3(self.maxX, self.minY, self.minZ);
-//    }
-//    throw new RuntimeException("Not a valid direction: " + direction);
-//    }
+    /**
+    * Returns the vertex of self box in the direction described by direction.
+    * @param direction The direction to look in.
+    * @return The vertex in that direction.
+    */
+    func pointAtExtent(extent: Extent) -> Vector3 {
+        let useMaxX = extent.rawValue & Extent.MaxXFlag != 0
+        let useMaxY = extent.rawValue & Extent.MaxYFlag != 0
+        let useMaxZ = extent.rawValue & Extent.MaxZFlag != 0
+        
+        return Vector3(useMaxX ? self.maxX : self.minX, useMaxY ? self.maxY : self.minY, useMaxZ ? self.maxZ : self.minZ)
+    }
     
     /**
     * @param otherBox The box to check intersection with.

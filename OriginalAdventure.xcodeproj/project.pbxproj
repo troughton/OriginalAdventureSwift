@@ -48,6 +48,8 @@
 		E9867C561BF1A1B4008781B0 /* Plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = E9867C551BF1A1B4008781B0 /* Plane.obj */; };
 		E9968EC01C1CF7AF000154C1 /* Octree.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EBF1C1CF7AF000154C1 /* Octree.swift */; };
 		E9968EC11C1CF7AF000154C1 /* Octree.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EBF1C1CF7AF000154C1 /* Octree.swift */; };
+		E9968EC31C1D268F000154C1 /* Frustum.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EC21C1D268F000154C1 /* Frustum.swift */; };
+		E9968EC41C1D268F000154C1 /* Frustum.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EC21C1D268F000154C1 /* Frustum.swift */; };
 		E99A844B1C01749800D0D63F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99A844A1C01749800D0D63F /* AppDelegate.swift */; };
 		E99A844D1C01749800D0D63F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99A844C1C01749800D0D63F /* GameViewController.swift */; };
 		E99A844F1C01749800D0D63F /* ForwardRendererShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = E99A844E1C01749800D0D63F /* ForwardRendererShaders.metal */; };
@@ -264,6 +266,7 @@
 		E9867C531BF19FFA008781B0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		E9867C551BF1A1B4008781B0 /* Plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Plane.obj; sourceTree = "<group>"; };
 		E9968EBF1C1CF7AF000154C1 /* Octree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Octree.swift; sourceTree = "<group>"; };
+		E9968EC21C1D268F000154C1 /* Frustum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frustum.swift; sourceTree = "<group>"; };
 		E99A84481C01749800D0D63F /* OriginalAdventureMetal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OriginalAdventureMetal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E99A844A1C01749800D0D63F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = OriginalAdventureMetal/AppDelegate.swift; sourceTree = "<group>"; };
 		E99A844C1C01749800D0D63F /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameViewController.swift; path = OriginalAdventureMetal/GameViewController.swift; sourceTree = "<group>"; };
@@ -449,6 +452,7 @@
 				E9205DBE1BD740CE005B990F /* BoundingBox.swift */,
 				E9205DC41BD77331005B990F /* CBridges.h */,
 				E9205DC51BD777B7005B990F /* CBridges.c */,
+				E9968EC21C1D268F000154C1 /* Frustum.swift */,
 			);
 			name = Maths;
 			path = OriginalAdventure;
@@ -881,6 +885,7 @@
 				E9F774FD1BFC1E53009776F0 /* Settings.swift in Sources */,
 				E90B21BB1BF7ED3D00EA118A /* OptionalStringInitialisable.swift in Sources */,
 				E93EED4A1BD30262005B6B05 /* SceneNode.swift in Sources */,
+				E9968EC31C1D268F000154C1 /* Frustum.swift in Sources */,
 				E9BE64031BF417AE00045FBB /* MaterialParser.swift in Sources */,
 				E9205DC61BD777B7005B990F /* CBridges.c in Sources */,
 				E91AA9971BEAFDB30026D9ED /* GBuffer.swift in Sources */,
@@ -960,6 +965,7 @@
 				E99A844B1C01749800D0D63F /* AppDelegate.swift in Sources */,
 				E9B6ABF11C02957600F27FD7 /* MTLForwardRenderer.swift in Sources */,
 				E9B6AC231C02991C00F27FD7 /* MetalConstants.swift in Sources */,
+				E9968EC41C1D268F000154C1 /* Frustum.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1114,7 +1120,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ingenero.OriginalAdventureMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "OriginalAdventureMetal/OriginalAdventureMetal-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Debug;
 		};

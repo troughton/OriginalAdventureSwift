@@ -51,7 +51,7 @@ class GameObject: TransformNode {
     var camera : Camera?
     
     override var boundingBox : BoundingBox? {
-        return mesh?.boundingBox
+        return mesh?.boundingBox.axisAlignedBoundingBoxInSpace(self.nodeToWorldSpaceTransform)
     }
     
     override var isEnabled : Bool {

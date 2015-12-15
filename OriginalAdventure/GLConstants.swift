@@ -11,6 +11,8 @@ import Foundation
 typealias RendererType = GLDeferredRenderer
 typealias MeshType = GLMesh
 
+let isGL = true
+
 func CurrentTime() -> Double {
     return glfwGetTime()
 }

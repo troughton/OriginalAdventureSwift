@@ -9,22 +9,33 @@
 import Foundation
 
 enum Extent : Int {
-    case minX_minY_minZ = 0b000
-    case minX_minY_maxZ = 0b001
-    case minX_maxY_minZ = 0b010
-    case minX_maxY_maxZ = 0b011
-    case maxX_minY_minZ = 0b100
-    case maxX_minY_maxZ = 0b101
-    case maxX_maxY_minZ = 0b110
-    case maxX_maxY_maxZ = 0b111
+    case MinX_MinY_MinZ = 0b000
+    case MinX_MinY_MaxZ = 0b001
+    case MinX_MaxY_MinZ = 0b010
+    case MinX_MaxY_MaxZ = 0b011
+    case MaxX_MinY_MinZ = 0b100
+    case MaxX_MinY_MaxZ = 0b101
+    case MaxX_MaxY_MinZ = 0b110
+    case MaxX_MaxY_MaxZ = 0b111
     case LastElement
+    
+    static let MaxXFlag = 0b100
+    static let MaxYFlag = 0b010
+    static let MaxZFlag = 0b001
+    
+    static let values = (0..<Extent.LastElement.rawValue).map { rawValue -> Extent in return Extent(rawValue: rawValue)! }
 }
 
 class OctreeNode<T> {
     
-    private var _nodes = [T]()
+    var values = [T]()
     let boundingVolume : BoundingBox
-    var children = [OctreeNode<T>?](count: Extent.LastElement.rawValue, repeatedValue: nil)
+    private var children = [OctreeNode<T>?](count: Extent.LastElement.rawValue, repeatedValue: nil)
+    
+    lazy var boundingSphere : (centre: Vector3, radius: Float) = {
+        let diameter = max(self.boundingVolume.width, self.boundingVolume.height, self.boundingVolume.depth)
+        return (self.boundingVolume.centre, diameter/2)
+    }()
     
     private let _subVolumes : [BoundingBox]
     
@@ -61,35 +72,39 @@ class OctreeNode<T> {
         _subVolumes = OctreeNode.computeSubVolumesForBox(boundingVolume)
     }
     
-    func nodeAtExtent(extent: Extent) -> OctreeNode<T> {
-        return self.nodeAtIndex(extent.rawValue)
+    subscript(extent: Extent) -> OctreeNode<T>? {
+        return self[extent.rawValue]
     }
     
-    private func nodeAtIndex(index: Int) -> OctreeNode<T> {
-        if let node = self.children[index] {
-            return node
-        } else {
-            let node = OctreeNode<T>(boundingVolume: _subVolumes[index])
-            self.children[index] = node
-            return node
-        }
+    private subscript(index: Int) -> OctreeNode<T>? {
+        return self.children[index]
     }
+    
     
     func append(element: T, boundingBox: BoundingBox) {
         for (i, subVolume) in _subVolumes.enumerate() {
             if subVolume.contains(boundingBox) {
-                self.nodeAtIndex(i).append(element, boundingBox: boundingBox)
+                (self[i] ?? {
+                    let node = OctreeNode<T>(boundingVolume: _subVolumes[i])
+                    self.children[i] = node
+                    return node
+                }())
+                .append(element, boundingBox: boundingBox)
                 return
             }
         }
         
-        _nodes.append(element)
+        values.append(element)
     }
     
     func traverse(@noescape function: ([T]) -> ()) {
-        function(_nodes)
+        function(values)
         for child in children {
             child?.traverse(function)
         }
     }
+}
+
+extension OctreeNode where T : Mesh {
+    
 }

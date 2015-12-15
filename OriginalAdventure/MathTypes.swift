@@ -126,11 +126,17 @@ extension Vector3 : Equatable {
 }
 
 func *(lhs: Vector3, rhs: Vector3) -> Vector3 {
-    return Vector3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z)
+    var result = lhs
+    result *= rhs
+    return result
 }
 
 func /(lhs: Vector3, rhs: Float) -> Vector3 {
-    return Vector3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs)
+    return lhs * (1 / rhs)
+}
+
+func /(lhs: double3, rhs: Double) -> double3 {
+    return lhs * (1 / rhs)
 }
 
 public func ==(lhs: float3, rhs: float3) -> Bool {
@@ -168,7 +174,7 @@ public func ==(lhs: float4, rhs: float4) -> Bool {
 }
 
 func /(lhs: Vector4, rhs: Float) -> Vector4 {
-    return Vector4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs)
+    return lhs * (1 / rhs)
 }
 
 

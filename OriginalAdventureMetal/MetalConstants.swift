@@ -11,6 +11,8 @@ import Foundation
 typealias RendererType = MTLDeferredRenderer
 typealias MeshType = MTLMesh
 
+let isGL = false
+
 func CurrentTime() -> Double {
     return NSDate.timeIntervalSinceReferenceDate()
 }

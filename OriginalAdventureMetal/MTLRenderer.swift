@@ -139,14 +139,56 @@ class MTLRenderer : Renderer {
         
     }
     
-    func render(meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, fieldOfView: Float, hdrMaxIntensity: Float) {
+    private func recurseTree(node: OctreeNode<Mesh>, frustum: Frustum, inout meshesList: [Mesh]) {
+        //Algorithm:
+        //First, visit the back children
+        //Then, add the elements belonging to the node
+        //Finally, visit the front children
+    
+        if !frustum.containsBox(node.boundingVolume) { return }
+        
+        for i in 0..<Extent.LastElement.rawValue where i & Extent.MaxZFlag == 0 {
+            if let child = node[Extent(rawValue: i)!] {
+                recurseTree(child, frustum: frustum, meshesList: &meshesList)
+            }
+        }
+        meshesList.appendContentsOf(node.values)
+        
+        for i in 0..<Extent.LastElement.rawValue where i & Extent.MaxZFlag != 0 {
+            if let child = node[Extent(rawValue: i)!] {
+                recurseTree(child, frustum: frustum, meshesList: &meshesList)
+            }
+        }
+    }
+    
+    func render(tree: OctreeNode<Mesh>, dynamicMeshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, fieldOfView: Float, hdrMaxIntensity: Float) {
         if (fieldOfView != _currentFOV) {
             _currentFOV = fieldOfView;
         }
-        self.render(meshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: _projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)
+        
+        var meshesList = [Mesh]()
+        
+        let frustum = Frustum(worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: _projectionMatrix)
+        
+        self.recurseTree(tree, frustum: frustum, meshesList: &meshesList)
+        
+        self.render(meshesList + dynamicMeshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: _projectionMatrix, hdrMaxIntensity: hdrMaxIntensity, zSort: false)
     }
     
-    func render(meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float) {
+    func render(meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, fieldOfView: Float, hdrMaxIntensity: Float, zSort shouldZSort: Bool = false) {
+        if (fieldOfView != _currentFOV) {
+            _currentFOV = fieldOfView;
+        }
+        self.render(meshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: _projectionMatrix, hdrMaxIntensity: hdrMaxIntensity, zSort: shouldZSort)
+    }
+    
+    func render(meshes: [Mesh], lights: [Light], worldToCameraMatrix: Matrix4, projectionMatrix: Matrix4, hdrMaxIntensity: Float, zSort shouldZSort: Bool = false) {
+        var meshes = meshes
+        
+        if shouldZSort {
+            zSort(&meshes, worldToCameraMatrix: worldToCameraMatrix)
+        }
+        
         guard let (commandBuffer, renderEncoder, currentDrawable) = self.preRender() else { return }
         
         self.render(commandBuffer: commandBuffer, renderEncoder: renderEncoder, drawable: currentDrawable, meshes: meshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix, hdrMaxIntensity: hdrMaxIntensity)

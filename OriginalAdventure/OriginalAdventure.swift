@@ -13,7 +13,7 @@ class OriginalAdventure: Game {
     var title = "Original Adventure"
     lazy var _renderer : Renderer = RendererType()
     var sceneGraph : SceneNode! = nil
-    var sceneTree : OctreeNode<Mesh>! = nil
+    var staticMeshesOctree : OctreeNode<Mesh>! = nil
     
     var camera : Camera! = nil
     var player : PlayerBehaviour! = nil
@@ -42,10 +42,10 @@ class OriginalAdventure: Game {
         self.camera = playerObject?.camera
         self.camera.hdrMaxIntensity = 4
         
-        self.sceneTree = OctreeNode<Mesh>(boundingVolume: self.sceneGraph.boundingBox!)
-        self.sceneGraph.allNodesOfType(GameObject).forEach { (gameObject) -> () in
-            if let mesh = gameObject.mesh {
-                sceneTree.append(mesh, boundingBox: mesh.boundingBox.axisAlignedBoundingBoxInSpace(mesh.worldSpaceTransform))
+        self.staticMeshesOctree = OctreeNode<Mesh>(boundingVolume: sceneGraph.boundingBox!)
+        for node in sceneGraph.allNodesOfType(GameObject) {
+            if !node.isDynamic && node.mesh != nil {
+                staticMeshesOctree.append(node.mesh!, boundingBox: node.boundingBox!)
             }
         }
         
@@ -74,15 +74,14 @@ class OriginalAdventure: Game {
         
         self.player.lookInDirection(_viewAngle.x, angleY: _viewAngle.y)
         
-        var meshes = sceneGraph.enabledNodesOfType(GameObject).flatMap { $0.mesh }
-        let worldToCameraMatrix = self.camera.worldToNodeSpaceTransform
-        zSort(&meshes, worldToCameraMatrix: worldToCameraMatrix)
+        let lights = sceneGraph.enabledNodesOfType(Light)
         
-        _renderer.render(meshes,
-            lights: sceneGraph.enabledNodesOfType(Light),
-            worldToCameraMatrix: worldToCameraMatrix,
-            fieldOfView: self.camera.fieldOfView,
-            hdrMaxIntensity: self.camera.hdrMaxIntensity)
+        let worldToCameraMatrix = self.camera.worldToNodeSpaceTransform
+        
+        let dynamicMeshes = sceneGraph.enabledNodesOfType(GameObject.self, excludingStaticNodes: true).flatMap { $0.mesh }
+
+        
+        _renderer.render(self.staticMeshesOctree, dynamicMeshes: dynamicMeshes, lights: lights, worldToCameraMatrix: worldToCameraMatrix, fieldOfView: self.camera.fieldOfView, hdrMaxIntensity: self.camera.hdrMaxIntensity)
         
     }
     

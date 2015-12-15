@@ -56,6 +56,8 @@ class SceneNode : Hashable {
     
     let id : String
     
+    var dynamicNodes : Reference<[SceneNode]>
+    
     var idsToNodes : Reference<[String : SceneNode]>;
     private var _nodesOfType : Reference<[SceneNodeType : [SceneNode]]>
     
@@ -63,6 +65,8 @@ class SceneNode : Hashable {
         self.id = id;
         self.idsToNodes = Reference([String : SceneNode]());
         self.isDynamic = false;
+        
+        self.dynamicNodes = Reference([SceneNode]())
         
         _nodesOfType = Reference([SceneNodeType : [SceneNode]]());
         
@@ -77,12 +81,17 @@ class SceneNode : Hashable {
         
         self.isDynamic = isDynamic || parent.isDynamic
         
+        self.dynamicNodes = parent.dynamicNodes
+        
         self.id = id
         self.idsToNodes.value[id] = self;
         
         self.parent = parent
         
         self.addNodeWithTypeToDictionary(type: self.dynamicType, node: self)
+        if self.isDynamic {
+            self.dynamicNodes.value.append(self)
+        }
     }
     
     private func addNodeWithTypeToDictionary<T : SceneNode>(type type : T.Type, node : T) {
@@ -108,9 +117,9 @@ class SceneNode : Hashable {
         }
     }
     
-    func enabledNodesOfType<T : SceneNode>(type : T.Type) -> [T] {
+    func enabledNodesOfType<T : SceneNode>(type : T.Type, excludingStaticNodes excludeStatic: Bool = false) -> [T] {
         return self.withAllNodesOfType(type) { (nodes) -> [T] in
-            let retVal = nodes.filter { $0.isEnabled }
+            let retVal = nodes.filter { $0.isEnabled && (!excludeStatic || $0.isDynamic) }
             return retVal
         }
     }

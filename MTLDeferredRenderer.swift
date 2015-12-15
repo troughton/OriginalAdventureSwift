@@ -303,6 +303,7 @@ class MTLDeferredRenderer : MTLRenderer {
         var materialBufferIndex = 0
         
         for (matricesBufferIndex, mesh) in meshes.enumerate() {
+            
             let transformationBufferOffset = matricesBufferIndex * transformationBufferStep
             let matricesRef = UnsafeMutablePointer<ModelMatrices>(transformationBuffer.advancedBy(transformationBufferOffset))
             self.setModelMatrices(matricesRef, forMesh: mesh, worldToCameraMatrix: worldToCameraMatrix, projectionMatrix: projectionMatrix)
@@ -427,7 +428,6 @@ class MTLDeferredRenderer : MTLRenderer {
         renderEncoder.setRenderPipelineState(self.compositionPassPipelineState)
         renderEncoder.setDepthStencilState(self.directionalLightPassDepthState)
         renderEncoder.setCullMode(.None)
-    
         
         
         renderEncoder.setVertexBuffer(self.quadBuffer, offset: 0, atIndex: 0)
