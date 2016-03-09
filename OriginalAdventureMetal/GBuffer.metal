@@ -37,7 +37,7 @@ fragment GBuffers gBufferFragmentShader(VertexInOut inFrag [[stage_in]],
     
     GBuffers output;
     output.diffuse = float4(diffuse.rgb, avgTint);
-    output.normal = float4((inFrag.normal + 1)/2, half(specular.w));
+    output.normal = float4((normalize(inFrag.normal) + 1)/2, specular.w);
     output.light = ambientColour + float4(diffuse.rgb * ambientLightIntensity, 0);
     
     return output;
@@ -72,7 +72,7 @@ fragment GBuffers gBufferFragmentShaderNormalMap(VertexInOut inFrag [[stage_in]]
     
     GBuffers output;
     output.diffuse = float4(diffuse.rgb, avgTint);
-    output.normal = float4((surfaceNormal + 1)/2, half(specular.w));
+    output.normal = float4((surfaceNormal + 1)/2, specular.w);
     output.light = ambientColour + float4(diffuse.rgb * ambientLightIntensity, 0);
     
     return output;

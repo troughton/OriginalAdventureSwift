@@ -68,10 +68,12 @@ fragment float4 lightFrag(LightingVertexOutput in [[stage_in]],
     float specularTint = diffuse.w;
     float3 specularColour = float3(mix(float3(1), diffuse.rgb, specularTint));
   
-    float4 normal = float4(normalTexture.sample(s, in.position.xy) * 2 - 1);
-    half specularity = normal.w;
+    float4 normalAndSpecularity = normalTexture.sample(s, in.position.xy);
+    float3 normal = normalAndSpecularity.xyz * 2 - 1;
+    normal.z = 1 - length_squared(normal.xy); //faster than normalize() since it avoids a sqrt
+    float specularity = normalAndSpecularity.w;
     
-    float3 totalLighting = ComputeLighting(cameraSpacePosition, light, normal.xyz, diffuse, float4(specularColour, specularity));
+    float3 totalLighting = ComputeLighting(cameraSpacePosition, light, normal, diffuse, float4(specularColour, specularity));
     
     return float4(totalLighting, 1);
 }

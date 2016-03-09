@@ -46,6 +46,7 @@
 		E97FB0131BFABA1700025554 /* AnimationSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FB0121BFABA1700025554 /* AnimationSystem.swift */; };
 		E9867C541BF19FFA008781B0 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9867C531BF19FFA008781B0 /* GLKit.framework */; };
 		E9867C561BF1A1B4008781B0 /* Plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = E9867C551BF1A1B4008781B0 /* Plane.obj */; };
+		E988C9731C7BEC99004DBFDE /* TorranceSparrow.metal in Sources */ = {isa = PBXBuildFile; fileRef = E988C9721C7BEC99004DBFDE /* TorranceSparrow.metal */; };
 		E9968EC01C1CF7AF000154C1 /* Octree.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EBF1C1CF7AF000154C1 /* Octree.swift */; };
 		E9968EC11C1CF7AF000154C1 /* Octree.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EBF1C1CF7AF000154C1 /* Octree.swift */; };
 		E9968EC31C1D268F000154C1 /* Frustum.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9968EC21C1D268F000154C1 /* Frustum.swift */; };
@@ -265,6 +266,7 @@
 		E97FB0121BFABA1700025554 /* AnimationSystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationSystem.swift; sourceTree = "<group>"; };
 		E9867C531BF19FFA008781B0 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		E9867C551BF1A1B4008781B0 /* Plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Plane.obj; sourceTree = "<group>"; };
+		E988C9721C7BEC99004DBFDE /* TorranceSparrow.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = TorranceSparrow.metal; sourceTree = "<group>"; };
 		E9968EBF1C1CF7AF000154C1 /* Octree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Octree.swift; sourceTree = "<group>"; };
 		E9968EC21C1D268F000154C1 /* Frustum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frustum.swift; sourceTree = "<group>"; };
 		E99A84481C01749800D0D63F /* OriginalAdventureMetal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OriginalAdventureMetal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -566,6 +568,7 @@
 			children = (
 				E99C44471C0560B200F27679 /* LightComputations.h */,
 				E99C44481C0560B200F27679 /* LightComputations.metal */,
+				E988C9721C7BEC99004DBFDE /* TorranceSparrow.metal */,
 				E99A844E1C01749800D0D63F /* ForwardRendererShaders.metal */,
 				E99C443D1C05321A00F27679 /* Deferred */,
 				E99C443F1C05326D00F27679 /* MetalStructs.h */,
@@ -913,6 +916,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E988C9731C7BEC99004DBFDE /* TorranceSparrow.metal in Sources */,
 				E9B6AC211C02982000F27FD7 /* Game.swift in Sources */,
 				E9B6ABF41C02965500F27FD7 /* EventDataKey.swift in Sources */,
 				E9B6ABF51C02965500F27FD7 /* Event.swift in Sources */,
